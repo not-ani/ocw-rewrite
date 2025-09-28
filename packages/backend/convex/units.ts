@@ -1,0 +1,178 @@
+import { v } from "convex/values";
+import { mutation, query } from "./_generated/server";
+import { assertEditorOrAdmin, getRequesterRole } from "./permissions";
+
+export const getTableData = query({
+  args: { courseId: v.id("courses") },
+  handler: async (ctx, args) => {
+    const units = await ctx.db
+      .query("units")
+      .withIndex("by_course_and_order", (q) => q.eq("courseId", args.courseId))
+      .order("asc")
+      .collect();
+
+    return units.map((u) => ({
+      id: u._id,
+      name: u.name,
+      isPublished: u.isPublished,
+      courseId: u.courseId,
+      order: u.order,
+    }));
+  },
+});
+
+export const getById = query({
+  args: { id: v.id("units") },
+  handler: async (ctx, args) => {
+    const unit = await ctx.db.get(args.id);
+    return unit ?? null;
+  },
+});
+
+export const create = mutation({
+  args: {
+    courseId: v.id("courses"),
+    description: v.optional(v.string()),
+    isPublished: v.optional(v.boolean()),
+    unitName: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const role = await getRequesterRole(ctx, args.courseId);
+    assertEditorOrAdmin(role);
+
+    const count = await ctx.db
+      .query("units")
+      .withIndex("by_course_id", (q) => q.eq("courseId", args.courseId))
+      .collect();
+
+    const order = count.length;
+    const id = await ctx.db.insert("units", {
+      courseId: args.courseId,
+      name: args.unitName,
+      description: args.description ?? undefined,
+      isPublished: args.isPublished ?? false,
+      order,
+    });
+
+    await ctx.db.insert("logs", {
+      userId: (await ctx.auth.getUserIdentity())?.subject ?? "unknown",
+      courseId: args.courseId,
+      action: "CREATE_UNIT",
+      timestamp: Date.now(),
+      unitId: id,
+    });
+
+    return id;
+  },
+});
+
+export const update = mutation({
+  args: {
+    courseId: v.id("courses"),
+    data: v.object({
+      id: v.id("units"),
+      name: v.optional(v.string()),
+      isPublished: v.optional(v.boolean()),
+      description: v.optional(v.union(v.string(), v.null())),
+    }),
+  },
+  handler: async (ctx, args) => {
+    const role = await getRequesterRole(ctx, args.courseId);
+    assertEditorOrAdmin(role);
+
+    const unit = await ctx.db.get(args.data.id);
+    if (!(unit && unit.courseId === args.courseId)) {
+      throw new Error("Unit not found");
+    }
+
+    await ctx.db.patch(args.data.id, {
+      name: args.data.name ?? unit.name,
+      isPublished: args.data.isPublished ?? unit.isPublished,
+      description:
+        args.data.description === undefined
+          ? unit.description
+          : (args.data.description ?? undefined),
+    });
+
+    await ctx.db.insert("logs", {
+      userId: (await ctx.auth.getUserIdentity())?.subject ?? "unknown",
+      courseId: args.courseId,
+      unitId: args.data.id,
+      action: "UPDATE_UNIT",
+      timestamp: Date.now(),
+    });
+  },
+});
+
+export const reorder = mutation({
+  args: {
+    courseId: v.id("courses"),
+    data: v.array(
+      v.object({
+        id: v.id("units"),
+        position: v.number(),
+      })
+    ),
+  },
+  handler: async (ctx, args) => {
+    const role = await getRequesterRole(ctx, args.courseId);
+    assertEditorOrAdmin(role);
+
+    // Update each unit order to the provided position
+    for (const item of args.data) {
+      const unit = await ctx.db.get(item.id);
+      if (
+        unit &&
+        unit.courseId === args.courseId &&
+        unit.order !== item.position
+      ) {
+        await ctx.db.patch(item.id, { order: item.position });
+      }
+    }
+
+    await ctx.db.insert("logs", {
+      userId: (await ctx.auth.getUserIdentity())?.subject ?? "unknown",
+      courseId: args.courseId,
+      action: "REORDER_UNIT",
+      timestamp: Date.now(),
+    });
+  },
+});
+
+export const remove = mutation({
+  args: {
+    courseId: v.id("courses"),
+    id: v.id("units"),
+  },
+  handler: async (ctx, args) => {
+    const role = await getRequesterRole(ctx, args.courseId);
+    assertEditorOrAdmin(role);
+
+    const unit = await ctx.db.get(args.id);
+    if (!(unit && unit.courseId === args.courseId)) {
+      throw new Error("Unit not found");
+    }
+
+    await ctx.db.delete(args.id);
+
+    // Re-number remaining units
+    const remaining = await ctx.db
+      .query("units")
+      .withIndex("by_course_and_order", (q) => q.eq("courseId", args.courseId))
+      .order("asc")
+      .collect();
+    for (const [index, u] of remaining.entries()) {
+      if (u.order !== index) {
+        await ctx.db.patch(u._id, { order: index });
+      }
+    }
+
+    await ctx.db.insert("logs", {
+      userId: (await ctx.auth.getUserIdentity())?.subject ?? "unknown",
+      courseId: args.courseId,
+      unitId: args.id,
+      action: "DELETE_UNIT",
+      timestamp: Date.now(),
+    });
+  },
+});
