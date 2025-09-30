@@ -47,28 +47,28 @@ type SearchEntityKind = "course" | "unit" | "lesson";
 
 type SearchResult =
   | {
-      type: "course";
-      id: Id<"courses">;
-      name: string;
-      description: string;
-      unitLength: number;
-    }
+    type: "course";
+    id: Id<"courses">;
+    name: string;
+    description: string;
+    unitLength: number;
+  }
   | {
-      type: "unit";
-      id: Id<"units">;
-      name: string;
-      courseId: Id<"courses">;
-      courseName: string;
-    }
+    type: "unit";
+    id: Id<"units">;
+    name: string;
+    courseId: Id<"courses">;
+    courseName: string;
+  }
   | {
-      type: "lesson";
-      id: Id<"lessons">;
-      name: string;
-      courseId: Id<"courses">;
-      courseName: string;
-      unitId: Id<"units">;
-      unitName: string;
-    };
+    type: "lesson";
+    id: Id<"lessons">;
+    name: string;
+    courseId: Id<"courses">;
+    courseName: string;
+    unitId: Id<"units">;
+    unitName: string;
+  };
 
 const MAX_RESULTS_PER_GROUP = 5;
 
@@ -167,7 +167,7 @@ async function hydrateResults(
   const unitById = new Map(
     units
       .filter(
-        (unit): unit is Doc<"units"> => Boolean(unit) && unit.isPublished
+        (unit): unit is Doc<"units"> => Boolean(unit) && Boolean(unit?.isPublished)
       )
       .map((unit) => [unit._id, unit])
   );

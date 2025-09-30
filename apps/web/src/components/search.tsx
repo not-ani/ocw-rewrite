@@ -152,9 +152,9 @@ function getResultHref(item: SearchItem) {
     case "course":
       return `/course/${item.id}`
     case "unit":
-      return `/course/${item.courseId}?unit=${item.id}`
+      return `/course/${item.courseId}/${item.id}`
     case "lesson":
-      return `/course/${item.courseId}?unit=${item.unitId}&lesson=${item.id}`
+      return `/course/${item.courseId}/${item.unitId}/${item.id}`
     default:
       return "#"
   }

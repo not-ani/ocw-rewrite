@@ -1,10 +1,12 @@
-"use client"
+"use client";
 
-import { SignedIn, UserButton } from '@clerk/nextjs'
-import Link from "next/link";
+import { SignedIn, UserButton } from "@clerk/nextjs";
 import { Menu, MoveRight, X } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
+import { Search } from "./search";
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -14,9 +16,12 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "./ui/navigation-menu";
-import { Search } from './search';
 
 function Header() {
+  const route = usePathname();
+
+  const isCoursesPage = route.endsWith("/courses");
+
   const navigationItems = [
     {
       title: "Courses",
@@ -64,7 +69,7 @@ function Header() {
   const [isOpen, setOpen] = useState(false);
   return (
     <header className={"flex bg-background"}>
-      <div className="flex min-h-20 w-full flex-row items-center justify-evenly gap-4 lg:grid lg:grid-cols-3">
+      <div className="flex min-h-20 px-5 w-full flex-row items-center justify-evenly gap-4 lg:grid lg:grid-cols-3">
         <div className="hidden flex-row items-center justify-start gap-4 lg:flex">
           <NavigationMenu
             className="flex items-start justify-start"
@@ -96,7 +101,7 @@ function Header() {
                       </ul>
                     </NavigationMenuContent>
                   </NavigationMenuItem>
-                )
+                ),
               )}
             </NavigationMenuList>
           </NavigationMenu>
@@ -107,7 +112,7 @@ function Header() {
           </Link>
         </div>
         <div className="flex w-full justify-end gap-4">
-          <Search />
+          {!isCoursesPage && <Search />}
           <div className="hidden border-r md:inline" />
           <SignedIn>
             <UserButton />

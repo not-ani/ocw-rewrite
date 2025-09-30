@@ -51,50 +51,54 @@ export function Pagination({
     return arr;
   }, [currentPage, totalPages, maxVisible]);
 
+  const isPrevDisabled = currentPage === 1;
+  const isNextDisabled = currentPage === totalPages;
+
   return (
-    <div className="flex items-center space-x-1">
-      {currentPage > 1 && (
+    <div className="flex flex-col items-center space-y-4">
+      <div className="flex items-center space-x-2">
         <Button
-          className="rounded-l-md px-3 py-2 font-medium text-sm"
-          onClick={() => onPageChange(currentPage - 1)}
+          className={`rounded-l-md h-10 w-20  px-3 py-2 font-medium text-sm`}
+          variant={"outline"}
+          onClick={() => onPageChange(currentPage - 1)} disabled={isPrevDisabled}
         >
           Previous
         </Button>
-      )}
 
-      {pages.map((p, idx) =>
-        p === "ellipsis" ? (
-          <span
-            aria-hidden
-            className="border border-gray-300 bg-background px-3 py-2 font-medium text-gray-500 text-sm"
-            key={`el-${idx}`}
-          >
-            ...
-          </span>
-        ) : (
-          <Button
-            aria-current={p === currentPage ? "page" : undefined}
-            aria-label={`Go to page ${p}`}
-            className={`border px-3 py-2 font-medium text-sm ${p === currentPage
+        {pages.map((p) =>
+          p === "ellipsis" ? (
+            <span
+              aria-hidden
+              className="border border-gray-300 bg-background px-3 py-2 font-medium text-gray-500 text-sm"
+              key={`el-${p}`}
+            >
+              ...
+            </span>
+          ) : (
+            <Button
+              aria-current={p === currentPage ? "page" : undefined}
+              aria-label={`Go to page ${p}`}
+              className={`border px-3 py-2 font-medium text-sm ${p === currentPage
                 ? "border-blue-500 bg-blue-50 text-blue-600"
                 : "border-gray-300 bg-background text-gray-500 hover:bg-gray-50 hover:text-gray-700"
-              }`}
-            key={p}
-            onClick={() => onPageChange(p)}
-          >
-            {p}
-          </Button>
-        )
-      )}
+                }`}
+              key={p}
+              onClick={() => onPageChange(p)}
+            >
+              {p}
+            </Button>
+          )
+        )}
 
-      {currentPage < totalPages && (
         <Button
-          className="rounded-r-md px-3 py-2 font-medium text-sm"
+          className="rounded-r-md px-3 py-2 font-medium text-sm h-10 w-20"
           onClick={() => onPageChange(currentPage + 1)}
+          variant={"outline"}
+          disabled={isNextDisabled}
         >
           Next
         </Button>
-      )}
+      </div>
     </div>
   );
 }

@@ -124,7 +124,7 @@ export default function WritersTable() {
   };
 
   return (
-    <div className="mx-auto  h-screen max-w-4xl">
+    <div className="mx-auto h-screen max-w-4xl">
       <div className="overflow-hidden rounded-2xl">
         {/* Table Header */}
         <div className="px-8 py-6">

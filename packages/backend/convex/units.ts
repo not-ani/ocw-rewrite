@@ -29,6 +29,45 @@ export const getById = query({
   },
 });
 
+export const getUnitWithLessons = query({
+  args: { id: v.id("units") },
+  handler: async (ctx, args) => {
+    const unit = await ctx.db.get(args.id);
+
+    if (!unit) {
+      return null;
+    }
+
+    const course = await ctx.db.get(unit.courseId);
+
+    if (!course) {
+      return null;
+    }
+
+    const lessons = await ctx.db
+      .query("lessons")
+      .withIndex("by_unit_and_order", (q) => q.eq("unitId", unit._id))
+      .filter((q) => q.eq(q.field("isPublished"), true))
+      .order("asc")
+      .collect();
+
+    return {
+      ...unit,
+      _id: unit._id,
+      course: {
+        _id: course._id,
+        name: course.name,
+      },
+      lessons: lessons.map((lesson) => ({
+        id: lesson._id,
+        name: lesson.name,
+        contentType: lesson.contentType,
+        order: lesson.order,
+      })),
+    };
+  },
+});
+
 export const create = mutation({
   args: {
     courseId: v.id("courses"),

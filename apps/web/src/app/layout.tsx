@@ -33,8 +33,7 @@ export default function RootLayout({
       >
         <ClerkProvider>
           <Providers>
-            <div className="grid bg-background grid-rows-[auto_1fr] h-svh">
-              <Header />
+            <div className="grid bg-background grid-rows-[auto_1fr] h-screen">
               <NuqsAdapter>{children}</NuqsAdapter>
             </div>
           </Providers>
