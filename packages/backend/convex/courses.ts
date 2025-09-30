@@ -403,6 +403,64 @@ export const getSidebarData = query({
   },
 });
 
+export const getBreadcrumbData = query({
+  args: {
+    courseId: v.id("courses"),
+    unitId: v.optional(v.id("units")),
+    lessonId: v.optional(v.id("lessons")),
+  },
+  handler: async (ctx, args) => {
+    const course = await ctx.db.get(args.courseId);
+    
+    if (!course) {
+      return null;
+    }
+
+    const result: {
+      course: { id: Id<"courses">; name: string };
+      unit?: { id: Id<"units">; name: string };
+      lesson?: { id: Id<"lessons">; name: string };
+    } = {
+      course: {
+        id: course._id,
+        name: course.name,
+      },
+    };
+
+    if (args.unitId) {
+      const unit = await ctx.db.get(args.unitId);
+      if (unit) {
+        result.unit = {
+          id: unit._id,
+          name: unit.name,
+        };
+      }
+    }
+
+    if (args.lessonId) {
+      const lesson = await ctx.db.get(args.lessonId);
+      if (lesson) {
+        result.lesson = {
+          id: lesson._id,
+          name: lesson.name,
+        };
+        
+        if (!args.unitId && lesson.unitId) {
+          const unit = await ctx.db.get(lesson.unitId);
+          if (unit) {
+            result.unit = {
+              id: unit._id,
+              name: unit.name,
+            };
+          }
+        }
+      }
+    }
+
+    return result;
+  },
+});
+
 export const normalizeUnitLengths = mutation({
   args: {},
   handler: async (ctx) => {

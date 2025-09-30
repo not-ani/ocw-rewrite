@@ -123,6 +123,42 @@ export const getByUnit = query({
   },
 });
 
+export const searchByCourse = query({
+  args: {
+    courseId: v.id("courses"),
+    searchTerm: v.string(),
+  },
+  handler: async (ctx, args) => {
+    if (!args.searchTerm.trim()) {
+      return [];
+    }
+
+    const lessons = await ctx.db
+      .query("lessons")
+      .withSearchIndex("search_name", (q) =>
+        q.search("name", args.searchTerm).eq("courseId", args.courseId)
+      )
+      .take(10);
+
+    // Get unit names for each lesson
+    const lessonsWithUnits = await Promise.all(
+      lessons.map(async (lesson) => {
+        const unit = await ctx.db.get(lesson.unitId);
+        return {
+          id: lesson._id,
+          name: lesson.name,
+          unitId: lesson.unitId,
+          unitName: unit?.name ?? "Unknown Unit",
+          isPublished: lesson.isPublished,
+          contentType: lesson.contentType,
+        };
+      })
+    );
+
+    return lessonsWithUnits;
+  },
+});
+
 export const create = mutation({
   args: {
     courseId: v.id("courses"),

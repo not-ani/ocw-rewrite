@@ -29,6 +29,31 @@ export const getById = query({
   },
 });
 
+export const searchByCourse = query({
+  args: {
+    courseId: v.id("courses"),
+    searchTerm: v.string(),
+  },
+  handler: async (ctx, args) => {
+    if (!args.searchTerm.trim()) {
+      return [];
+    }
+
+    const units = await ctx.db
+      .query("units")
+      .withSearchIndex("search_name", (q) =>
+        q.search("name", args.searchTerm).eq("courseId", args.courseId)
+      )
+      .take(10);
+
+    return units.map((unit) => ({
+      id: unit._id,
+      name: unit.name,
+      isPublished: unit.isPublished,
+    }));
+  },
+});
+
 export const getUnitWithLessons = query({
   args: { id: v.id("units") },
   handler: async (ctx, args) => {
