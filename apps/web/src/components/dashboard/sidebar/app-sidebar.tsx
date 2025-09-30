@@ -9,7 +9,9 @@ import {
   PieChart,
   Send,
   Settings2,
+  SettingsIcon,
   SquareTerminal,
+  Users2Icon,
 } from "lucide-react";
 import {
   Sidebar,
@@ -23,6 +25,8 @@ import {
 import { NavProjects } from "./nav-projects";
 import { NavUser } from "./nav-user";
 import Link from "next/link";
+import { useParams } from "next/navigation";
+import type { Id } from "@ocw-rewrite/backend/convex/_generated/dataModel";
 
 const data = {
   user: {
@@ -32,86 +36,17 @@ const data = {
   },
   navMain: [
     {
-      title: "Playground",
+      title: "Dashboard",
       url: "#",
       icon: SquareTerminal,
       isActive: true,
       items: [
         {
-          title: "History",
+          title: "Overview",
           url: "#",
         },
         {
-          title: "Starred",
-          url: "#",
-        },
-        {
-          title: "Settings",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Models",
-      url: "#",
-      icon: Bot,
-      items: [
-        {
-          title: "Genesis",
-          url: "#",
-        },
-        {
-          title: "Explorer",
-          url: "#",
-        },
-        {
-          title: "Quantum",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Documentation",
-      url: "#",
-      icon: BookOpen,
-      items: [
-        {
-          title: "Introduction",
-          url: "#",
-        },
-        {
-          title: "Get Started",
-          url: "#",
-        },
-        {
-          title: "Tutorials",
-          url: "#",
-        },
-        {
-          title: "Changelog",
-          url: "#",
-        },
-      ],
-    },
-    {
-      title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "#",
-        },
-        {
-          title: "Team",
-          url: "#",
-        },
-        {
-          title: "Billing",
-          url: "#",
-        },
-        {
-          title: "Limits",
+          title: "Users",
           url: "#",
         },
       ],
@@ -131,24 +66,47 @@ const data = {
   ],
   projects: [
     {
-      name: "Design Engineering",
+      name: "Dashboard",
       url: "#",
       icon: Frame,
     },
     {
-      name: "Sales & Marketing",
+      name: "Users",
       url: "#",
-      icon: PieChart,
+      icon: Users2Icon,
     },
     {
-      name: "Travel",
+      name: "Settings",
       url: "#",
-      icon: MapIcon,
+      icon: SettingsIcon,
     },
   ],
 };
 
+function getUrls(path: string) {
+  return [
+    {
+      name: "Dashboard",
+      url: `/course/${path}/dashboard`,
+      icon: Frame,
+    },
+    {
+      name: "Users",
+      url: `/course/${path}/dashboard/users`,
+      icon: Users2Icon,
+    },
+    {
+      name: "Settings",
+      url: `/course/${path}/dashboard/settings`,
+      icon: SettingsIcon,
+    },
+  ]
+}
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const params = useParams();
+  const path = params.id as Id<"courses">;
+  const urls = getUrls(path);
   return (
     <Sidebar
       className="top-(--header-height) h-[calc(100svh-var(--header-height))]!"
@@ -172,7 +130,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavProjects projects={data.projects} />
+        <NavProjects projects={urls} />
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={data.user} />
