@@ -13,7 +13,7 @@ import { Separator } from "@/components/ui/separator";
 import { useSidebar } from "@/components/ui/sidebar";
 import { SearchForm } from "./search-form";
 
-export function SiteHeader() {
+export function CourseDashboardHeader() {
   const { toggleSidebar } = useSidebar();
 
   return (

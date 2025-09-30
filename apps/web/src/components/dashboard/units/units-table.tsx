@@ -15,8 +15,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import type { Id } from "@ocw-convex/backend/convex/_generated/dataModel";
-import { useNavigate } from "@tanstack/react-router";
+import type { Id } from "@ocw-rewrite/backend/convex/_generated/dataModel";
 import { GripVerticalIcon, MoreHorizontalIcon, TrashIcon } from "lucide-react";
 import { useCallback, useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
@@ -45,6 +44,7 @@ import {
   TableProvider,
 } from "@/components/ui/kibo-ui/table";
 import { TableCell } from "@/components/ui/table";
+import { useRouter } from "next/navigation";
 
 type Unit = {
   id: Id<"units">;
@@ -87,7 +87,7 @@ function SortableUnitRow({
   onRemoveUnit: (id: Id<"units">) => Promise<void>;
 }) {
   const unit = row.original;
-  const navigate = useNavigate();
+  const router = useRouter();
   const [confirmDialog, setConfirmDialog] = useState<ConfirmationDialog>(null);
 
   const {
@@ -151,10 +151,7 @@ function SortableUnitRow({
           isDragging ? "opacity-50" : ""
         }`}
         onClick={() =>
-          navigate({
-            to: "/course/$id/$unitId",
-            params: { id: courseId, unitId: unit.id },
-          })
+          router.push(`/course/${courseId}/dashboard/unit/${unit.id}`)
         }
         ref={setNodeRef}
         style={style}

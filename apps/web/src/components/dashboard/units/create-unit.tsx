@@ -1,9 +1,8 @@
 "use client";
-import { useUser } from "@clerk/clerk-react";
+import { useUser } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { api } from "@ocw-convex/backend/convex/_generated/api";
-import type { Id } from "@ocw-convex/backend/convex/_generated/dataModel";
-import { getRouteApi } from "@tanstack/react-router";
+import { api } from "@ocw-rewrite/backend/convex/_generated/api";
+import type { Id } from "@ocw-rewrite/backend/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -22,7 +21,8 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogContent, DialogTrigger } from "../ui/dialog";
+import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
+import { useParams } from "next/navigation";
 
 const formSchema = z.object({
   unitName: z.string().min(1).min(3).max(50),
@@ -123,13 +123,10 @@ export function CreateUnitForm({ callback, courseId }: CreateUnitFormProps) {
     </Form>
   );
 }
-const route = getRouteApi("/course/$id/dashboard");
 
 export function CreateUnitDialog() {
   const [open, setOpen] = useState(false);
-  const id = route.useParams({
-    select: (data) => data.id as Id<"courses">,
-  });
+  const id = useParams<{ id: string }>().id as Id<"courses">;
 
   function changeOpen() {
     setOpen(false);
