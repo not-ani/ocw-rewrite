@@ -81,10 +81,10 @@ export default function DashboardCommand() {
       : "skip"
   );
 
-  const isSearching = 
-    courseId && 
-    debouncedSearch.trim() !== "" && 
-    mode === "search" && 
+  const isSearching =
+    courseId &&
+    debouncedSearch.trim() !== "" &&
+    mode === "search" &&
     (units === undefined || lessons === undefined);
 
   const handleNavigateToUnit = (unitId: Id<"units">) => {
@@ -136,7 +136,7 @@ export default function DashboardCommand() {
         </kbd>
       </button>
 
-      <CommandDialog open={open} onOpenChange={setOpen}>
+      <CommandDialog shouldFilter={false} open={open} onOpenChange={setOpen}>
         {mode === "search" && (
           <>
             <CommandInput
@@ -154,8 +154,8 @@ export default function DashboardCommand() {
                 ) : (
                   <div className="py-6 text-center">
                     <p className="text-sm text-muted-foreground">
-                      {debouncedSearch.trim() 
-                        ? "No results found." 
+                      {debouncedSearch.trim()
+                        ? "No results found."
                         : "Type to search or select a quick action below."}
                     </p>
                   </div>
@@ -190,7 +190,7 @@ export default function DashboardCommand() {
               {(units?.length || lessons?.length) ? (
                 <>
                   <CommandSeparator />
-                  
+
                   {units && units.length > 0 && (
                     <CommandGroup heading="Units">
                       {units.map((unit) => (
