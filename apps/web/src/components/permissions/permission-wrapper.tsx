@@ -1,0 +1,122 @@
+"use client";
+
+import { api } from "@ocw-rewrite/backend/convex/_generated/api";
+import type { Id } from "@ocw-rewrite/backend/convex/_generated/dataModel";
+import { useQuery } from "convex/react";
+import type { ReactNode } from "react";
+
+type PermissionWrapperProps = {
+  courseId: Id<"courses">;
+  requiredRole?: "admin" | "editor" | "user";
+  requiredPermission?: 
+    | "create_unit"
+    | "edit_unit"
+    | "delete_unit"
+    | "create_lesson"
+    | "edit_lesson"
+    | "delete_lesson"
+    | "reorder_lesson"
+    | "manage_users"
+    | "manage_course";
+  fallback?: ReactNode;
+  children: ReactNode;
+};
+
+/**
+ * Client-side permission wrapper that conditionally renders children
+ * based on user's role and permissions for a course
+ */
+export function PermissionWrapper({
+  courseId,
+  requiredRole,
+  requiredPermission,
+  fallback = null,
+  children,
+}: PermissionWrapperProps) {
+  const membership = useQuery(api.courseUsers.getMyMembership, { courseId });
+
+  // Loading state - don't render anything
+  if (membership === undefined) {
+    return null;
+  }
+
+  // Not a member
+  if (!membership) {
+    return <>{fallback}</>;
+  }
+
+  // Check role requirement
+  if (requiredRole) {
+    const roleHierarchy = { admin: 3, editor: 2, user: 1 };
+    const userRoleLevel = roleHierarchy[membership.role];
+    const requiredRoleLevel = roleHierarchy[requiredRole];
+
+    if (userRoleLevel < requiredRoleLevel) {
+      return <>{fallback}</>;
+    }
+  }
+
+  // Check permission requirement
+  if (requiredPermission) {
+    // Admins and editors have all permissions by default
+    const hasPermission =
+      membership.role === "admin" ||
+      membership.role === "editor" ||
+      membership.permissions.includes(requiredPermission);
+
+    if (!hasPermission) {
+      return <>{fallback}</>;
+    }
+  }
+
+  return <>{children}</>;
+}
+
+/**
+ * Hook to check if user has permission for a course
+ */
+export function usePermission(courseId: Id<"courses">) {
+  const membership = useQuery(api.courseUsers.getMyMembership, { courseId });
+
+  const hasRole = (role: "admin" | "editor" | "user") => {
+    if (!membership) return false;
+    const roleHierarchy = { admin: 3, editor: 2, user: 1 };
+    return roleHierarchy[membership.role] >= roleHierarchy[role];
+  };
+
+  const hasPermission = (
+    permission:
+      | "create_unit"
+      | "edit_unit"
+      | "delete_unit"
+      | "create_lesson"
+      | "edit_lesson"
+      | "delete_lesson"
+      | "reorder_lesson"
+      | "manage_users"
+      | "manage_course"
+  ) => {
+    if (!membership) return false;
+    return (
+      membership.role === "admin" ||
+      membership.role === "editor" ||
+      membership.permissions.includes(permission)
+    );
+  };
+
+  const canManageUsers = () => hasPermission("manage_users");
+  const isAdmin = () => membership?.role === "admin";
+  const isEditor = () => membership?.role === "editor";
+  const isAdminOrEditor = () => isAdmin() || isEditor();
+
+  return {
+    membership,
+    hasRole,
+    hasPermission,
+    canManageUsers,
+    isAdmin,
+    isEditor,
+    isAdminOrEditor,
+  };
+}
+

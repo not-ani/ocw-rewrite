@@ -12,7 +12,6 @@ import {
   usePreloadedQuery,
   useQuery,
 } from "convex/react";
-import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { Suspense, useCallback, useEffect, useState } from "react";
 import { CreateUnitDialog } from "@/components/dashboard/units/create-unit";
@@ -20,9 +19,6 @@ import { UnitsTable } from "@/components/dashboard/units/units-table";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
-const DASHBOARD_SPINNER_SIZE = 32 as const;
-
-// Skeleton components for granular loading states
 function DashboardHeaderSkeleton() {
   return (
     <div className="flex flex-wrap items-center justify-between gap-3">
@@ -85,7 +81,6 @@ function DashboardContent({
     courseId,
   });
 
-  // Use preloaded queries for instant hydration
   const dashboard = usePreloadedQuery(preloadedDashboard);
   const units = usePreloadedQuery(preloadedUnits);
 
@@ -104,7 +99,6 @@ function DashboardContent({
 
   const unitList = units ?? [];
 
-  // When units load set a default selection.
   useEffect(() => {
     if (!selectedUnitId && unitList[0]) {
       setSelectedUnitId(unitList[0].id as Id<"units">);
@@ -127,7 +121,6 @@ function DashboardContent({
   const handleRemoveUnit = useCallback(
     async (id: Id<"units">) => {
       await removeUnit({ courseId, id });
-      // if we deleted the selected unit, pick the first one next render
       setSelectedUnitId((prev) => (prev === id ? null : prev));
     },
     [removeUnit, courseId]
