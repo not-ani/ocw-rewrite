@@ -300,24 +300,26 @@ export function UnitPageClient({
           <UnitEditForm unit={unit} courseId={courseId} unitId={unitId} />
         </Suspense>
 
-        <div className="border-t pt-8">
-          <Suspense fallback={<LessonsTableSkeleton />}>
-            <div className="space-y-4">
-              <div className="flex items-center justify-between">
-                <h2 className="font-semibold text-lg">Lessons</h2>
-                <CreateLessonDialog courseId={courseId} unitId={unitId} />
+        {unit && (
+          <div className="border-t pt-8">
+            <Suspense fallback={<LessonsTableSkeleton />}>
+              <div className="space-y-4">
+                <div className="flex items-center justify-between">
+                  <h2 className="font-semibold text-lg">Lessons</h2>
+                  <CreateLessonDialog courseId={courseId} unitId={unitId} />
+                </div>
+                <LessonsTable
+                  courseId={courseId}
+                  unitId={unitId}
+                  lessons={lessonList}
+                  onUpdateLesson={handleUpdateLesson}
+                  onRemoveLesson={handleRemoveLesson}
+                  onReorder={handleReorderLessons}
+                />
               </div>
-              <LessonsTable
-                courseId={courseId}
-                unitId={unitId}
-                lessons={lessonList}
-                onUpdateLesson={handleUpdateLesson}
-                onRemoveLesson={handleRemoveLesson}
-                onReorder={handleReorderLessons}
-              />
-            </div>
-          </Suspense>
-        </div>
+            </Suspense>
+          </div>
+        )}
       </div>
     </div>
   );
