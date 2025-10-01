@@ -8,7 +8,7 @@ import type { ReactNode } from "react";
 type PermissionWrapperProps = {
   courseId: Id<"courses">;
   requiredRole?: "admin" | "editor" | "user";
-  requiredPermission?: 
+  requiredPermission?:
     | "create_unit"
     | "edit_unit"
     | "delete_unit"
@@ -34,18 +34,13 @@ export function PermissionWrapper({
   children,
 }: PermissionWrapperProps) {
   const membership = useQuery(api.courseUsers.getMyMembership, { courseId });
-
-  // Loading state - don't render anything
   if (membership === undefined) {
     return null;
   }
-
-  // Not a member
   if (!membership) {
     return <>{fallback}</>;
   }
 
-  // Check role requirement
   if (requiredRole) {
     const roleHierarchy = { admin: 3, editor: 2, user: 1 };
     const userRoleLevel = roleHierarchy[membership.role];
@@ -56,9 +51,7 @@ export function PermissionWrapper({
     }
   }
 
-  // Check permission requirement
   if (requiredPermission) {
-    // Admins and editors have all permissions by default
     const hasPermission =
       membership.role === "admin" ||
       membership.role === "editor" ||
@@ -94,7 +87,7 @@ export function usePermission(courseId: Id<"courses">) {
       | "delete_lesson"
       | "reorder_lesson"
       | "manage_users"
-      | "manage_course"
+      | "manage_course",
   ) => {
     if (!membership) return false;
     return (
@@ -119,4 +112,3 @@ export function usePermission(courseId: Id<"courses">) {
     isAdminOrEditor,
   };
 }
-

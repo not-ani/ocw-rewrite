@@ -6,16 +6,43 @@ export const getMyMembership = query({
   args: { courseId: v.id("courses") },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
+
     if (!identity) {
       return null;
     }
 
-    const membership = await ctx.db
-      .query("courseUsers")
-      .withIndex("by_course_and_user", (q) =>
-        q.eq("courseId", args.courseId).eq("userId", identity.tokenIdentifier)
-      )
-      .unique();
+    const [membership, siteUser] = await Promise.all([
+      ctx.db
+        .query("courseUsers")
+        .withIndex("by_course_and_user", (q) =>
+          q
+            .eq("courseId", args.courseId)
+            .eq("userId", identity.tokenIdentifier),
+        )
+        .unique(),
+      ctx.db
+        .query("siteUser")
+        .withIndex("by_user_id", (q) =>
+          q.eq("userId", identity.tokenIdentifier),
+        )
+        .unique(),
+    ]);
+
+    if (siteUser?.role === "admin") {
+      return {
+        role: "admin",
+        permissions: [
+          "create_unit",
+          "edit_unit",
+          "delete_unit",
+          "create_lesson",
+          "delete_lesson",
+          "reorder_lesson",
+          "manage_users",
+          "manage_course",
+        ],
+      } as const;
+    }
 
     if (!membership) {
       return null;
@@ -31,7 +58,6 @@ export const getMyMembership = query({
 export const countMembersByRole = query({
   args: { courseId: v.id("courses") },
   handler: async (ctx, args) => {
-
     const role = await getRequesterRole(ctx, args.courseId);
     assertEditorOrAdmin(role);
 
@@ -49,7 +75,7 @@ export const countMembersByRole = query({
         admin: number;
         editor: number;
         user: number;
-      }
+      },
     );
 
     return counts;
@@ -62,7 +88,6 @@ export const listMembers = query({
   handler: async (ctx, args) => {
     const role = await getRequesterRole(ctx, args.courseId);
     assertEditorOrAdmin(role);
-
 
     const members = await ctx.db
       .query("courseUsers")
@@ -95,9 +120,9 @@ export const addOrUpdateMember = mutation({
           v.literal("delete_lesson"),
           v.literal("reorder_lesson"),
           v.literal("manage_users"),
-          v.literal("manage_course")
-        )
-      )
+          v.literal("manage_course"),
+        ),
+      ),
     ),
   },
   handler: async (ctx, args) => {
@@ -107,7 +132,7 @@ export const addOrUpdateMember = mutation({
     const existing = await ctx.db
       .query("courseUsers")
       .withIndex("by_course_and_user", (q) =>
-        q.eq("courseId", args.courseId).eq("userId", args.userId)
+        q.eq("courseId", args.courseId).eq("userId", args.userId),
       )
       .unique();
 
@@ -133,14 +158,13 @@ export const addOrUpdateMember = mutation({
 export const removeMember = mutation({
   args: { courseId: v.id("courses"), userId: v.string() },
   handler: async (ctx, args) => {
-
     const role = await getRequesterRole(ctx, args.courseId);
     assertEditorOrAdmin(role);
 
     const existing = await ctx.db
       .query("courseUsers")
       .withIndex("by_course_and_user", (q) =>
-        q.eq("courseId", args.courseId).eq("userId", args.userId)
+        q.eq("courseId", args.courseId).eq("userId", args.userId),
       )
       .unique();
     if (!existing) {
