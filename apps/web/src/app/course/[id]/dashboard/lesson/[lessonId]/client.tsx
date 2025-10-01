@@ -243,9 +243,12 @@ function LessonEditForm({
                 <FormItem className="flex flex-row items-start space-x-3 space-y-0">
                   <FormControl>
                     <input
+                      ref={field.ref}
+                      name={field.name}
                       type="checkbox"
                       checked={field.value}
-                      onChange={field.onChange}
+                      onChange={(event) => field.onChange(event.target.checked)}
+                      onBlur={field.onBlur}
                       className="mt-1 h-4 w-4 rounded border-gray-300"
                     />
                   </FormControl>
