@@ -136,6 +136,23 @@ function DashboardContent({
   if (!user.isLoaded) {
     return null;
   }
+  // First, show loading skeleton while membership is unresolved
+  const isLoadingMembership = membership === undefined;
+
+  if (isLoadingMembership) {
+    return (
+      <div className="space-y-6">
+        <DashboardHeaderSkeleton />
+        <UnitsTableSkeleton />
+      </div>
+    );
+  }
+
+  // Then check authorization once we have membership
+  const isAuthorized =
+    membership?.role === "admin" ||
+    membership?.role === "editor" ||
+    userRole === "admin";
 
   if (!isAuthorized) {
     return (
@@ -152,17 +169,6 @@ function DashboardContent({
             Back to course
           </Link>
         </div>
-      </div>
-    );
-  }
-
-  const isLoadingMembership = membership === undefined;
-
-  if (isLoadingMembership) {
-    return (
-      <div className="space-y-6">
-        <DashboardHeaderSkeleton />
-        <UnitsTableSkeleton />
       </div>
     );
   }
