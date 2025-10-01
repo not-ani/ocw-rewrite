@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import { assertEditorOrAdmin, getRequesterRole } from "./permissions";
 
 export const getMyMembership = query({
   args: { courseId: v.id("courses") },
@@ -30,26 +31,9 @@ export const getMyMembership = query({
 export const countMembersByRole = query({
   args: { courseId: v.id("courses") },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      return null;
-    }
 
-    const requester = await ctx.db
-      .query("courseUsers")
-      .withIndex("by_course_and_user", (q) =>
-        q.eq("courseId", args.courseId).eq("userId", identity.tokenIdentifier)
-      )
-      .unique();
-
-    if (
-      !(
-        requester &&
-        (requester.role === "admin" || requester.role === "editor")
-      )
-    ) {
-      return null;
-    }
+    const role = await getRequesterRole(ctx, args.courseId);
+    assertEditorOrAdmin(role);
 
     const members = await ctx.db
       .query("courseUsers")
@@ -76,27 +60,9 @@ export const countMembersByRole = query({
 export const listMembers = query({
   args: { courseId: v.id("courses") },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      return null;
-    }
+    const role = await getRequesterRole(ctx, args.courseId);
+    assertEditorOrAdmin(role);
 
-    const requester = await ctx.db
-      .query("courseUsers")
-      .withIndex("by_course_and_user", (q) =>
-        q.eq("courseId", args.courseId).eq("userId", identity.tokenIdentifier)
-      )
-      .unique();
-
-    const canManage =
-      !!requester &&
-      (requester.role === "admin" ||
-        requester.role === "editor" ||
-        (Array.isArray(requester.permissions) &&
-          requester.permissions.includes("manage_users")));
-    if (!canManage) {
-      throw new Error("Not authorized");
-    }
 
     const members = await ctx.db
       .query("courseUsers")
@@ -135,25 +101,8 @@ export const addOrUpdateMember = mutation({
     ),
   },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      return null;
-    }
-    const requester = await ctx.db
-      .query("courseUsers")
-      .withIndex("by_course_and_user", (q) =>
-        q.eq("courseId", args.courseId).eq("userId", identity.tokenIdentifier)
-      )
-      .unique();
-    const canManage =
-      !!requester &&
-      (requester.role === "admin" ||
-        requester.role === "editor" ||
-        (Array.isArray(requester.permissions) &&
-          requester.permissions.includes("manage_users")));
-    if (!canManage) {
-      throw new Error("Not authorized");
-    }
+    const role = await getRequesterRole(ctx, args.courseId);
+    assertEditorOrAdmin(role);
 
     const existing = await ctx.db
       .query("courseUsers")
@@ -184,25 +133,9 @@ export const addOrUpdateMember = mutation({
 export const removeMember = mutation({
   args: { courseId: v.id("courses"), userId: v.string() },
   handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      return null;
-    }
-    const requester = await ctx.db
-      .query("courseUsers")
-      .withIndex("by_course_and_user", (q) =>
-        q.eq("courseId", args.courseId).eq("userId", identity.tokenIdentifier)
-      )
-      .unique();
-    const canManage =
-      !!requester &&
-      (requester.role === "admin" ||
-        requester.role === "editor" ||
-        (Array.isArray(requester.permissions) &&
-          requester.permissions.includes("manage_users")));
-    if (!canManage) {
-      throw new Error("Not authorized");
-    }
+
+    const role = await getRequesterRole(ctx, args.courseId);
+    assertEditorOrAdmin(role);
 
     const existing = await ctx.db
       .query("courseUsers")

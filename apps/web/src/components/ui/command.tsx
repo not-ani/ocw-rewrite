@@ -1,5 +1,3 @@
-"use client"
-
 import * as React from "react"
 import { Command as CommandPrimitive } from "cmdk"
 import { SearchIcon } from "lucide-react"
@@ -34,18 +32,18 @@ function CommandDialog({
   description = "Search for a command to run...",
   children,
   className,
-  shouldFilter = false,
+  shouldFilter = true,
   showCloseButton = true,
   ...props
 }: React.ComponentProps<typeof Dialog> & {
   title?: string
   description?: string
   className?: string
-  showCloseButton?: boolean
   shouldFilter?: boolean
+  showCloseButton?: boolean
 }) {
   return (
-    <Dialog {...props}>
+    <Dialog  {...props}>
       <DialogHeader className="sr-only">
         <DialogTitle>{title}</DialogTitle>
         <DialogDescription>{description}</DialogDescription>

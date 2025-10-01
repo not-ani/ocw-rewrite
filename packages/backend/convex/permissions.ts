@@ -1,4 +1,5 @@
 import type { Id } from "./_generated/dataModel";
+import { query } from "./_generated/server";
 import type { QueryCtx } from "./_generated/server";
 
 type GetRequesterRole = {
@@ -15,6 +16,7 @@ export async function getRequesterRole(
   if (!identity) {
     return null;
   }
+
   const membership = await ctx.db
     .query("courseUsers")
     .withIndex("by_course_and_user", (q) =>
@@ -32,12 +34,23 @@ export async function getRequesterRole(
     siteRole: siteUser?.role ?? null,
   };
 }
+export const getSiteUser = query({
+  args: {},
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (!identity) {
+      return null;
+    }
+    return await ctx.db.query("siteUser").withIndex("by_user_id", (q) => q.eq("userId", identity.tokenIdentifier)).unique();
+  },
+});
 
 export function assertEditorOrAdmin(requesterInfo: GetRequesterRole | null) {
   const hasCourseRole =
     requesterInfo?.courseRole === "admin" ||
     requesterInfo?.courseRole === "editor";
 
+    console.log("requesterInfo", requesterInfo);
   const hasSiteRole = requesterInfo?.siteRole === "admin";
   if (!(hasCourseRole || hasSiteRole)) {
     throw new Error("Not authorized");

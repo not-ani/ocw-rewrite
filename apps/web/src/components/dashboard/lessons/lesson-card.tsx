@@ -4,8 +4,8 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { api } from "@ocw-convex/backend/convex/_generated/api";
-import type { Id } from "@ocw-convex/backend/convex/_generated/dataModel";
+import { api } from "@ocw-rewrite/backend/convex/_generated/api";
+import type { Id } from "@ocw-rewrite/backend/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { useCallback, useMemo, useState } from "react";
 import { Button } from "@/components/ui/button";
@@ -17,8 +17,8 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { LoadingSpinner } from "@/components/ui/loading-spinner";
 import { LessonRow } from "./lesson-row";
+import { Loader2 } from "lucide-react";
 
 export function LessonsCard({
   selectedUnitId,
@@ -127,7 +127,7 @@ export function LessonsCard({
         </CardHeader>
         <CardContent>
           <div className="flex h-28 items-center justify-center">
-            <LoadingSpinner size={24} />
+            <Loader2 className="animate-spin" size={24} />
           </div>
         </CardContent>
       </Card>
