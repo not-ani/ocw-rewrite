@@ -88,13 +88,8 @@ function DashboardContent({
   const reorderUnits = useMutation(api.units.reorder);
   const removeUnit = useMutation(api.units.remove);
 
-  const isAuthorized =
-    membership?.role === "admin" ||
-    membership?.role === "editor" ||
-    userRole === "admin";
-
   const [selectedUnitId, setSelectedUnitId] = useState<null | Id<"units">>(
-    null
+    null,
   );
 
   const unitList = units ?? [];
@@ -115,7 +110,7 @@ function DashboardContent({
         data: { id: payload.id, ...payload.data },
       });
     },
-    [updateUnit, courseId]
+    [updateUnit, courseId],
   );
 
   const handleRemoveUnit = useCallback(
@@ -123,21 +118,26 @@ function DashboardContent({
       await removeUnit({ courseId, id });
       setSelectedUnitId((prev) => (prev === id ? null : prev));
     },
-    [removeUnit, courseId]
+    [removeUnit, courseId],
   );
 
   const handleReorderUnits = useCallback(
     async (data: { id: Id<"units">; position: number }[]) => {
       await reorderUnits({ courseId, data });
     },
-    [reorderUnits, courseId]
+    [reorderUnits, courseId],
   );
 
   if (!user.isLoaded) {
     return null;
   }
-  // First, show loading skeleton while membership is unresolved
+
   const isLoadingMembership = membership === undefined;
+
+  const isAuthorized =
+    membership?.role === "admin" ||
+    membership?.role === "editor" ||
+    userRole === "admin";
 
   if (isLoadingMembership) {
     return (
@@ -148,12 +148,6 @@ function DashboardContent({
     );
   }
 
-  // Then check authorization once we have membership
-  const isAuthorized =
-    membership?.role === "admin" ||
-    membership?.role === "editor" ||
-    userRole === "admin";
-
   if (!isAuthorized) {
     return (
       <div className="mx-auto max-w-xl text-center">
@@ -162,10 +156,7 @@ function DashboardContent({
           You do not have permission to view this course dashboard.
         </p>
         <div className="mt-4">
-          <Link
-            href={`/course/${courseId}`}
-            className="text-primary underline"
-          >
+          <Link href={`/course/${courseId}`} className="text-primary underline">
             Back to course
           </Link>
         </div>
@@ -252,3 +243,4 @@ export function DashboardPageClient({
     </div>
   );
 }
+
