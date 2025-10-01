@@ -126,7 +126,13 @@ export function CreateUnitForm({ callback, courseId }: CreateUnitFormProps) {
 
 export function CreateUnitDialog() {
   const [open, setOpen] = useState(false);
-  const id = useParams<{ id: string }>().id as Id<"courses">;
+  const params = useParams<{ id: string }>();
+  const id = params.id;
+
+  if (!id) {
+    // Handle missing ID - either redirect or show error
+    return null;
+  }
 
   function changeOpen() {
     setOpen(false);
