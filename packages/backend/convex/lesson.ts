@@ -25,35 +25,44 @@ export const getLessonById = query({
   },
 });
 
-const regex = /<iframe[^>]*src=["']([^"']+)["']/i;
 function detectEmbed(input: string): {
   contentType: "google_docs" | "quizlet" | "notion" | "tiptap" | "flashcard";
   embedUrl?: string;
 } | null {
-  const iframeSrcMatch = input.match(regex);
+  const iframeSrcMatch = input.match(/src="([^"]+)"/);
   const url = iframeSrcMatch ? iframeSrcMatch[1] : input.trim();
+
   try {
     const u = new URL(url);
 
     if (u.hostname.includes("drive.google.com")) {
+      // Normalize Google Drive file links to use `/preview`
+      const match = u.pathname.match(/\/file\/d\/([^/]+)/);
+      if (match) {
+        const fileId = match[1];
+        return {
+          contentType: "google_docs",
+          embedUrl: `https://drive.google.com/file/d/${fileId}/preview`,
+        };
+      }
       return { contentType: "google_docs", embedUrl: u.toString() };
     }
 
     if (u.hostname.includes("docs.google.com")) {
       return { contentType: "google_docs", embedUrl: u.toString() };
     }
+
     if (u.hostname.includes("quizlet.com")) {
       return { contentType: "quizlet", embedUrl: u.toString() };
     }
-    if (
-      u.hostname.includes("notion.so") ||
-      u.hostname.includes("notion.site")
-    ) {
+
+    if (u.hostname.includes("notion.so") || u.hostname.includes("notion.site")) {
       return { contentType: "notion", embedUrl: u.toString() };
     }
   } catch {
     return null;
   }
+
   return null;
 }
 

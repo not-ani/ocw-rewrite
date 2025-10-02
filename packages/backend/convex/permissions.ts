@@ -50,7 +50,6 @@ export function assertEditorOrAdmin(requesterInfo: GetRequesterRole | null) {
     requesterInfo?.courseRole === "admin" ||
     requesterInfo?.courseRole === "editor";
 
-    console.log("requesterInfo", requesterInfo);
   const hasSiteRole = requesterInfo?.siteRole === "admin";
   if (!(hasCourseRole || hasSiteRole)) {
     throw new Error("Not authorized");
