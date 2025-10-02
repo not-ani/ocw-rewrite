@@ -34,6 +34,11 @@ function detectEmbed(input: string): {
   const url = iframeSrcMatch ? iframeSrcMatch[1] : input.trim();
   try {
     const u = new URL(url);
+
+    if (u.hostname.includes("drive.google.com")) {
+      return { contentType: "google_docs", embedUrl: u.toString() };
+    }
+
     if (u.hostname.includes("docs.google.com")) {
       return { contentType: "google_docs", embedUrl: u.toString() };
     }
