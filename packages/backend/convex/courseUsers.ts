@@ -82,6 +82,16 @@ export const countMembersByRole = query({
   },
 });
 
+export const getTokenId = query({
+  handler: async (ctx) => {
+    const identity = await ctx.auth.getUserIdentity();
+
+    return {
+      token: identity?.tokenIdentifier
+    }
+  },
+});
+
 // List members for a course (admin/editor or manage_users only)
 export const listMembers = query({
   args: { courseId: v.id("courses") },
