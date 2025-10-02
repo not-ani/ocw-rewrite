@@ -23,7 +23,6 @@ import { Suspense } from "react";
 type PreloadedLesson = Preloaded<typeof api.lesson.getLessonById>;
 type PreloadedSidebar = Preloaded<typeof api.courses.getSidebarData>;
 
-// Skeleton for the main embed content
 function LessonEmbedSkeleton() {
   return (
     <div className="flex h-screen flex-col">
@@ -37,7 +36,6 @@ function LessonEmbedSkeleton() {
   );
 }
 
-// Skeleton for breadcrumb
 function BreadcrumbSkeleton() {
   return (
     <div className="flex items-center gap-2">
@@ -52,7 +50,6 @@ function BreadcrumbSkeleton() {
   );
 }
 
-// Skeleton for the entire page when nothing is loaded
 export function LessonPageSkeleton() {
   return (
     <div className="flex h-screen flex-col">
@@ -93,12 +90,12 @@ function LessonEmbed({
   password,
 }: {
   contentType:
-    | "quizlet"
-    | "google_docs"
-    | "notion"
-    | "tiptap"
-    | "flashcard"
-    | undefined;
+  | "quizlet"
+  | "google_docs"
+  | "notion"
+  | "tiptap"
+  | "flashcard"
+  | undefined;
   embedId: string | null;
   password: string | null;
 }) {
@@ -118,10 +115,10 @@ function LessonEmbed({
   }
 }
 
-function Layout({ 
-  children, 
-  preloadedSidebar 
-}: { 
+function Layout({
+  children,
+  preloadedSidebar
+}: {
   children: React.ReactNode;
   preloadedSidebar: PreloadedSidebar;
 }) {

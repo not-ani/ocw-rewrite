@@ -10,17 +10,16 @@ export async function generateMetadata({
   params: Promise<{ id: string; unitId: string; lessonId: string }>
 }): Promise<Metadata> {
   const { lessonId } = await params;
-  
+
   try {
     const preloadedLesson = await preloadQuery(api.lesson.getLessonById, {
       id: lessonId as Id<"lessons">,
     });
-    
-    // Extract lesson name from preloaded data
-    const lessonName = preloadedLesson._valueJSON 
-      ? JSON.parse(preloadedLesson._valueJSON)?.lesson?.name 
+
+    const lessonName = preloadedLesson._valueJSON
+      ? JSON.parse(preloadedLesson._valueJSON)?.lesson?.name
       : "Lesson";
-    
+
     return {
       title: lessonName || "Lesson",
       description: `View and study ${lessonName || "this lesson"}`,
@@ -40,8 +39,6 @@ export default async function Page({
 }) {
   const { id, lessonId } = await params;
 
-  // Preload both lesson data and sidebar data in parallel for optimal performance
-  // This ensures data is fetched on the server and streamed to the client
   const [preloadedLesson, preloadedSidebar] = await Promise.all([
     preloadQuery(api.lesson.getLessonById, {
       id: lessonId as Id<"lessons">,
@@ -52,7 +49,7 @@ export default async function Page({
   ]);
 
   return (
-    <LessonPageClient 
+    <LessonPageClient
       preloadedLesson={preloadedLesson}
       preloadedSidebar={preloadedSidebar}
     />

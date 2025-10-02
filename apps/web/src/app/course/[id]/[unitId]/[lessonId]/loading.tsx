@@ -5,7 +5,6 @@ import {
   SidebarProvider,
 } from "@/components/ui/sidebar";
 
-// Skeleton for breadcrumb
 function BreadcrumbSkeleton() {
   return (
     <div className="flex items-center gap-2">
@@ -20,7 +19,6 @@ function BreadcrumbSkeleton() {
   );
 }
 
-// Skeleton for sidebar
 function SidebarSkeleton() {
   return (
     <div className="h-screen w-[21rem] border-r bg-background p-4">
@@ -41,7 +39,6 @@ function SidebarSkeleton() {
   );
 }
 
-// Skeleton for the main embed content
 function LessonEmbedSkeleton() {
   return (
     <div className="flex h-screen flex-col">

@@ -1,5 +1,5 @@
 "use client"
-import { SidebarIcon } from "lucide-react";
+import { HomeIcon, SidebarIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
 import { useQuery } from "convex/react";
@@ -13,10 +13,12 @@ import {
   BreadcrumbPage,
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
-import { Button } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { useSidebar } from "@/components/ui/sidebar";
 import DashboardCommand from "@/components/dashboard/dashboard-command";
+import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 export function CourseDashboardHeader() {
   const { toggleSidebar } = useSidebar();
@@ -129,8 +131,19 @@ export function CourseDashboardHeader() {
             ) : null}
           </BreadcrumbList>
         </Breadcrumb>
-        <div className="ml-auto">
+        <div className="ml-auto flex flex-row gap-3">
           <DashboardCommand />
+          <Separator orientation="vertical" />
+          <Link
+            className={cn(
+              buttonVariants({ variant: "outline" }),
+              "p-2 font-medium text-sm"
+            )}
+            href={"/"}
+          >
+            <HomeIcon />
+            Home
+          </Link>
         </div>
       </div>
     </header>
