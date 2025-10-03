@@ -1,7 +1,9 @@
 "use client";
 
 import { SignedIn, UserButton } from "@clerk/nextjs";
-import { Menu, MoveRight, X } from "lucide-react";
+import { api } from "@ocw-rewrite/backend/convex/_generated/api";
+import { useQuery } from "convex/react";
+import { Menu, MoveRight, Shield, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -19,6 +21,7 @@ import {
 
 function Header() {
   const route = usePathname();
+  const isSiteAdmin = useQuery(api.admin.isSiteAdmin);
 
   const isCoursesPage = route.endsWith("/courses");
 
@@ -115,6 +118,14 @@ function Header() {
           {!isCoursesPage && <Search />}
           <div className="hidden border-r md:inline" />
           <SignedIn>
+            {isSiteAdmin && (
+              <Link href="/admin">
+                <Button variant="ghost" size="sm" className="gap-2">
+                  <Shield className="h-4 w-4" />
+                  <span className="hidden sm:inline">Admin</span>
+                </Button>
+              </Link>
+            )}
             <UserButton />
           </SignedIn>
         </div>
