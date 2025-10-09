@@ -116,13 +116,16 @@ const writers = [
   },
   {
     id: 14,
+    avatar: defaultPhoto,
     name: "Kartikey Mishra",
-    role: "Marketing",
-    description: "Karitkey lead some of our marketing efforts",
+    role: "Marketing Lead",
+    description:
+      "Kartikey is the Marketing Lead and leads our marketing efforts",
   },
   {
     id: 15,
     name: "Kaushik Vukanti",
+    avatar: defaultPhoto,
     role: "Director of Content @ Grandview",
     description:
       "Kaushik is the Director of Content at Grandview and is responsible for the content on the platform related to grandview high school",
