@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 
@@ -114,6 +114,19 @@ const writers = [
     description:
       "Ani has contributed to the AP Comparative Government Course on the platform",
   },
+  {
+    id: 14,
+    name: "Kartikey Mishra",
+    role: "Marketing",
+    description: "Karitkey lead some of our marketing efforts",
+  },
+  {
+    id: 15,
+    name: "Kaushik Vukanti",
+    role: "Director of Content @ Grandview",
+    description:
+      "Kaushik is the Director of Content at Grandview and is responsible for the content on the platform related to grandview high school",
+  },
 ];
 
 export default function WritersTable() {
@@ -152,8 +165,9 @@ export default function WritersTable() {
               <div
                 aria-expanded={expandedId === writer.id}
                 aria-label={`${expandedId === writer.id ? "Collapse" : "Expand"} details for ${writer.name}`}
-                className={`cursor-pointer px-8 py-6 transition-all duration-300 ease-out ${expandedId === writer.id ? "text-primary/30" : ""
-                  }`}
+                className={`cursor-pointer px-8 py-6 transition-all duration-300 ease-out ${
+                  expandedId === writer.id ? "text-primary/30" : ""
+                }`}
                 onClick={() => handleRowClick(writer.id)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" || e.key === " ") {
@@ -168,10 +182,11 @@ export default function WritersTable() {
                   {/* Avatar */}
                   <div className="col-span-1">
                     <div
-                      className={`relative transition-all duration-300 ease-out ${expandedId === writer.id
-                        ? "scale-75 opacity-0"
-                        : "scale-100 opacity-100"
-                        }`}
+                      className={`relative transition-all duration-300 ease-out ${
+                        expandedId === writer.id
+                          ? "scale-75 opacity-0"
+                          : "scale-100 opacity-100"
+                      }`}
                     >
                       <img
                         alt={writer.name}
@@ -184,10 +199,11 @@ export default function WritersTable() {
                   {/* Name */}
                   <div className="col-span-5">
                     <h3
-                      className={`font-semibold transition-all duration-300 group-hover:text-foreground ${expandedId === writer.id
-                        ? "text-foreground"
-                        : "text-muted-foreground"
-                        }`}
+                      className={`font-semibold transition-all duration-300 group-hover:text-foreground ${
+                        expandedId === writer.id
+                          ? "text-foreground"
+                          : "text-muted-foreground"
+                      }`}
                     >
                       {writer.name}
                     </h3>
@@ -196,10 +212,11 @@ export default function WritersTable() {
                   {/* Role */}
                   <div className="col-span-5">
                     <span
-                      className={`transition-all duration-300 group-hover:text-foreground/90 ${expandedId === writer.id
-                        ? "font-medium text-accent-foreground/80"
-                        : "text-muted-foreground"
-                        }`}
+                      className={`transition-all duration-300 group-hover:text-foreground/90 ${
+                        expandedId === writer.id
+                          ? "font-medium text-accent-foreground/80"
+                          : "text-muted-foreground"
+                      }`}
                     >
                       {writer.role}
                     </span>
@@ -224,18 +241,20 @@ export default function WritersTable() {
 
               {/* Expanded Content */}
               <div
-                className={`overflow-hidden transition-all duration-500 ease-out ${expandedId === writer.id
-                  ? "max-h-96 opacity-100"
-                  : "max-h-0 opacity-0"
-                  }`}
+                className={`overflow-hidden transition-all duration-500 ease-out ${
+                  expandedId === writer.id
+                    ? "max-h-96 opacity-100"
+                    : "max-h-0 opacity-0"
+                }`}
               >
                 <div className="px-8 pt-6 pb-8">
                   <div className="mx-auto max-w-2xl">
                     <div
-                      className={`transform transition-all duration-500 ease-out ${expandedId === writer.id
-                        ? "translate-y-0 opacity-100"
-                        : "translate-y-4 opacity-0"
-                        }`}
+                      className={`transform transition-all duration-500 ease-out ${
+                        expandedId === writer.id
+                          ? "translate-y-0 opacity-100"
+                          : "translate-y-4 opacity-0"
+                      }`}
                     >
                       <div className="overflow-hidden rounded-2xl border">
                         {/* Card Header with Image */}
