@@ -3,13 +3,13 @@ import { v } from "convex/values";
 
 export default defineSchema({
   siteConfig: defineTable({
-    school: v.string(),
+    school: v.optional(v.string()),
     schoolName: v.string(),
     siteHero: v.string(),  }).index("by_school", ["school"]),
   siteUser: defineTable({
     userId: v.string(),
     role: v.union(v.literal("admin")),
-    school: v.string(),
+    school: v.optional(v.string()),
   }).index("by_user_id_and_school", ["userId", "school"]).index("by_school", ["school"]),
   courses: defineTable({
     id: v.optional(v.string()),
@@ -19,7 +19,7 @@ export default defineSchema({
     isPublic: v.boolean(),
     imageUrl: v.optional(v.string()),
     unitLength: v.number(),
-    school: v.string(),
+    school: v.optional(v.string()),
     description: v.string(),
   })
     .index("by_is_public_and_school", ["isPublic", "school"])
@@ -34,7 +34,7 @@ export default defineSchema({
     }),
 
   courseUsers: defineTable({
-    school: v.string(),
+    school: v.optional(v.string()),
     id: v.optional(v.string()),
     courseId: v.id("courses"),
     userId: v.string(),
@@ -62,7 +62,7 @@ export default defineSchema({
 
   units: defineTable({
     id: v.optional(v.string()),
-    school: v.string(),
+    school: v.optional(v.string()),
     courseId: v.id("courses"),
     name: v.string(),
     description: v.optional(v.string()),
@@ -82,7 +82,7 @@ export default defineSchema({
     }),
 
   lessons: defineTable({
-    school: v.string(),
+    school: v.optional(v.string()),
     id: v.optional(v.string()),
     order: v.number(),
     isPublished: v.boolean(),
@@ -110,7 +110,7 @@ export default defineSchema({
     }),
 
   lessonEmbeds: defineTable({
-    school: v.string(),
+    school: v.optional(v.string()),
     id: v.optional(v.string()),
     password: v.optional(v.string()),
     lessonId: v.id("lessons"),
@@ -118,7 +118,7 @@ export default defineSchema({
   }).index("by_lesson_id_and_school", ["lessonId", "school"]),
 
   logs: defineTable({
-    school: v.string(),
+    school: v.optional(v.string()),
     userId: v.string(),
     lessonId: v.optional(v.id("lessons")),
     unitId: v.optional(v.id("units")),

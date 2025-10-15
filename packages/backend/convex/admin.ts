@@ -39,7 +39,6 @@ export const getAllCourses = query({
       isPublic: v.boolean(),
       imageUrl: v.optional(v.string()),
       unitLength: v.number(),
-      school: v.string(),
       description: v.string(),
     })
   ),
@@ -84,7 +83,6 @@ export const getAllSiteAdmins = query({
       _creationTime: v.number(),
       userId: v.string(),
       role: v.union(v.literal("admin")),
-      school: v.string(),
     })
   ),
   handler: async (ctx, args) => {
