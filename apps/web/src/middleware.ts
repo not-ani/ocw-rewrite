@@ -51,7 +51,10 @@ export default clerkMiddleware(async (auth, req) => {
       return NextResponse.redirect(new URL("/", req.url));
     }
 
- 
+    // For the root path on a subdomain, rewrite to the subdomain page
+    if (pathname === "/") {
+      return NextResponse.rewrite(new URL(`/s/${subdomain}`, req.url));
+    }
   }
 
   return NextResponse.next();

@@ -1,14 +1,13 @@
-import React from "react";
-import { HeroSection } from "@/components/hero";
+import Link from "next/link";
 
 export default function Page() {
   return (
-    <div className="bg-background/60 w-full">
-      <main className="flex w-full flex-1 flex-col rounded-xl p-4 transition-all duration-300 ease-in-out">
-        <div className="py-52 sm:py-42">
-          <HeroSection />
-        </div>
-      </main>
+    <div className="container mx-auto w-full h-screen flex flex-col">
+      <h1> The OpenCourseWare Project </h1>
+      <p> Welcome to the OpenCourseWare Project </p>
+      <Link href="https://creek.ocwproject.org">
+        Your probably looking for creekocw
+      </Link>
     </div>
   );
 }
