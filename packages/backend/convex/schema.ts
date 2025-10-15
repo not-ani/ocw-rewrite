@@ -4,13 +4,39 @@ import { v } from "convex/values";
 export default defineSchema({
   siteConfig: defineTable({
     school: v.string(),
+    siteHero: v.optional(v.string()),
     schoolName: v.string(),
-    siteHero: v.string(),  }).index("by_school", ["school"]),
+    siteLogo: v.optional(v.string()),
+    contributors: v.optional(v.array(
+      v.object({
+        name: v.string(),
+        role: v.string(),
+        avatar: v.string(),
+        description: v.string(),
+      })
+    )),
+    siteContributeLink: v.optional(v.string()),
+    club: v.optional(
+      v.object({
+        name: v.string(),
+        email: v.string(),
+      })
+    ),
+    personsContact: v.optional(v.array(
+      v.object({
+        name: v.string(),
+        email: v.string(),
+        description: v.string(),
+      })
+    )),
+  }).index("by_school", ["school"]),
   siteUser: defineTable({
     userId: v.string(),
     role: v.union(v.literal("admin")),
     school: v.string(),
-  }).index("by_user_id_and_school", ["userId", "school"]).index("by_school", ["school"]),
+  })
+    .index("by_user_id_and_school", ["userId", "school"])
+    .index("by_school", ["school"]),
   courses: defineTable({
     id: v.optional(v.string()),
     subjectId: v.string(),
@@ -50,9 +76,9 @@ export default defineSchema({
           v.literal("delete_lesson"),
           v.literal("reorder_lesson"),
           v.literal("manage_users"),
-          v.literal("manage_course"),
-        ),
-      ),
+          v.literal("manage_course")
+        )
+      )
     ),
   })
     .index("by_course_id_and_school", ["courseId", "school"])
@@ -92,7 +118,7 @@ export default defineSchema({
       v.literal("notion"),
       v.literal("quizlet"),
       v.literal("tiptap"),
-      v.literal("flashcard"),
+      v.literal("flashcard")
     ),
     courseId: v.id("courses"),
     unitId: v.id("units"),
@@ -106,7 +132,13 @@ export default defineSchema({
     .index("by_content_type_and_school", ["contentType", "school"])
     .searchIndex("search_name", {
       searchField: "name",
-      filterFields: ["courseId", "unitId", "isPublished", "contentType", "school"],
+      filterFields: [
+        "courseId",
+        "unitId",
+        "isPublished",
+        "contentType",
+        "school",
+      ],
     }),
 
   lessonEmbeds: defineTable({
@@ -136,7 +168,7 @@ export default defineSchema({
       v.literal("REORDER_UNIT"),
       v.literal("REORDER_LESSON"),
       v.literal("DELETE_USER"),
-      v.literal("UPDATE_USER"),
+      v.literal("UPDATE_USER")
     ),
     timestamp: v.optional(v.number()), // Will use _creationTime if not provided
   })

@@ -1,6 +1,9 @@
+"use client";
 import Link from "next/link";
+import { useSiteContext } from "@/lib/multi-tenant/context";
 
 export default function Page() {
+  const { siteConfig } = useSiteContext();
   return (
     <div className="min-h-screen bg-background px-4 py-12 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl">
@@ -9,16 +12,16 @@ export default function Page() {
         </h1>
         <div className="space-y-6 text-foreground">
           <p className="leading-relaxed">
-            Creek OpenCourseWare (OCW) is dedicated to providing free,
-            high-quality resources to students at Cherry Creek High School. Our
+            {siteConfig?.schoolName} OpenCourseWare (OCW) is dedicated to providing free,
+            high-quality resources to students at {siteConfig?.schoolName}. Our
             platform offers a wide range of courses, notes, and tools to help
             students achieve their academic goals.
           </p>
           <p className="leading-relaxed">
             As students who are always invested in helping others learn—often
-            from resources we created ourselves—CreekOCW is our way of
+            from resources we created ourselves—{siteConfig?.schoolName}OCW is our way of
             facilitating a larger proliferation of the best of these resources.
-            In general and at Creek, sharing knowledge heightens the character
+            In general and at {siteConfig?.schoolName}, sharing knowledge heightens the character
             of our academics, accelerates the pace of our learning, and deepens
             the level of our understanding.
           </p>

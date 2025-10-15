@@ -1,6 +1,14 @@
+"use client";
+import { useSiteContext } from "@/lib/multi-tenant/context";
 import Image from "next/image";
 
 export default function Page() {
+  const { siteConfig } = useSiteContext();
+
+  const people = siteConfig?.personsContact;
+  const club = siteConfig?.club;
+
+
   return (
     <div>
       <div className="min-h-screen bg-background px-4 py-12 sm:px-6 lg:px-8">
@@ -21,65 +29,41 @@ export default function Page() {
               Maintained By
             </h2>
             <p className="mx-auto max-w-2xl text-foreground/90">
-              This OpenCourseWare site is proudly maintained by the Cherry Creek
-              High School&apos;s Computer Science Honor Society. For general
-              inquiries about the site&apos;s maintenance or the organization,
-              please contact:
+              This OpenCourseWare site is proudly maintained by {siteConfig?.schoolName}{" "}
+              {club?.name}. For general inquiries about the site&apos;s
+              maintenance or the organization, please contact:
             </p>
             <a
               className="mt-4 inline-block text-blue-600 hover:text-blue-800 hover:underline"
-              href="mailto:cherrycreekcshs@gmail.com"
+              href={`mailto:${club?.email}`}
             >
-              cherrycreekcshs@gmail.com
+              {club?.email}
             </a>
           </div>
 
           <div className="mt-12 grid grid-cols-1 gap-8 md:grid-cols-2">
             <div className="flex flex-col items-center text-center">
-              <Image
-                alt="Aniketh Chenjeri"
-                className="mb-4 h-20 w-20 rounded-full object-cover"
-                height={80}
-                src="https://ugakd4mkxv.ufs.sh/f/QRXW6mPDvNgcf1bAHpXv5c4nkOatgwsmYj96KRpli3hUEdx1"
-                width={80}
-              />
-              <h2 className="font-semibold text-foreground text-xl">
-                Aniketh Chenjeri
-              </h2>
-              <p className="text-foreground/90">
-                Aniketh serves as the Project Lead and Lead Developer. In this
-                dual role, he directs the project&apos;s development and manages
-                the content presented on the site.
-              </p>
-              <a
-                className="mt-4 text-blue-600 hover:text-blue-800 hover:underline"
-                href="mailto:anikethchenjeri@gmail.com"
-              >
-                anikethchenjeri@gmail.com
-              </a>
-            </div>
-
-            <div className="flex flex-col items-center text-center">
-              <Image
-                alt="Jason Chen"
-                className="mb-4 h-20 w-20 rounded-full object-cover"
-                height={80}
-                src="https://ugakd4mkxv.ufs.sh/f/QRXW6mPDvNgcBOk5v5CzYZbKVLiWvQ9r1lpMUyjw58osCXnO"
-                width={80}
-              />
-              <h2 className="font-semibold text-gray-900 text-xl">
-                Jason Chen
-              </h2>
-              <p className="text-gray-600">
-                Jason is the Co-Founder of the original OpenCourseWare platform
-                and is helping develop the current site.
-              </p>
-              <a
-                className="mt-4 text-blue-600 hover:text-blue-800 hover:underline"
-                href="mailto:jchen3200@gatech.edu"
-              >
-                jchen3200@gatech.edu
-              </a>
+              {people?.map((person) => (
+                <div key={person.name}>
+                  <Image
+                    alt={person.name}
+                    className="mb-4 h-20 w-20 rounded-full object-cover"
+                    height={80}
+                    src="https://ugakd4mkxv.ufs.sh/f/QRXW6mPDvNgcf1bAHpXv5c4nkOatgwsmYj96KRpli3hUEdx1"
+                    width={80}
+                  />
+                  <h2 className="font-semibold text-foreground text-xl">
+                    {person.name}
+                  </h2>
+                  <p className="text-foreground/90">{person.description}</p>
+                  <a
+                    className="mt-4 text-blue-600 hover:text-blue-800 hover:underline"
+                    href={`mailto:${person.email}`}
+                  >
+                    {person.email}
+                  </a>
+                </div>
+              ))}
             </div>
           </div>
         </div>

@@ -12,9 +12,17 @@ export const getSiteConfig = query({
       .first();
 
     if (!siteConfig) {
-      throw new ConvexError("Site config not found");
+      return null;
     }
 
     return siteConfig;
+  },
+
+});
+
+export const getSites = query({
+  handler: async (ctx) => {
+    const sites = await ctx.db.query("siteConfig").collect();
+    return sites;
   },
 });
