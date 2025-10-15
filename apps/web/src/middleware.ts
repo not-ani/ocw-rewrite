@@ -22,9 +22,11 @@ function extractSubdomain(request: NextRequest): string | null {
 
   // Production environment
   const rootDomainFormatted = rootDomain.split(":")[0];
+  console.log("rootDomainFormatted", rootDomainFormatted);
 
   // Handle preview deployment URLs (tenant---branch-name.vercel.app)
   if (hostname.includes("---") && hostname.endsWith(".vercel.app")) {
+    console.log("this is a preview deployment");
     const parts = hostname.split("---");
     return parts.length > 0 ? parts[0] : null;
   }
@@ -35,6 +37,8 @@ function extractSubdomain(request: NextRequest): string | null {
     hostname !== `www.${rootDomainFormatted}` &&
     hostname.endsWith(`.${rootDomainFormatted}`);
 
+  console.log("isSubdomain", isSubdomain);
+
   return isSubdomain ? hostname.replace(`.${rootDomainFormatted}`, "") : null;
 }
 
@@ -42,18 +46,23 @@ export default clerkMiddleware(async (auth, req) => {
   const { pathname } = req.nextUrl;
   const subdomain = extractSubdomain(req);
 
+  console.log("subdomain", subdomain);
+
   if (subdomain) {
     // Block access to admin page from subdomains
     if (pathname.startsWith("/ocw-admin")) {
       return NextResponse.redirect(new URL("/", req.url));
     }
+    console.log("redirecting to root");
 
     // For the root path on a subdomain, rewrite to the subdomain page
     if (pathname === "/") {
+      console.log("redirecting to subdomain");
       return NextResponse.rewrite(new URL(`/s/${subdomain}`, req.url));
     }
   }
 
+  console.log("redirecting to root");
   return NextResponse.next();
 });
 
