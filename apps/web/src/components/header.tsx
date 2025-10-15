@@ -21,7 +21,7 @@ import type { UrlObject } from "url";
 
 function Header() {
   const route = usePathname();
-  const { user } = useSiteContext();
+  const { user, siteConfig } = useSiteContext();
 
   const isCoursesPage = route.endsWith("/courses");
 
@@ -108,7 +108,7 @@ function Header() {
         </div>
         <div className="flex lg:justify-center">
           <Link href="/">
-            <p className="font-semibold">Creek OCW</p>
+            <p className="font-semibold">{(siteConfig?.school)?.toUpperCase()} OCW</p>
           </Link>
         </div>
         <div className="flex w-full justify-end gap-4">
