@@ -7,6 +7,8 @@ function extractSubdomain(request: NextRequest): string | null {
   const host = request.headers.get("host") || "";
   const hostname = host.split(":")[0];
 
+  console.log("Middleware - hostname:", hostname, "url:", url);
+
   if (url.includes("localhost") || url.includes("127.0.0.1")) {
     const fullUrlMatch = url.match(/http:\/\/([^.]+)\.localhost/);
     if (fullUrlMatch && fullUrlMatch[1]) {
@@ -22,11 +24,11 @@ function extractSubdomain(request: NextRequest): string | null {
 
   // Production environment
   const rootDomainFormatted = rootDomain.split(":")[0];
-  console.log("rootDomainFormatted", rootDomainFormatted);
+  console.log("Middleware - rootDomain:", rootDomain, "rootDomainFormatted:", rootDomainFormatted);
 
   // Handle preview deployment URLs (tenant---branch-name.vercel.app)
   if (hostname.includes("---") && hostname.endsWith(".vercel.app")) {
-    console.log("this is a preview deployment");
+    console.log("Middleware - preview deployment detected");
     const parts = hostname.split("---");
     return parts.length > 0 ? parts[0] : null;
   }
@@ -37,7 +39,7 @@ function extractSubdomain(request: NextRequest): string | null {
     hostname !== `www.${rootDomainFormatted}` &&
     hostname.endsWith(`.${rootDomainFormatted}`);
 
-  console.log("isSubdomain", isSubdomain);
+  console.log("Middleware - isSubdomain:", isSubdomain, "hostname:", hostname);
 
   return isSubdomain ? hostname.replace(`.${rootDomainFormatted}`, "") : null;
 }
@@ -46,23 +48,23 @@ export default clerkMiddleware(async (auth, req) => {
   const { pathname } = req.nextUrl;
   const subdomain = extractSubdomain(req);
 
-  console.log("subdomain", subdomain);
+  console.log("Middleware - subdomain:", subdomain, "pathname:", pathname);
 
   if (subdomain) {
     // Block access to admin page from subdomains
     if (pathname.startsWith("/ocw-admin")) {
+      console.log("Middleware - blocking admin access from subdomain");
       return NextResponse.redirect(new URL("/", req.url));
     }
-    console.log("redirecting to root");
 
     // For the root path on a subdomain, rewrite to the subdomain page
     if (pathname === "/") {
-      console.log("redirecting to subdomain");
+      console.log("Middleware - rewriting subdomain to /s/" + subdomain);
       return NextResponse.rewrite(new URL(`/s/${subdomain}`, req.url));
     }
   }
 
-  console.log("redirecting to root");
+  console.log("Middleware - continuing without rewrite");
   return NextResponse.next();
 });
 

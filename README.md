@@ -20,6 +20,17 @@ First, install the dependencies:
 pnpm install
 ```
 
+## Environment Variables
+
+This project requires the following environment variables to be set:
+
+### Required for Production
+- `NEXT_PUBLIC_ROOT_DOMAIN` - Your production domain (e.g., `example.com`). In development, this defaults to `localhost:3001`.
+- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` - Clerk publishable key
+- `CLERK_SECRET_KEY` - Clerk secret key
+- `NEXT_PUBLIC_CONVEX_URL` - Convex deployment URL
+- `CONVEX_DEPLOYMENT` - Convex deployment ID
+
 ## Convex Setup
 
 This project uses Convex as a backend. You'll need to set up Convex before running the app:
