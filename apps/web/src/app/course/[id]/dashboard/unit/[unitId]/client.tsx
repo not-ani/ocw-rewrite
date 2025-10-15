@@ -27,6 +27,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { LessonsTable } from "./lessons-table";
 import { CreateLessonDialog } from "@/components/dashboard/lessons/create-lesson";
+import { useSiteContext } from "@/lib/multi-tenant/context";
 
 const unitFormSchema = z.object({
   name: z.string().min(1, "Unit name is required").max(200),
@@ -90,6 +91,7 @@ function UnitEditForm({
   unit,
   courseId,
   unitId,
+  school,
 }: {
   unit: {
     _id: Id<"units">;
@@ -100,6 +102,7 @@ function UnitEditForm({
     courseId: Id<"courses">;
   } | null;
   courseId: Id<"courses">;
+  school: string;
   unitId: Id<"units">;
 }) {
   const updateUnit = useMutation(api.units.update);
@@ -130,6 +133,7 @@ function UnitEditForm({
     try {
       await updateUnit({
         courseId,
+        school,
         data: {
           id: unitId,
           name: values.name,
@@ -247,6 +251,7 @@ export function UnitPageClient({
   const router = useRouter();
   const unit = usePreloadedQuery(preloadedUnit);
   const lessons = usePreloadedQuery(preloadedLessons);
+  const school = useSiteContext().subdomain;
 
   const updateLesson = useMutation(api.lesson.update);
   const reorderLessons = useMutation(api.lesson.reorder);
@@ -259,6 +264,7 @@ export function UnitPageClient({
     }) => {
       await updateLesson({
         courseId,
+        school,
         data: { id: payload.id, ...payload.data },
       });
     },
@@ -267,7 +273,7 @@ export function UnitPageClient({
 
   const handleRemoveLesson = useCallback(
     async (id: Id<"lessons">) => {
-      await removeLesson({ courseId, id });
+      await removeLesson({ courseId, id, school });
       toast.success("Lesson deleted");
     },
     [removeLesson, courseId]
@@ -275,7 +281,7 @@ export function UnitPageClient({
 
   const handleReorderLessons = useCallback(
     async (data: { id: Id<"lessons">; position: number }[]) => {
-      await reorderLessons({ courseId, unitId, data });
+      await reorderLessons({ courseId, unitId, data, school });
     },
     [reorderLessons, courseId, unitId]
   );
@@ -297,7 +303,7 @@ export function UnitPageClient({
 
       <div className="space-y-8">
         <Suspense fallback={<UnitFormSkeleton />}>
-          <UnitEditForm unit={unit} courseId={courseId} unitId={unitId} />
+          <UnitEditForm unit={unit} courseId={courseId} unitId={unitId} school={school} />
         </Suspense>
 
         {unit && (

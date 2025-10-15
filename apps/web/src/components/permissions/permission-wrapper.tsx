@@ -20,6 +20,7 @@ type PermissionWrapperProps = {
     | "manage_course";
   fallback?: ReactNode;
   children: ReactNode;
+  school: string;
 };
 
 /**
@@ -28,12 +29,13 @@ type PermissionWrapperProps = {
  */
 export function PermissionWrapper({
   courseId,
+  school,
   requiredRole,
   requiredPermission,
   fallback = null,
   children,
 }: PermissionWrapperProps) {
-  const membership = useQuery(api.courseUsers.getMyMembership, { courseId });
+  const membership = useQuery(api.courseUsers.getMyMembership, { courseId, school });
   if (membership === undefined) {
     return null;
   }
@@ -68,8 +70,8 @@ export function PermissionWrapper({
 /**
  * Hook to check if user has permission for a course
  */
-export function usePermission(courseId: Id<"courses">) {
-  const membership = useQuery(api.courseUsers.getMyMembership, { courseId });
+export function usePermission(courseId: Id<"courses">, school: string) {
+  const membership = useQuery(api.courseUsers.getMyMembership, { courseId, school });
 
   const hasRole = (role: "admin" | "editor" | "user") => {
     if (!membership) return false;

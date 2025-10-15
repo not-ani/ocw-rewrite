@@ -31,6 +31,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useSiteContext } from "@/lib/multi-tenant/context";
 
 const lessonFormSchema = z.object({
   name: z.string().min(1, "Lesson name is required").max(200),
@@ -70,6 +71,7 @@ function LessonEditForm({
   embed,
   courseId,
   lessonId,
+  school,
 }: {
   lesson: {
     _id?: Id<"lessons">;
@@ -90,6 +92,7 @@ function LessonEditForm({
   } | null | undefined;
   courseId: Id<"courses">;
   lessonId: Id<"lessons">;
+  school: string;
 }) {
   const router = useRouter();
   const updateLesson = useMutation(api.lesson.update);
@@ -124,6 +127,7 @@ function LessonEditForm({
       // Update lesson metadata
       await updateLesson({
         courseId,
+        school,
         data: {
           id: lessonId,
           name: values.name,
@@ -135,6 +139,7 @@ function LessonEditForm({
       if (values.embedUrl && values.embedUrl.trim()) {
         await createOrUpdateEmbed({
           lessonId,
+          school,
           raw: values.embedUrl,
         });
       }
@@ -166,7 +171,7 @@ function LessonEditForm({
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => router.push(`/course/${courseId}/dashboard/unit/${lesson.unitId}`)}
+              onClick={() => router.push(`/course/${courseId}/dashboard/unit/${lesson.unitId}?school=${school}`)}
             >
               View Unit
             </Button>
@@ -272,7 +277,7 @@ function LessonEditForm({
             <Button
               type="button"
               variant="outline"
-              onClick={() => router.push(`/course/${courseId}/${lesson.unitId}/${lessonId}`)}
+              onClick={() => router.push(`/course/${courseId}/${lesson.unitId}/${lessonId}?school=${school}`)}
             >
               Preview Lesson
             </Button>
@@ -296,6 +301,7 @@ export function LessonPageClient({
   const data = usePreloadedQuery(preloadedLesson);
   const lesson = data?.lesson;
   const embed = data?.embed;
+  const school = useSiteContext().subdomain;
 
   return (
     <div className="mx-auto w-full max-w-7xl p-4 sm:p-6">
@@ -305,7 +311,7 @@ export function LessonPageClient({
           size="sm"
           onClick={() => {
             if (lesson?.unitId) {
-              router.push(`/course/${courseId}/dashboard/unit/${lesson.unitId}`);
+              router.push(`/course/${courseId}/dashboard/unit/${lesson.unitId}?school=${school}`);
             } else {
               router.push(`/course/${courseId}/dashboard`);
             }
@@ -322,6 +328,7 @@ export function LessonPageClient({
           embed={embed}
           courseId={courseId}
           lessonId={lessonId}
+          school={school}
         />
       </Suspense>
     </div>

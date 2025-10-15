@@ -4,6 +4,7 @@ import { preloadQuery } from "convex/nextjs";
 import { UnitPageClient } from "./client";
 import type { Metadata } from "next";
 import { getAuthToken } from "@/lib/auth";
+import { extractSubdomain } from "@/lib/multi-tenant/server";
 
 export async function generateMetadata({
   params,
@@ -26,13 +27,18 @@ export default async function UnitPage({
   const courseId = id as Id<"courses">;
 
   const token = await getAuthToken();
-
+  const subdomain = await extractSubdomain();
+  if (!subdomain) {
+    return null;
+  }
   const [preloadedUnit, preloadedLessons] = await Promise.all([
     preloadQuery(api.units.getById, {
       id: unitId as Id<"units">,
+      school: subdomain
     }, {token: token}),
     preloadQuery(api.lesson.getByUnit, {
       unitId: unitId as Id<"units">,
+      school: subdomain,
     }, {token: token}),
   ]);
 

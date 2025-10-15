@@ -3,6 +3,7 @@ import type { Id } from "@ocw-rewrite/backend/convex/_generated/dataModel";
 import { preloadQuery } from "convex/nextjs";
 import type { Metadata } from "next";
 import { LessonPageClient } from "./client";
+import { extractSubdomain } from "@/lib/multi-tenant/server";
 
 export async function generateMetadata({
   params
@@ -10,10 +11,17 @@ export async function generateMetadata({
   params: Promise<{ id: string; unitId: string; lessonId: string }>
 }): Promise<Metadata> {
   const { lessonId } = await params;
-
+  const subdomain = await extractSubdomain();
+  if (!subdomain) {
+    return {
+      title: "Lesson",
+      description: "View and study this lesson",
+    };
+  }
   try {
     const preloadedLesson = await preloadQuery(api.lesson.getLessonById, {
       id: lessonId as Id<"lessons">,
+      school: subdomain,
     });
 
     const lessonName = preloadedLesson._valueJSON
@@ -38,13 +46,20 @@ export default async function Page({
   params: Promise<{ id: string; unitId: string; lessonId: string }>
 }) {
   const { id, lessonId } = await params;
+  const subdomain = await extractSubdomain();
+
+  if (!subdomain) {
+    return null;
+  }
 
   const [preloadedLesson, preloadedSidebar] = await Promise.all([
     preloadQuery(api.lesson.getLessonById, {
       id: lessonId as Id<"lessons">,
+      school: subdomain,
     }),
     preloadQuery(api.courses.getSidebarData, {
       courseId: id as Id<"courses">,
+      school: subdomain,
     })
   ]);
 

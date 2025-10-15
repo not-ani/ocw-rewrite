@@ -18,6 +18,7 @@ import { CreateUnitDialog } from "@/components/dashboard/units/create-unit";
 import { UnitsTable } from "@/components/dashboard/units/units-table";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useSiteContext } from "@/lib/multi-tenant/context";
 
 function DashboardHeaderSkeleton() {
   return (
@@ -73,12 +74,14 @@ function DashboardContent({
   preloadedUnits: Preloaded<typeof api.units.getTableData>;
 }) {
   const user = useUser();
+  const subdomain = useSiteContext().subdomain;
   const roleFromClerk = user.user?.publicMetadata?.role;
   const userRole =
     typeof roleFromClerk === "string" ? roleFromClerk : undefined;
 
   const membership = useQuery(api.courseUsers.getMyMembership, {
     courseId,
+    school: subdomain,
   });
 
   const dashboard = usePreloadedQuery(preloadedDashboard);
@@ -107,6 +110,7 @@ function DashboardContent({
     }) => {
       await updateUnit({
         courseId,
+        school: subdomain,
         data: { id: payload.id, ...payload.data },
       });
     },
@@ -115,7 +119,7 @@ function DashboardContent({
 
   const handleRemoveUnit = useCallback(
     async (id: Id<"units">) => {
-      await removeUnit({ courseId, id });
+      await removeUnit({ courseId, id, school: subdomain });
       setSelectedUnitId((prev) => (prev === id ? null : prev));
     },
     [removeUnit, courseId],
@@ -123,7 +127,7 @@ function DashboardContent({
 
   const handleReorderUnits = useCallback(
     async (data: { id: Id<"units">; position: number }[]) => {
-      await reorderUnits({ courseId, data });
+      await reorderUnits({ courseId, data, school: subdomain });
     },
     [reorderUnits, courseId],
   );

@@ -359,7 +359,6 @@ export const getSidebarData = query({
     const units = await ctx.db
       .query("units")
       .withIndex("by_course_and_order_and_school", (q) => q.eq("courseId", args.courseId).eq("school", args.school))
-      .filter((q) => q.eq(q.field("isPublished"), true))
       .collect();
 
     const result = await Promise.all(
@@ -402,6 +401,7 @@ export const getSidebarData = query({
       })
     );
 
+    console.log(result);
     return result;
   },
 });

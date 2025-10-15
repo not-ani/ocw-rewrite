@@ -4,6 +4,7 @@ import { buttonVariants } from "@/components/ui/button";
 import { Edit } from "lucide-react";
 import { PermissionWrapper } from "./permissions";
 import type { Id } from "@ocw-rewrite/backend/convex/_generated/dataModel";
+import { extractSubdomain } from "@/lib/multi-tenant/server";
 
 function getLink(id: string, unitId?: string, lessonId?: string) {
   if (lessonId) {
@@ -26,11 +27,15 @@ export default async function EditButton({
 }) {
   const { lessonId, unitId, id } = await params;
 
+  const subdomain = await extractSubdomain();
+  if (!subdomain) {
+    return null;
+  }
   const link = getLink(id, unitId, lessonId);
 
   return (
     <div className="relative">
-      <PermissionWrapper courseId={id as Id<"courses">} requiredRole="editor">
+      <PermissionWrapper courseId={id as Id<"courses">} requiredRole="editor" school={subdomain}>
         <Link
           prefetch
           href={link}
