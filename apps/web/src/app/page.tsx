@@ -3,7 +3,6 @@ import Link from "next/link";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useQuery } from "convex/react";
 import { api } from "@ocw-rewrite/backend/convex/_generated/api";
-import { protocol, rootDomain } from "@/lib/site";
 import { Skeleton } from "@/components/ui/skeleton";
 
 
@@ -17,7 +16,7 @@ export default function Page() {
         {sites ? sites.map((site) => (
           <Card key={site.school} className="flex flex-col items-center justify-center">
             <CardContent> 
-              <Link href={`${protocol}://${site.school}.${rootDomain}`}>
+              <Link href={`https://${site.school}.ocwproject.org`}>
                 {site.schoolName}
               </Link>
             </CardContent>
