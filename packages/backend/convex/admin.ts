@@ -4,7 +4,7 @@ import { mutation, query, type QueryCtx } from "./_generated/server";
 /**
  * Check if the current user is a site admin
  */
-async function assertSiteAdmin(ctx: QueryCtx) {
+async function assertSiteAdmin(ctx: QueryCtx, args: { school: string }) {
   const identity = await ctx.auth.getUserIdentity();
   
   if (!identity) {
@@ -13,7 +13,7 @@ async function assertSiteAdmin(ctx: QueryCtx) {
 
   const siteUser = await ctx.db
     .query("siteUser")
-    .withIndex("by_user_id", q => q.eq("userId", identity.tokenIdentifier))
+    .withIndex("by_user_id_and_school", q => q.eq("userId", identity.tokenIdentifier).eq("school", args.school))
     .unique();
 
   if (!siteUser || siteUser.role !== "admin") {
@@ -27,7 +27,7 @@ async function assertSiteAdmin(ctx: QueryCtx) {
  * Get all courses for site admin dashboard
  */
 export const getAllCourses = query({
-  args: {},
+  args: { school: v.string() },
   returns: v.array(
     v.object({
       _id: v.id("courses"),
@@ -39,13 +39,14 @@ export const getAllCourses = query({
       isPublic: v.boolean(),
       imageUrl: v.optional(v.string()),
       unitLength: v.number(),
+      school: v.string(),
       description: v.string(),
     })
   ),
-  handler: async (ctx) => {
-    await assertSiteAdmin(ctx);
+  handler: async (ctx, args) => {
+    await assertSiteAdmin(ctx, args);
 
-    const courses = await ctx.db.query("courses").collect();
+    const courses = await ctx.db.query("courses").withIndex("by_is_public_and_school", q => q.eq("isPublic", true).eq("school", args.school)).collect();
     
     return courses;
   },
@@ -58,10 +59,11 @@ export const updateCourseStatus = mutation({
   args: {
     courseId: v.id("courses"),
     isPublic: v.boolean(),
+    school: v.string(),
   },
   returns: v.null(),
   handler: async (ctx, args) => {
-    await assertSiteAdmin(ctx);
+    await assertSiteAdmin(ctx, args);
 
     await ctx.db.patch(args.courseId, {
       isPublic: args.isPublic,
@@ -75,21 +77,22 @@ export const updateCourseStatus = mutation({
  * Get all site admins
  */
 export const getAllSiteAdmins = query({
-  args: {},
+  args: { school: v.string() },
   returns: v.array(
     v.object({
       _id: v.id("siteUser"),
       _creationTime: v.number(),
       userId: v.string(),
       role: v.union(v.literal("admin")),
+      school: v.string(),
     })
   ),
-  handler: async (ctx) => {
-    await assertSiteAdmin(ctx);
+  handler: async (ctx, args) => {
+    await assertSiteAdmin(ctx, args);
 
     const admins = await ctx.db
       .query("siteUser")
-      .withIndex("by_user_id")
+      .withIndex("by_school", q => q.eq("school", args.school))
       .collect();
 
     return admins;
@@ -102,15 +105,16 @@ export const getAllSiteAdmins = query({
 export const addSiteAdmin = mutation({
   args: {
     userId: v.string(),
+    school: v.string(),
   },
   returns: v.id("siteUser"),
   handler: async (ctx, args) => {
-    await assertSiteAdmin(ctx);
+    await assertSiteAdmin(ctx, args);
 
     // Check if user is already an admin
     const existing = await ctx.db
       .query("siteUser")
-      .withIndex("by_user_id", q => q.eq("userId", args.userId))
+      .withIndex("by_user_id_and_school", q => q.eq("userId", args.userId).eq("school", args.school))
       .unique();
 
     if (existing) {
@@ -120,6 +124,7 @@ export const addSiteAdmin = mutation({
     const id = await ctx.db.insert("siteUser", {
       userId: args.userId,
       role: "admin",
+      school: args.school,
     });
 
     return id;
@@ -132,10 +137,11 @@ export const addSiteAdmin = mutation({
 export const removeSiteAdmin = mutation({
   args: {
     userId: v.string(),
+    school: v.string(),
   },
   returns: v.null(),
   handler: async (ctx, args) => {
-    const identity = await assertSiteAdmin(ctx);
+    const identity = await assertSiteAdmin(ctx, args);
 
     // Prevent removing yourself
     if (identity.tokenIdentifier === args.userId) {
@@ -144,7 +150,7 @@ export const removeSiteAdmin = mutation({
 
     const siteUser = await ctx.db
       .query("siteUser")
-      .withIndex("by_user_id", q => q.eq("userId", args.userId))
+      .withIndex("by_user_id_and_school", q => q.eq("userId", args.userId).eq("school", args.school))
       .unique();
 
     if (!siteUser) {
@@ -161,9 +167,9 @@ export const removeSiteAdmin = mutation({
  * Check if current user is a site admin (for client-side checks)
  */
 export const isSiteAdmin = query({
-  args: {},
+  args: { school: v.string() },
   returns: v.boolean(),
-  handler: async (ctx) => {
+  handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     
     if (!identity) {
@@ -172,7 +178,7 @@ export const isSiteAdmin = query({
 
     const siteUser = await ctx.db
       .query("siteUser")
-      .withIndex("by_user_id", (q) => q.eq("userId", identity.tokenIdentifier))
+      .withIndex("by_user_id_and_school", (q) => q.eq("userId", identity.tokenIdentifier).eq("school", args.school))
       .unique();
 
     return siteUser?.role === "admin";

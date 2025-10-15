@@ -1,12 +1,15 @@
+"use client";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import { useSiteContext } from "@/lib/multi-tenant/context";
 
 export function HeroSection() {
+  const { siteConfig } = useSiteContext();
   return (
     <section className="relative h-[38vh]">
       <div className="relative z-auto container mx-auto flex flex-col gap-5 px-4 text-center">
         <h2 className="text-foreground mb-8 text-4xl font-extrabold sm:text-5xl lg:text-6xl">
-          Your Life At Creek Made Easy
+          {siteConfig?.schoolName} OpenCourseWare
         </h2>
         <div className="flex flex-row items-center justify-center gap-20">
           {[

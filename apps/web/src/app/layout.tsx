@@ -5,6 +5,9 @@ import "../index.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { Header } from "@/components/header";
 import Providers from "@/components/providers";
+import { PostHogProvider } from "@/components/providers/posthog";
+import { extractSubdomain } from "@/lib/multi-tenant/server";
+import { SiteContextProvider } from "@/lib/multi-tenant/context";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -88,11 +91,13 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const subdomain = await extractSubdomain();
+
   return (
     <html lang="en" suppressHydrationWarning>
       <body
@@ -101,7 +106,13 @@ export default function RootLayout({
         <ClerkProvider>
           <Providers>
             <div className="grid bg-background grid-rows-[auto_1fr] h-screen">
-              <NuqsAdapter>{children}</NuqsAdapter>
+              <NuqsAdapter>
+                <PostHogProvider>
+                  <SiteContextProvider subdomain={subdomain}>
+                    {children}
+                  </SiteContextProvider>
+                </PostHogProvider>
+              </NuqsAdapter>
             </div>
           </Providers>
         </ClerkProvider>

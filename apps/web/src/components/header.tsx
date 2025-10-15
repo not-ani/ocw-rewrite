@@ -1,8 +1,6 @@
 "use client";
 
 import { SignedIn, UserButton } from "@clerk/nextjs";
-import { api } from "@ocw-rewrite/backend/convex/_generated/api";
-import { useQuery } from "convex/react";
 import { Menu, MoveRight, Shield, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -18,10 +16,12 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "./ui/navigation-menu";
+import { useSiteContext } from "@/lib/multi-tenant/context";
+import type { UrlObject } from "url";
 
 function Header() {
   const route = usePathname();
-  const isSiteAdmin = useQuery(api.admin.isSiteAdmin);
+  const { user } = useSiteContext();
 
   const isCoursesPage = route.endsWith("/courses");
 
@@ -43,10 +43,7 @@ function Header() {
           title: "For teachers",
           href: "/teachers",
         },
-        {
-          title: "Statistics",
-          href: "/statistics",
-        },
+       
         {
           title: "Contributors",
           href: "/contributors",
@@ -86,7 +83,7 @@ function Header() {
                       asChild
                       className={navigationMenuTriggerStyle()}
                     >
-                      <Link href={item.href}>{item.title}</Link>
+                      <Link href={item.href as unknown as UrlObject}>{item.title}</Link>
                     </NavigationMenuLink>
                   </NavigationMenuItem>
                 ) : (
@@ -97,7 +94,7 @@ function Header() {
                         {item.items?.map((subItem) => (
                           <li key={subItem.title}>
                             <NavigationMenuLink asChild>
-                              <Link href={subItem.href}>{subItem.title}</Link>
+                              <Link href={subItem.href as unknown as UrlObject}>{subItem.title}</Link>
                             </NavigationMenuLink>
                           </li>
                         ))}
@@ -118,7 +115,7 @@ function Header() {
           {!isCoursesPage && <Search />}
           <div className="hidden border-r md:inline" />
           <SignedIn>
-            {isSiteAdmin && (
+            {user?.isSiteAdmin && (
               <Link href="/admin">
                 <Button variant="ghost" size="sm" className="gap-2">
                   <Shield className="h-4 w-4" />
@@ -141,7 +138,7 @@ function Header() {
                     {item.href ? (
                       <Link
                         className="flex items-center justify-between"
-                        href={item.href}
+                        href={item.href as unknown as UrlObject}
                       >
                         <span className="text-lg">{item.title}</span>
                         <MoveRight className="h-4 w-4 stroke-1 text-muted-foreground" />
@@ -153,7 +150,7 @@ function Header() {
                       <Link
                         className="flex items-center justify-between"
                         key={subItem.title}
-                        href={subItem.href}
+                        href={subItem.href as unknown as UrlObject}
                       >
                         <span className="text-muted-foreground">
                           {subItem.title}

@@ -3,8 +3,14 @@ import { NextResponse } from "next/server";
 import { getAuthToken } from "@/lib/auth";
 import { fetchQuery } from "convex/nextjs";
 import { api } from "@ocw-rewrite/backend/convex/_generated/api";
+import { extractSubdomain } from "@/lib/multi-tenant/server";
 
 export async function GET() {
+  const subdomain = await extractSubdomain();
+  if (!subdomain) {
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  }
+
   try {
     const token = await getAuthToken();
 
@@ -15,7 +21,7 @@ export async function GET() {
     // Check if user is a site admin
     const isSiteAdmin = await fetchQuery(
       api.admin.isSiteAdmin,
-      {},
+      { school: subdomain },
       { token }
     );
 

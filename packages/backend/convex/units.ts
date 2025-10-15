@@ -3,11 +3,11 @@ import { mutation, query } from "./_generated/server";
 import { assertEditorOrAdmin, getRequesterRole } from "./permissions";
 
 export const getTableData = query({
-  args: { courseId: v.id("courses") },
+  args: { courseId: v.id("courses"), school: v.string() },
   handler: async (ctx, args) => {
     const units = await ctx.db
       .query("units")
-      .withIndex("by_course_and_order", (q) => q.eq("courseId", args.courseId))
+      .withIndex("by_course_id_and_school", (q) => q.eq("courseId", args.courseId).eq("school", args.school))
       .order("asc")
       .collect();
 
@@ -22,7 +22,7 @@ export const getTableData = query({
 });
 
 export const getById = query({
-  args: { id: v.id("units") },
+  args: { id: v.id("units"), school: v.string() },
   handler: async (ctx, args) => {
     const unit = await ctx.db.get(args.id);
     return unit ?? null;
@@ -55,7 +55,7 @@ export const searchByCourse = query({
 });
 
 export const getUnitWithLessons = query({
-  args: { id: v.id("units") },
+  args: { id: v.id("units"), school: v.string() },
   handler: async (ctx, args) => {
     const unit = await ctx.db.get(args.id);
 
@@ -71,7 +71,7 @@ export const getUnitWithLessons = query({
 
     const lessons = await ctx.db
       .query("lessons")
-      .withIndex("by_unit_and_order", (q) => q.eq("unitId", unit._id))
+      .withIndex("by_unit_id_and_school", (q) => q.eq("unitId", unit._id).eq("school", args.school))
       .filter((q) => q.eq(q.field("isPublished"), true))
       .order("asc")
       .collect();
@@ -99,18 +99,20 @@ export const create = mutation({
     description: v.optional(v.string()),
     isPublished: v.optional(v.boolean()),
     unitName: v.string(),
+    school: v.string(),
   },
   handler: async (ctx, args) => {
-    const role = await getRequesterRole(ctx, args.courseId);
+    const role = await getRequesterRole(ctx, args.courseId, args.school);
     assertEditorOrAdmin(role);
 
     const count = await ctx.db
       .query("units")
-      .withIndex("by_course_id", (q) => q.eq("courseId", args.courseId))
+      .withIndex("by_course_id_and_school", (q) => q.eq("courseId", args.courseId).eq("school", args.school))
       .collect();
 
     const order = count.length;
     const id = await ctx.db.insert("units", {
+      school: args.school,
       courseId: args.courseId,
       name: args.unitName,
       description: args.description ?? undefined,
@@ -121,6 +123,7 @@ export const create = mutation({
     await ctx.db.insert("logs", {
       userId: (await ctx.auth.getUserIdentity())?.subject ?? "unknown",
       courseId: args.courseId,
+      school: args.school,
       action: "CREATE_UNIT",
       timestamp: Date.now(),
       unitId: id,
@@ -139,9 +142,10 @@ export const update = mutation({
       isPublished: v.optional(v.boolean()),
       description: v.optional(v.union(v.string(), v.null())),
     }),
+    school: v.string(),
   },
   handler: async (ctx, args) => {
-    const role = await getRequesterRole(ctx, args.courseId);
+    const role = await getRequesterRole(ctx, args.courseId, args.school);
     assertEditorOrAdmin(role);
 
     const unit = await ctx.db.get(args.data.id);
@@ -163,6 +167,7 @@ export const update = mutation({
       courseId: args.courseId,
       unitId: args.data.id,
       action: "UPDATE_UNIT",
+      school: args.school,
       timestamp: Date.now(),
     });
   },
@@ -177,9 +182,10 @@ export const reorder = mutation({
         position: v.number(),
       })
     ),
+    school: v.string(),
   },
   handler: async (ctx, args) => {
-    const role = await getRequesterRole(ctx, args.courseId);
+    const role = await getRequesterRole(ctx, args.courseId, args.school);
     assertEditorOrAdmin(role);
 
     // Update each unit order to the provided position
@@ -198,6 +204,7 @@ export const reorder = mutation({
       userId: (await ctx.auth.getUserIdentity())?.subject ?? "unknown",
       courseId: args.courseId,
       action: "REORDER_UNIT",
+      school: args.school,
       timestamp: Date.now(),
     });
   },
@@ -207,9 +214,10 @@ export const remove = mutation({
   args: {
     courseId: v.id("courses"),
     id: v.id("units"),
+    school: v.string(),
   },
   handler: async (ctx, args) => {
-    const role = await getRequesterRole(ctx, args.courseId);
+    const role = await getRequesterRole(ctx, args.courseId, args.school);
     assertEditorOrAdmin(role);
 
     const unit = await ctx.db.get(args.id);
@@ -222,7 +230,7 @@ export const remove = mutation({
     // Re-number remaining units
     const remaining = await ctx.db
       .query("units")
-      .withIndex("by_course_and_order", (q) => q.eq("courseId", args.courseId))
+      .withIndex("by_course_id_and_school", (q) => q.eq("courseId", args.courseId).eq("school", args.school))
       .order("asc")
       .collect();
     for (const [index, u] of remaining.entries()) {
@@ -236,6 +244,7 @@ export const remove = mutation({
       courseId: args.courseId,
       unitId: args.id,
       action: "DELETE_UNIT",
+      school: args.school,
       timestamp: Date.now(),
     });
   },

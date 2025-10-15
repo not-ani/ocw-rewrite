@@ -1,15 +1,18 @@
 import type { Id } from "./_generated/dataModel";
+import { v } from "convex/values";
 import { query } from "./_generated/server";
 import type { QueryCtx } from "./_generated/server";
 
 type GetRequesterRole = {
   courseRole: "admin" | "editor" | "user" | null;
   siteRole: "admin" | null;
+  school: string;
 };
 
 export async function getRequesterRole(
   ctx: QueryCtx,
-  courseId: Id<"courses">
+  courseId: Id<"courses">,
+  school: string
 ): Promise<GetRequesterRole | null> {
   const identity = await ctx.auth.getUserIdentity();
 
@@ -19,29 +22,30 @@ export async function getRequesterRole(
 
   const membership = await ctx.db
     .query("courseUsers")
-    .withIndex("by_course_and_user", (q) =>
-      q.eq("courseId", courseId).eq("userId", identity.tokenIdentifier)
+    .withIndex("by_course_and_user_and_school", (q) =>
+      q.eq("courseId", courseId).eq("userId", identity.tokenIdentifier).eq("school", school)
     )
     .unique();
 
   const siteUser = await ctx.db
     .query("siteUser")
-    .withIndex("by_user_id", (q) => q.eq("userId", identity.tokenIdentifier))
+    .withIndex("by_user_id_and_school", (q) => q.eq("userId", identity.tokenIdentifier).eq("school", school))
     .unique();
 
   return {
     courseRole: membership?.role ?? null,
     siteRole: siteUser?.role ?? null,
+    school: school,
   };
 }
 export const getSiteUser = query({
-  args: {},
-  handler: async (ctx) => {
+  args: { school: v.string() },
+  handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     if (!identity) {
       return null;
     }
-    return await ctx.db.query("siteUser").withIndex("by_user_id", (q) => q.eq("userId", identity.tokenIdentifier)).unique();
+    return await ctx.db.query("siteUser").withIndex("by_user_id_and_school", (q) => q.eq("userId", identity.tokenIdentifier).eq("school", args.school)).unique();
   },
 });
 

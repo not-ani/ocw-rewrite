@@ -3,7 +3,7 @@ import { mutation, query } from "./_generated/server";
 import { assertEditorOrAdmin, getRequesterRole } from "./permissions";
 
 export const getMyMembership = query({
-  args: { courseId: v.id("courses") },
+  args: { courseId: v.id("courses"), school: v.string() },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
 
@@ -14,16 +14,17 @@ export const getMyMembership = query({
     const [membership, siteUser] = await Promise.all([
       ctx.db
         .query("courseUsers")
-        .withIndex("by_course_and_user", (q) =>
+        .withIndex("by_course_and_user_and_school", (q) =>
           q
             .eq("courseId", args.courseId)
-            .eq("userId", identity.tokenIdentifier),
+            .eq("userId", identity.tokenIdentifier)
+            .eq("school", args.school),
         )
         .unique(),
       ctx.db
         .query("siteUser")
-        .withIndex("by_user_id", (q) =>
-          q.eq("userId", identity.tokenIdentifier),
+        .withIndex("by_user_id_and_school", (q) =>
+          q.eq("userId", identity.tokenIdentifier).eq("school", args.school),
         )
         .unique(),
     ]);
@@ -56,14 +57,14 @@ export const getMyMembership = query({
 });
 
 export const countMembersByRole = query({
-  args: { courseId: v.id("courses") },
+  args: { courseId: v.id("courses"), school: v.string() },
   handler: async (ctx, args) => {
-    const role = await getRequesterRole(ctx, args.courseId);
+    const role = await getRequesterRole(ctx, args.courseId, args.school);
     assertEditorOrAdmin(role);
 
     const members = await ctx.db
       .query("courseUsers")
-      .withIndex("by_course_id", (q) => q.eq("courseId", args.courseId))
+      .withIndex("by_course_id_and_school", (q) => q.eq("courseId", args.courseId).eq("school", args.school))
       .collect();
 
     const counts = members.reduce(
@@ -94,14 +95,14 @@ export const getTokenId = query({
 
 // List members for a course (admin/editor or manage_users only)
 export const listMembers = query({
-  args: { courseId: v.id("courses") },
+  args: { courseId: v.id("courses"), school: v.string() },
   handler: async (ctx, args) => {
-    const role = await getRequesterRole(ctx, args.courseId);
+    const role = await getRequesterRole(ctx, args.courseId, args.school);
     assertEditorOrAdmin(role);
 
     const members = await ctx.db
       .query("courseUsers")
-      .withIndex("by_course_id", (q) => q.eq("courseId", args.courseId))
+      .withIndex("by_course_id_and_school", (q) => q.eq("courseId", args.courseId).eq("school", args.school))
       .collect();
 
     return members.map((m) => ({
@@ -134,15 +135,16 @@ export const addOrUpdateMember = mutation({
         ),
       ),
     ),
+    school: v.string(),
   },
   handler: async (ctx, args) => {
-    const role = await getRequesterRole(ctx, args.courseId);
+    const role = await getRequesterRole(ctx, args.courseId, args.school);
     assertEditorOrAdmin(role);
 
     const existing = await ctx.db
       .query("courseUsers")
-      .withIndex("by_course_and_user", (q) =>
-        q.eq("courseId", args.courseId).eq("userId", args.userId),
+      .withIndex("by_course_and_user_and_school", (q) =>
+        q.eq("courseId", args.courseId).eq("userId", args.userId).eq("school", args.school),
       )
       .unique();
 
@@ -159,6 +161,7 @@ export const addOrUpdateMember = mutation({
       userId: args.userId,
       role: args.role,
       permissions: args.permissions,
+      school: args.school,
     });
     return { updated: false, created: true } as const;
   },
@@ -166,15 +169,15 @@ export const addOrUpdateMember = mutation({
 
 // Remove a member from a course (admin/editor or manage_users only)
 export const removeMember = mutation({
-  args: { courseId: v.id("courses"), userId: v.string() },
+  args: { courseId: v.id("courses"), userId: v.string(), school: v.string() },
   handler: async (ctx, args) => {
-    const role = await getRequesterRole(ctx, args.courseId);
+    const role = await getRequesterRole(ctx, args.courseId, args.school);
     assertEditorOrAdmin(role);
 
     const existing = await ctx.db
       .query("courseUsers")
-      .withIndex("by_course_and_user", (q) =>
-        q.eq("courseId", args.courseId).eq("userId", args.userId),
+      .withIndex("by_course_and_user_and_school", (q) =>
+        q.eq("courseId", args.courseId).eq("userId", args.userId).eq("school", args.school),
       )
       .unique();
     if (!existing) {

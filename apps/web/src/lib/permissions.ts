@@ -5,26 +5,30 @@ import { fetchQuery, preloadQuery } from "convex/nextjs";
 import { api } from "@ocw-rewrite/backend/convex/_generated/api";
 import type { Id } from "@ocw-rewrite/backend/convex/_generated/dataModel";
 import { getAuthToken } from "./auth";
-
+import { extractSubdomain } from "./multi-tenant/server";
 /**
  * Check if the current user has permission to manage users for a course
  * This is a server-side only function
  */
 export async function checkUserManagementPermission(courseId: Id<"courses">) {
   const token = await getAuthToken();
+  const subdomain =  await extractSubdomain();
+  if (!subdomain) {
+    return { authorized: false, membership: null } as const;
+  }
   if (!token) {
     return { authorized: false, membership: null } as const;
   }
 
   const siteUser = await fetchQuery(
     api.permissions.getSiteUser,
-    {},
+    { school: subdomain },
     { token }
   );
 
   const membership = await fetchQuery(
     api.courseUsers.getMyMembership,
-    { courseId },
+    { courseId, school: subdomain },
     { token }
   );
 
@@ -50,19 +54,23 @@ export async function checkUserManagementPermission(courseId: Id<"courses">) {
 
 export async function checkAdminOrEditorPermission(courseId: Id<"courses">) {
   const token = await getAuthToken();
+  const subdomain = await extractSubdomain();
+  if (!subdomain) {
+    return { authorized: false, membership: null } as const;
+  }
   if (!token) {
     return { authorized: false, membership: null } as const;
   }
 
   const siteUser = await fetchQuery(
     api.permissions.getSiteUser,
-    {},
+    { school: subdomain },
     { token }
   );
 
   const membership = await fetchQuery(
     api.courseUsers.getMyMembership,
-    { courseId },
+    { courseId, school: subdomain },
     { token }
   );
 

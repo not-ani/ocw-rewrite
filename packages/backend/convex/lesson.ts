@@ -5,13 +5,14 @@ import { assertEditorOrAdmin, getRequesterRole } from "./permissions";
 export const getLessonById = query({
   args: {
     id: v.id("lessons"),
+    school: v.string(),
   },
   handler: async (ctx, args) => {
     const lesson = await ctx.db.get(args.id);
 
     const lessonEmbed = await ctx.db
       .query("lessonEmbeds")
-      .withIndex("by_lesson_id", (q) => q.eq("lessonId", args.id))
+      .withIndex("by_lesson_id_and_school", (q) => q.eq("lessonId", args.id).eq("school", args.school))
       .first();
 
     return {
@@ -70,6 +71,7 @@ export const createOrUpdateEmbed = mutation({
   args: {
     lessonId: v.id("lessons"),
     raw: v.string(),
+    school: v.string(),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -94,7 +96,7 @@ export const createOrUpdateEmbed = mutation({
 
     const existing = await ctx.db
       .query("lessonEmbeds")
-      .withIndex("by_lesson_id", (q) => q.eq("lessonId", args.lessonId))
+      .withIndex("by_lesson_id_and_school", (q) => q.eq("lessonId", args.lessonId).eq("school", args.school))
       .first();
 
     if (existing) {
@@ -105,6 +107,7 @@ export const createOrUpdateEmbed = mutation({
       await ctx.db.insert("lessonEmbeds", {
         lessonId: args.lessonId,
         embedUrl: detected.embedUrl ?? "",
+        school: args.school,
       });
     }
 
@@ -114,16 +117,17 @@ export const createOrUpdateEmbed = mutation({
       unitId: lesson.unitId,
       lessonId: args.lessonId,
       action: "UPDATE_LESSON",
+      school: args.school,
       timestamp: Date.now(),
     });
   },
 });
 export const getByUnit = query({
-  args: { unitId: v.id("units") },
+  args: { unitId: v.id("units"), school: v.string() },
   handler: async (ctx, args) => {
     const lessons = await ctx.db
       .query("lessons")
-      .withIndex("by_unit_and_order", (q) => q.eq("unitId", args.unitId))
+      .withIndex("by_unit_id_and_school", (q) => q.eq("unitId", args.unitId).eq("school", args.school))
       .order("asc")
       .collect();
 
@@ -179,14 +183,15 @@ export const create = mutation({
     unitId: v.id("units"),
     name: v.string(),
     embedRaw: v.optional(v.string()),
+    school: v.string(),
   },
   handler: async (ctx, args) => {
-    const role = await getRequesterRole(ctx, args.courseId);
+    const role = await getRequesterRole(ctx, args.courseId, args.school);
     assertEditorOrAdmin(role);
 
     const existing = await ctx.db
       .query("lessons")
-      .withIndex("by_unit_id", (q) => q.eq("unitId", args.unitId))
+      .withIndex("by_unit_id_and_school", (q) => q.eq("unitId", args.unitId).eq("school", args.school))
       .collect();
     const order = existing.length;
 
@@ -201,6 +206,7 @@ export const create = mutation({
       unitId: args.unitId,
       name: args.name,
       content: undefined,
+      school: args.school,
     });
 
     if (detected?.embedUrl) {
@@ -208,6 +214,7 @@ export const create = mutation({
         lessonId,
         embedUrl: detected.embedUrl,
         password: undefined,
+        school: args.school,
       });
     }
 
@@ -217,6 +224,7 @@ export const create = mutation({
       unitId: args.unitId,
       lessonId,
       action: "CREATE_LESSON",
+      school: args.school,
       timestamp: Date.now(),
     });
 
@@ -234,9 +242,10 @@ export const update = mutation({
       unitId: v.optional(v.id("units")),
       content: v.optional(v.union(v.any(), v.null())),
     }),
+    school: v.string(),
   },
   handler: async (ctx, args) => {
-    const role = await getRequesterRole(ctx, args.courseId);
+    const role = await getRequesterRole(ctx, args.courseId, args.school);
     assertEditorOrAdmin(role);
     const lesson = await ctx.db.get(args.data.id);
     if (!lesson) {
@@ -258,6 +267,7 @@ export const update = mutation({
       unitId: lesson.unitId,
       lessonId: args.data.id,
       action: "UPDATE_LESSON",
+      school: args.school,
       timestamp: Date.now(),
     });
   },
@@ -268,9 +278,10 @@ export const reorder = mutation({
     courseId: v.id("courses"),
     unitId: v.id("units"),
     data: v.array(v.object({ id: v.id("lessons"), position: v.number() })),
+    school: v.string(),
   },
   handler: async (ctx, args) => {
-    const role = await getRequesterRole(ctx, args.courseId);
+    const role = await getRequesterRole(ctx, args.courseId, args.school);
     assertEditorOrAdmin(role);
     for (const item of args.data) {
       const lesson = await ctx.db.get(item.id);
@@ -288,15 +299,16 @@ export const reorder = mutation({
       courseId: args.courseId,
       unitId: args.unitId,
       action: "REORDER_LESSON",
+      school: args.school,
       timestamp: Date.now(),
     });
   },
 });
 
 export const remove = mutation({
-  args: { courseId: v.id("courses"), id: v.id("lessons") },
+  args: { courseId: v.id("courses"), id: v.id("lessons"), school: v.string() },
   handler: async (ctx, args) => {
-    const role = await getRequesterRole(ctx, args.courseId);
+    const role = await getRequesterRole(ctx, args.courseId, args.school);
     assertEditorOrAdmin(role);
     const lesson = await ctx.db.get(args.id);
     if (!lesson) {
@@ -307,7 +319,7 @@ export const remove = mutation({
     // Re-number remaining lessons within unit
     const remaining = await ctx.db
       .query("lessons")
-      .withIndex("by_unit_and_order", (q) => q.eq("unitId", lesson.unitId))
+      .withIndex("by_unit_id_and_school", (q) => q.eq("unitId", lesson.unitId).eq("school", args.school))
       .order("asc")
       .collect();
     for (const [index, l] of remaining.entries()) {
@@ -322,6 +334,7 @@ export const remove = mutation({
       unitId: lesson.unitId,
       lessonId: args.id,
       action: "DELETE_LESSON",
+      school: args.school,
       timestamp: Date.now(),
     });
   },

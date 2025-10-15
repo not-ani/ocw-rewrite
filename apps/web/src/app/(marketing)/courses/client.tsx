@@ -62,7 +62,11 @@ function CoursesPageSkeleton() {
   );
 }
 
-export function CoursesPage() {
+export function CoursesPage({
+  subdomain,
+}: {
+  subdomain: string ;
+}) {
   const [queryState, setQueryState] = useQueryStates(coursesSearchParams);
   const { page: currentPage, search: searchInput } = queryState;
   const debouncedSearch = useDebouncedValue(searchInput, SEARCH_DEBOUNCE_MS);
@@ -70,7 +74,8 @@ export function CoursesPage() {
   const coursesData = useQuery(api.courses.getPaginatedCourses, {
     page: currentPage,
     search: debouncedSearch,
-    limit: COURSES_PER_PAGE
+    limit: COURSES_PER_PAGE,
+    school: subdomain,
   });
 
   const courses = coursesData?.courses ?? [];

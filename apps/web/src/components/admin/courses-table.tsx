@@ -34,6 +34,7 @@ import {
   TableProvider,
   TableRow,
 } from "@/components/ui/kibo-ui/table";
+import { useSiteContext } from "@/lib/multi-tenant/context";
 
 type Course = Doc<"courses">;
 
@@ -50,6 +51,7 @@ type ConfirmationDialog = {
 
 function CourseActionsCell({ course }: { course: Course }) {
   const router = useRouter();
+  const { subdomain } = useSiteContext();
   const updateStatus = useMutation(api.admin.updateCourseStatus);
   const [confirmDialog, setConfirmDialog] = useState<ConfirmationDialog>(null);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -60,6 +62,7 @@ function CourseActionsCell({ course }: { course: Course }) {
       await updateStatus({
         courseId: course._id,
         isPublic: !course.isPublic,
+        school: subdomain,
       });
       toast.success(
         course.isPublic
@@ -74,7 +77,7 @@ function CourseActionsCell({ course }: { course: Course }) {
     } finally {
       setIsUpdating(false);
     }
-  }, [updateStatus, course._id, course.isPublic]);
+  }, [updateStatus, course._id, course.isPublic, subdomain]);
 
   const handleUnpublishClick = useCallback(() => {
     setConfirmDialog({

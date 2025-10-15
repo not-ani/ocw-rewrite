@@ -1,6 +1,5 @@
 import { v } from "convex/values";
 import type { Doc, Id } from "./_generated/dataModel";
-import type { GenericDatabaseReader } from "convex/server";
 import { mutation, query, QueryCtx } from "./_generated/server";
 import { assertEditorOrAdmin, getRequesterRole } from "./permissions";
 
@@ -9,9 +8,10 @@ export const getPaginatedCourses = query({
     page: v.number(),
     limit: v.number(),
     search: v.optional(v.string()),
+    school: v.string(),
   },
   handler: async (ctx, args) => {
-    const { page, limit, search } = args;
+    const { page, limit, search, school } = args;
     const offset = (page - 1) * limit;
 
     let allCourses: Doc<"courses">[];
@@ -19,19 +19,18 @@ export const getPaginatedCourses = query({
     if (search?.trim()) {
       allCourses = await ctx.db
         .query("courses")
-        .withSearchIndex("search_name", (q) => q.search("name", search.trim()))
+        .withSearchIndex("search_name", (q) => q.search("name", search.trim()).eq("school", school))
         .collect();
     } else {
       allCourses = await ctx.db
         .query("courses")
-        .withIndex("by_is_public", (q) => q.eq("isPublic", true))
+        .withIndex("by_is_public_and_school", (q) => q.eq("isPublic", true).eq("school", school))
         .collect();
     }
 
     const totalCourses = allCourses.length;
     const totalPages = Math.ceil(totalCourses / limit);
 
-    // Get paginated results
     const courses = allCourses.slice(offset, offset + limit);
 
     return {
@@ -72,19 +71,19 @@ type SearchResult =
 
 const MAX_RESULTS_PER_GROUP = 5;
 
-async function searchCourses(db: QueryCtx["db"], term: string, limit: number) {
+async function searchCourses(db: QueryCtx["db"], term: string, limit: number, school: string) {
   return await db
     .query("courses")
     .withSearchIndex("search_name", (q) =>
-      q.search("name", term).eq("isPublic", true)
+      q.search("name", term).eq("isPublic", true).eq("school", school)
     )
     .take(limit);
 }
 
-async function searchUnits(db: QueryCtx["db"], term: string, limit: number) {
+async function searchUnits(db: QueryCtx["db"], term: string, limit: number, school: string) {
   const matches = await db
     .query("units")
-    .withSearchIndex("search_name", (q) => q.search("name", term))
+    .withSearchIndex("search_name", (q) => q.search("name", term).eq("school", school))
     .take(limit * 3);
 
   return matches.filter((unit) => unit.isPublished).slice(0, limit);
@@ -93,11 +92,12 @@ async function searchUnits(db: QueryCtx["db"], term: string, limit: number) {
 async function searchLessons(
   db: QueryCtx["db"],
   term: string,
-  limit: number
+  limit: number,
+  school: string
 ) {
   const matches = await db
     .query("lessons")
-    .withSearchIndex("search_name", (q) => q.search("name", term))
+    .withSearchIndex("search_name", (q) => q.search("name", term).eq("school", school))
     .take(limit * 3);
 
   return matches.filter((lesson) => lesson.isPublished).slice(0, limit);
@@ -106,7 +106,8 @@ async function searchLessons(
 function formatResults(
   courses: Doc<"courses">[],
   units: Doc<"units">[],
-  lessons: Doc<"lessons">[]
+  lessons: Doc<"lessons">[],
+  school: string
 ): SearchResult[] {
   const courseResults: SearchResult[] = courses.map((course) => ({
     type: "course",
@@ -139,7 +140,8 @@ function formatResults(
 
 async function hydrateResults(
   db: QueryCtx["db"],
-  results: SearchResult[]
+  results: SearchResult[],
+  school: string
 ): Promise<SearchResult[]> {
   const courseIds = new Set<Id<"courses">>();
   const unitIds = new Set<Id<"units">>();
@@ -167,7 +169,7 @@ async function hydrateResults(
   const unitById = new Map(
     units
       .filter(
-        (unit): unit is Doc<"units"> => Boolean(unit) && Boolean(unit?.isPublished)
+        (unit): unit is Doc<"units"> => Boolean(unit) && Boolean(unit?.isPublished) && Boolean(unit?.school === school)
       )
       .map((unit) => [unit._id, unit])
   );
@@ -176,7 +178,7 @@ async function hydrateResults(
     .map((result) => {
       if (result.type === "unit") {
         const course = courseById.get(result.courseId);
-        if (!course || !course.isPublic) {
+        if (!course || !course.isPublic || course.school !== school) {
           return null;
         }
 
@@ -189,7 +191,7 @@ async function hydrateResults(
       if (result.type === "lesson") {
         const course = courseById.get(result.courseId);
         const unit = unitById.get(result.unitId);
-        if (!course || !course.isPublic || !unit) {
+        if (!course || !course.isPublic || !unit || unit.school !== school) {
           return null;
         }
 
@@ -213,8 +215,9 @@ export const searchEntities = query({
   args: {
     term: v.string(),
     include: v.optional(
-      v.array(v.union(v.literal("course"), v.literal("unit"), v.literal("lesson")))
+      v.array(v.union(v.literal("course"), v.literal("unit"), v.literal("lesson"))),
     ),
+    school: v.string(),
   },
   handler: async (ctx, args) => {
     const term = args.term.trim();
@@ -228,25 +231,25 @@ export const searchEntities = query({
     );
 
     const [courses, units, lessons] = await Promise.all([
-      include.has("course") ? searchCourses(ctx.db, term, MAX_RESULTS_PER_GROUP) : [],
-      include.has("unit") ? searchUnits(ctx.db, term, MAX_RESULTS_PER_GROUP) : [],
+      include.has("course") ? searchCourses(ctx.db, term, MAX_RESULTS_PER_GROUP, args.school) : [],
+      include.has("unit") ? searchUnits(ctx.db, term, MAX_RESULTS_PER_GROUP, args.school) : [],
       include.has("lesson")
-        ? searchLessons(ctx.db, term, MAX_RESULTS_PER_GROUP)
+        ? searchLessons(ctx.db, term, MAX_RESULTS_PER_GROUP, args.school)
         : [],
     ]);
 
-    const results = formatResults(courses, units, lessons);
-    const hydrated = await hydrateResults(ctx.db, results);
+    const results = formatResults(courses, units, lessons, args.school);
+    const hydrated = await hydrateResults(ctx.db, results, args.school);
 
     return hydrated;
   },
 });
 
 export const getCourseById = query({
-  args: { courseId: v.id("courses") },
+  args: { courseId: v.id("courses"), school: v.string() },
   handler: async (ctx, args) => {
     const course = await ctx.db.get(args.courseId);
-    if (!course?.isPublic) {
+    if (!course?.isPublic || course.school !== args.school) {
       return null;
     }
     return course;
@@ -254,7 +257,7 @@ export const getCourseById = query({
 });
 
 export const getCourseWithUnitsAndLessons = query({
-  args: { id: v.id("courses") },
+  args: { id: v.id("courses"), school: v.string() },
   handler: async (ctx, args) => {
     const course = await ctx.db.get(args.id);
 
@@ -264,15 +267,15 @@ export const getCourseWithUnitsAndLessons = query({
 
     const units = await ctx.db
       .query("units")
-      .withIndex("by_course_and_order", (q) => q.eq("courseId", course._id))
-      .filter((q) => q.eq(q.field("isPublished"), true))
+      .withIndex("by_course_and_order_and_school", (q) => q.eq("courseId", course._id).eq("school", args.school))
       .collect();
 
     const unitsWithLessons = await Promise.all(
       units.map(async (unit) => {
         const lessons = await ctx.db
           .query("lessons")
-          .withIndex("by_unit_id", (q) => q.eq("unitId", unit._id))
+          .withIndex("by_unit_id_and_school", (q) => q.eq("unitId", unit._id).eq("school", args.school))
+          .filter((q) => q.eq(q.field("isPublished"), true))
           .collect();
 
         return {
@@ -293,7 +296,7 @@ export const getCourseWithUnitsAndLessons = query({
 });
 
 export const getDashboardSummary = query({
-  args: { courseId: v.id("courses"), userRole: v.optional(v.string()) },
+  args: { courseId: v.id("courses"), userRole: v.optional(v.string()), school: v.string() },
   handler: async (ctx, args) => {
     const course = await ctx.db.get(args.courseId);
 
@@ -301,17 +304,17 @@ export const getDashboardSummary = query({
       throw new Error("Course not found");
     }
 
-    const role = await getRequesterRole(ctx, args.courseId);
+    const role = await getRequesterRole(ctx, args.courseId, args.school);
     assertEditorOrAdmin(role);
 
     const units = await ctx.db
       .query("units")
-      .withIndex("by_course_id", (q) => q.eq("courseId", course._id))
+      .withIndex("by_course_id_and_school", (q) => q.eq("courseId", course._id).eq("school", args.school))
       .collect();
 
     const lessons = await ctx.db
       .query("lessons")
-      .withIndex("by_course_id", (q) => q.eq("courseId", course._id))
+      .withIndex("by_course_id_and_school", (q) => q.eq("courseId", course._id).eq("school", args.school))
       .collect();
 
     const publishedUnits = units.filter((u) => u.isPublished).length;
@@ -319,7 +322,7 @@ export const getDashboardSummary = query({
 
     const last10Logs = await ctx.db
       .query("logs")
-      .withIndex("by_course_id", (q) => q.eq("courseId", course._id))
+      .withIndex("by_course_id_and_school", (q) => q.eq("courseId", course._id).eq("school", args.school))
       .order("desc")
       .take(10);
 
@@ -346,7 +349,7 @@ export const getDashboardSummary = query({
 });
 
 export const getSidebarData = query({
-  args: { courseId: v.id("courses") },
+  args: { courseId: v.id("courses"), school: v.string() },
   handler: async (ctx, args) => {
     const course = await ctx.db.get(args.courseId);
     if (!course) {
@@ -355,7 +358,7 @@ export const getSidebarData = query({
 
     const units = await ctx.db
       .query("units")
-      .withIndex("by_course_and_order", (q) => q.eq("courseId", args.courseId))
+      .withIndex("by_course_and_order_and_school", (q) => q.eq("courseId", args.courseId).eq("school", args.school))
       .filter((q) => q.eq(q.field("isPublished"), true))
       .collect();
 
@@ -363,7 +366,7 @@ export const getSidebarData = query({
       units.map(async (unit) => {
         const lessons = await ctx.db
           .query("lessons")
-          .withIndex("by_unit_and_order", (q) => q.eq("unitId", unit._id))
+          .withIndex("by_unit_and_order_and_school", (q) => q.eq("unitId", unit._id).eq("order", unit.order).eq("school", args.school))
           .filter((q) => q.eq(q.field("isPublished"), true))
           .collect();
 
@@ -371,7 +374,7 @@ export const getSidebarData = query({
           lessons.map(async (lesson) => {
             const embeds = await ctx.db
               .query("lessonEmbeds")
-              .withIndex("by_lesson_id", (q) => q.eq("lessonId", lesson._id))
+              .withIndex("by_lesson_id_and_school", (q) => q.eq("lessonId", lesson._id).eq("school", args.school))
               .unique();
 
             return {
@@ -408,11 +411,12 @@ export const getBreadcrumbData = query({
     courseId: v.id("courses"),
     unitId: v.optional(v.id("units")),
     lessonId: v.optional(v.id("lessons")),
+    school: v.string(),
   },
   handler: async (ctx, args) => {
     const course = await ctx.db.get(args.courseId);
     
-    if (!course) {
+    if (!course || course.school !== args.school) {
       return null;
     }
 
@@ -429,7 +433,7 @@ export const getBreadcrumbData = query({
 
     if (args.unitId) {
       const unit = await ctx.db.get(args.unitId);
-      if (unit) {
+      if (unit && unit.school === args.school) {
         result.unit = {
           id: unit._id,
           name: unit.name,
@@ -439,7 +443,7 @@ export const getBreadcrumbData = query({
 
     if (args.lessonId) {
       const lesson = await ctx.db.get(args.lessonId);
-      if (lesson) {
+      if (lesson && lesson.school === args.school) {
         result.lesson = {
           id: lesson._id,
           name: lesson.name,
@@ -447,7 +451,7 @@ export const getBreadcrumbData = query({
         
         if (!args.unitId && lesson.unitId) {
           const unit = await ctx.db.get(lesson.unitId);
-          if (unit) {
+          if (unit && unit.school === args.school) {
             result.unit = {
               id: unit._id,
               name: unit.name,
@@ -462,15 +466,16 @@ export const getBreadcrumbData = query({
 });
 
 export const normalizeUnitLengths = mutation({
-  args: {},
-  handler: async (ctx) => {
-    const courses = await ctx.db.query("courses").collect();
+  args: { school: v.string() },
+  handler: async (ctx, args) => {
+    const allCourses = await ctx.db.query("courses").collect();
+    const courses = allCourses.filter((course) => course.school === args.school);
 
     const updates = await Promise.all(
       courses.map(async (course) => {
         const unitCount = await ctx.db
           .query("units")
-          .withIndex("by_course_id", (q) => q.eq("courseId", course._id))
+          .withIndex("by_course_id_and_school", (q) => q.eq("courseId", course._id).eq("school", args.school))
           .collect()
           .then((units) => units.length);
 

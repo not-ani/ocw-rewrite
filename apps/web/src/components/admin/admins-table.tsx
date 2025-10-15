@@ -77,7 +77,7 @@ function RemoveAdminButton({
       setIsOpen(false);
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to remove admin"
+        error instanceof Error ? error.message : "Failed to remove admin",
       );
     } finally {
       setIsRemoving(false);
@@ -111,8 +111,9 @@ function RemoveAdminButton({
           <AlertDialogHeader>
             <AlertDialogTitle>Remove Site Admin</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to remove <strong>{userName}</strong> as a site
-              admin? They will lose all site-wide administrative privileges.
+              Are you sure you want to remove <strong>{userName}</strong> as a
+              site admin? They will lose all site-wide administrative
+              privileges.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -135,7 +136,9 @@ export function AdminsTable({ adminsWithUsers }: AdminsTableProps) {
   const columns: ColumnDef<AdminWithUser>[] = [
     {
       accessorKey: "user",
-      header: ({ column }) => <TableColumnHeader column={column} title="User" />,
+      header: ({ column }) => (
+        <TableColumnHeader column={column} title="User" />
+      ),
       cell: ({ row }) => {
         const user = row.original.clerkUser;
         if (!user) {
@@ -177,7 +180,9 @@ export function AdminsTable({ adminsWithUsers }: AdminsTableProps) {
     },
     {
       accessorKey: "role",
-      header: ({ column }) => <TableColumnHeader column={column} title="Role" />,
+      header: ({ column }) => (
+        <TableColumnHeader key={column.id} column={column} title="Role" />
+      ),
       cell: () => <Badge variant="destructive">Site Admin</Badge>,
     },
     {
@@ -206,18 +211,17 @@ export function AdminsTable({ adminsWithUsers }: AdminsTableProps) {
       <TableHeader>
         {({ headerGroup }) => (
           <TableHeaderGroup headerGroup={headerGroup}>
-            {({ header }) => <TableHead header={header} />}
+            {({ header }) => <TableHead key={header.id} header={header} />}
           </TableHeaderGroup>
         )}
       </TableHeader>
       <TableBody>
         {({ row }) => (
           <TableRow row={row}>
-            {({ cell }) => <TableCell cell={cell} />}
+            {({ cell }) => <TableCell key={cell.id} cell={cell} />}
           </TableRow>
         )}
       </TableBody>
     </TableProvider>
   );
 }
-
