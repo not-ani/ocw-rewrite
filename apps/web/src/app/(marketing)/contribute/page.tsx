@@ -1,5 +1,5 @@
 "use client";
-import { Clock, FileEdit } from "lucide-react";
+import { FileEdit } from "lucide-react";
 import {
   Card,
   CardContent,
@@ -11,23 +11,6 @@ import {
 import { QRCode } from "@/components/ui/kibo-ui/qr-code";
 import { useSite } from "@/lib/multi-tenant/context";
 import { Button } from "@/components/ui/button";
-
-const meetingTimes = [
-  {
-    id: "wednesday",
-    day: "Wednesday",
-    time: "After School",
-    hours: "3:30 PM - 4:15 PM",
-    icon: <Clock className="h-8 w-8 text-primary" />,
-  },
-  {
-    id: "thursday",
-    day: "Thursday",
-    time: "Before School",
-    hours: "7:50 AM - 8:10 AM",
-    icon: <Clock className="h-8 w-8 text-primary" />,
-  },
-];
 
 export default function RouteComponent() {
   const { siteConfig } = useSite();

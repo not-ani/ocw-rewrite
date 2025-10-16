@@ -17,55 +17,54 @@ import {
   navigationMenuTriggerStyle,
 } from "./ui/navigation-menu";
 import { useSite } from "@/lib/multi-tenant/context";
-import type { UrlObject } from "url";
+import type { Route } from "next";
+
+const navigationItems = [
+  {
+    title: "Courses",
+    href: "/courses",
+    description: "All the courses on our website",
+  },
+  {
+    title: "About OCW",
+    description: "More information about the OCW Project",
+    items: [
+      {
+        title: "About Us",
+        href: "/about",
+      },
+      {
+        title: "For teachers",
+        href: "/teachers",
+      },
+
+      {
+        title: "Contributors",
+        href: "/contributors",
+      },
+    ],
+  },
+  {
+    title: "Contribute to OCW",
+    description: "Contribute to the OCW Project",
+    items: [
+      {
+        title: "Contribute",
+        href: "/contribute",
+      },
+      {
+        title: "Contact",
+        href: "/contact",
+      },
+    ],
+  },
+];
 
 function Header() {
   const route = usePathname();
   const { user, siteConfig } = useSite();
 
   const isCoursesPage = route.endsWith("/courses");
-
-  const navigationItems = [
-    {
-      title: "Courses",
-      href: "/courses",
-      description: "All the courses on our website",
-    },
-    {
-      title: "About OCW",
-      description: "More information about the OCW Project",
-      items: [
-        {
-          title: "About Us",
-          href: "/about",
-        },
-        {
-          title: "For teachers",
-          href: "/teachers",
-        },
-
-        {
-          title: "Contributors",
-          href: "/contributors",
-        },
-      ],
-    },
-    {
-      title: "Contribute to OCW",
-      description: "Contribute to the OCW Project",
-      items: [
-        {
-          title: "Contribute",
-          href: "/contribute",
-        },
-        {
-          title: "Contact",
-          href: "/contact",
-        },
-      ],
-    },
-  ];
-
   const [isOpen, setOpen] = useState(false);
   return (
     <header className={"flex bg-background"}>
@@ -83,9 +82,7 @@ function Header() {
                       asChild
                       className={navigationMenuTriggerStyle()}
                     >
-                      <Link href={item.href as unknown as UrlObject}>
-                        {item.title}
-                      </Link>
+                      <Link href={item.href as Route}>{item.title}</Link>
                     </NavigationMenuLink>
                   </NavigationMenuItem>
                 ) : (
@@ -96,7 +93,7 @@ function Header() {
                         {item.items?.map((subItem) => (
                           <li key={subItem.title}>
                             <NavigationMenuLink asChild>
-                              <Link href={subItem.href as unknown as UrlObject}>
+                              <Link href={subItem.href as Route}>
                                 {subItem.title}
                               </Link>
                             </NavigationMenuLink>
@@ -144,7 +141,7 @@ function Header() {
                     {item.href ? (
                       <Link
                         className="flex items-center justify-between"
-                        href={item.href as unknown as UrlObject}
+                        href={item.href as Route}
                       >
                         <span className="text-lg">{item.title}</span>
                         <MoveRight className="h-4 w-4 stroke-1 text-muted-foreground" />
@@ -156,7 +153,7 @@ function Header() {
                       <Link
                         className="flex items-center justify-between"
                         key={subItem.title}
-                        href={subItem.href as unknown as UrlObject}
+                        href={subItem.href as Route}
                       >
                         <span className="text-muted-foreground">
                           {subItem.title}
