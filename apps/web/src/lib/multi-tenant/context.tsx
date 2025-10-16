@@ -10,7 +10,7 @@ type SiteContext = {
   subdomain: string;
   user?: {
     isSiteAdmin: boolean;
-  }
+  };
 };
 
 export const SiteContext = createContext<SiteContext | null>(null);
@@ -46,11 +46,11 @@ export const SiteContextProvider = ({
   );
 };
 
-
-export const useSiteContext = () => {
+export const useSite = () => {
   const context = useContext(SiteContext);
   if (!context) {
     throw new Error("useSiteContext must be used within a SiteContextProvider");
   }
   return context;
 };
+

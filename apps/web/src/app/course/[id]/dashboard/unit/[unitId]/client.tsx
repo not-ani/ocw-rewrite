@@ -27,7 +27,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { LessonsTable } from "./lessons-table";
 import { CreateLessonDialog } from "@/components/dashboard/lessons/create-lesson";
-import { useSiteContext } from "@/lib/multi-tenant/context";
+import { useSite } from "@/lib/multi-tenant/context";
 
 const unitFormSchema = z.object({
   name: z.string().min(1, "Unit name is required").max(200),
@@ -163,7 +163,7 @@ function UnitEditForm({
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="rounded-lg border p-6">
           <h2 className="mb-4 font-semibold text-lg">Unit Settings</h2>
-          
+
           <div className="space-y-4">
             <FormField
               control={form.control}
@@ -226,7 +226,9 @@ function UnitEditForm({
 
           <div className="mt-6">
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isSubmitting && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
               <Save className="mr-2 h-4 w-4" />
               Save Changes
             </Button>
@@ -251,7 +253,7 @@ export function UnitPageClient({
   const router = useRouter();
   const unit = usePreloadedQuery(preloadedUnit);
   const lessons = usePreloadedQuery(preloadedLessons);
-  const school = useSiteContext().subdomain;
+  const school = useSite().subdomain;
 
   const updateLesson = useMutation(api.lesson.update);
   const reorderLessons = useMutation(api.lesson.reorder);
@@ -268,7 +270,7 @@ export function UnitPageClient({
         data: { id: payload.id, ...payload.data },
       });
     },
-    [updateLesson, courseId]
+    [updateLesson, courseId],
   );
 
   const handleRemoveLesson = useCallback(
@@ -276,14 +278,14 @@ export function UnitPageClient({
       await removeLesson({ courseId, id, school });
       toast.success("Lesson deleted");
     },
-    [removeLesson, courseId]
+    [removeLesson, courseId],
   );
 
   const handleReorderLessons = useCallback(
     async (data: { id: Id<"lessons">; position: number }[]) => {
       await reorderLessons({ courseId, unitId, data, school });
     },
-    [reorderLessons, courseId, unitId]
+    [reorderLessons, courseId, unitId],
   );
 
   const lessonList = lessons ?? [];
@@ -303,7 +305,12 @@ export function UnitPageClient({
 
       <div className="space-y-8">
         <Suspense fallback={<UnitFormSkeleton />}>
-          <UnitEditForm unit={unit} courseId={courseId} unitId={unitId} school={school} />
+          <UnitEditForm
+            unit={unit}
+            courseId={courseId}
+            unitId={unitId}
+            school={school}
+          />
         </Suspense>
 
         {unit && (

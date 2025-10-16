@@ -1,13 +1,12 @@
 "use client";
-import { useSiteContext } from "@/lib/multi-tenant/context";
+import { useSite } from "@/lib/multi-tenant/context";
 import Image from "next/image";
 
 export default function Page() {
-  const { siteConfig } = useSiteContext();
+  const { siteConfig } = useSite();
 
   const people = siteConfig?.personsContact;
   const club = siteConfig?.club;
-
 
   return (
     <div>
@@ -29,9 +28,9 @@ export default function Page() {
               Maintained By
             </h2>
             <p className="mx-auto max-w-2xl text-foreground/90">
-              This OpenCourseWare site is proudly maintained by {siteConfig?.schoolName}{" "}
-              {club?.name}. For general inquiries about the site&apos;s
-              maintenance or the organization, please contact:
+              This OpenCourseWare site is proudly maintained by{" "}
+              {siteConfig?.schoolName} {club?.name}. For general inquiries about
+              the site&apos;s maintenance or the organization, please contact:
             </p>
             <a
               className="mt-4 inline-block text-blue-600 hover:text-blue-800 hover:underline"

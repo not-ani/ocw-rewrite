@@ -1,10 +1,10 @@
 "use client";
-import { useSiteContext } from "@/lib/multi-tenant/context";
+import { useSite } from "@/lib/multi-tenant/context";
 import { ChevronDown, ChevronUp } from "lucide-react";
 import { useState } from "react";
 
 export default function WritersTable() {
-  const { siteConfig } = useSiteContext();
+  const { siteConfig } = useSite();
   const [expandedId, setExpandedId] = useState<string | null>(null);
 
   const handleRowClick = (id: string) => {

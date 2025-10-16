@@ -34,7 +34,7 @@ import {
   TableProvider,
   TableRow,
 } from "@/components/ui/kibo-ui/table";
-import { useSiteContext } from "@/lib/multi-tenant/context";
+import { useSite } from "@/lib/multi-tenant/context";
 
 type Course = Doc<"courses">;
 
@@ -51,7 +51,7 @@ type ConfirmationDialog = {
 
 function CourseActionsCell({ course }: { course: Course }) {
   const router = useRouter();
-  const { subdomain } = useSiteContext();
+  const { subdomain } = useSite();
   const updateStatus = useMutation(api.admin.updateCourseStatus);
   const [confirmDialog, setConfirmDialog] = useState<ConfirmationDialog>(null);
   const [isUpdating, setIsUpdating] = useState(false);
@@ -67,12 +67,14 @@ function CourseActionsCell({ course }: { course: Course }) {
       toast.success(
         course.isPublic
           ? "Course unpublished successfully"
-          : "Course published successfully"
+          : "Course published successfully",
       );
       setConfirmDialog(null);
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to update course status"
+        error instanceof Error
+          ? error.message
+          : "Failed to update course status",
       );
     } finally {
       setIsUpdating(false);
@@ -110,7 +112,9 @@ function CourseActionsCell({ course }: { course: Course }) {
             View Dashboard
           </DropdownMenuItem>
           <DropdownMenuItem
-            onClick={course.isPublic ? handleUnpublishClick : handlePublishClick}
+            onClick={
+              course.isPublic ? handleUnpublishClick : handlePublishClick
+            }
           >
             {course.isPublic ? "Unpublish" : "Publish"}
           </DropdownMenuItem>
@@ -154,7 +158,9 @@ export function CoursesTable({ courses }: CoursesTableProps) {
   const columns: ColumnDef<Course>[] = [
     {
       accessorKey: "name",
-      header: ({ column }) => <TableColumnHeader column={column} title="Course Name" />,
+      header: ({ column }) => (
+        <TableColumnHeader column={column} title="Course Name" />
+      ),
       cell: ({ row }) => {
         const course = row.original;
         return (
@@ -172,21 +178,27 @@ export function CoursesTable({ courses }: CoursesTableProps) {
     },
     {
       accessorKey: "subjectId",
-      header: ({ column }) => <TableColumnHeader column={column} title="Subject" />,
+      header: ({ column }) => (
+        <TableColumnHeader column={column} title="Subject" />
+      ),
       cell: ({ row }) => (
         <Badge variant="outline">{row.original.subjectId}</Badge>
       ),
     },
     {
       accessorKey: "unitLength",
-      header: ({ column }) => <TableColumnHeader column={column} title="Units" />,
+      header: ({ column }) => (
+        <TableColumnHeader column={column} title="Units" />
+      ),
       cell: ({ row }) => (
         <div className="text-center">{row.original.unitLength}</div>
       ),
     },
     {
       accessorKey: "isPublic",
-      header: ({ column }) => <TableColumnHeader column={column} title="Status" />,
+      header: ({ column }) => (
+        <TableColumnHeader column={column} title="Status" />
+      ),
       cell: ({ row }) => (
         <Badge variant={row.original.isPublic ? "default" : "secondary"}>
           {row.original.isPublic ? "Published" : "Unpublished"}
@@ -205,7 +217,11 @@ export function CoursesTable({ courses }: CoursesTableProps) {
   ];
 
   return (
-    <TableProvider columns={columns} data={courses} className="rounded-lg border">
+    <TableProvider
+      columns={columns}
+      data={courses}
+      className="rounded-lg border"
+    >
       <TableHeader>
         {({ headerGroup }) => (
           <TableHeaderGroup key={headerGroup.id} headerGroup={headerGroup}>
@@ -223,4 +239,3 @@ export function CoursesTable({ courses }: CoursesTableProps) {
     </TableProvider>
   );
 }
-

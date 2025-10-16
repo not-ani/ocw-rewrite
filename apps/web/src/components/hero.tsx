@@ -1,10 +1,10 @@
 "use client";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { useSiteContext } from "@/lib/multi-tenant/context";
+import { useSite } from "@/lib/multi-tenant/context";
 
 export function HeroSection() {
-  const { siteConfig } = useSiteContext();
+  const { siteConfig } = useSite();
   return (
     <section className="relative h-[38vh]">
       <div className="relative z-auto container mx-auto flex flex-col gap-5 px-4 text-center">

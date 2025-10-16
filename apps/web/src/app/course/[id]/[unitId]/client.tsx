@@ -11,7 +11,7 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Header } from "@/components/header";
 import Link from "next/link";
-import { useSiteContext } from "@/lib/multi-tenant/context";
+import { useSite } from "@/lib/multi-tenant/context";
 
 type UnitWithLessons = Preloaded<typeof api.units.getUnitWithLessons>;
 
@@ -59,14 +59,14 @@ export function UnitPageSkeleton() {
 }
 
 export function UnitPageClient({
-  preloadedUnit
+  preloadedUnit,
 }: {
-  preloadedUnit: UnitWithLessons
+  preloadedUnit: UnitWithLessons;
 }) {
   const unit = usePreloadedQuery(preloadedUnit);
-  const school = useSiteContext().subdomain;
+  const school = useSite().subdomain;
   if (!unit) {
-    return <UnitPageSkeleton />
+    return <UnitPageSkeleton />;
   }
 
   return (
@@ -76,12 +76,13 @@ export function UnitPageClient({
         {/* Sidebar */}
         <div className="hidden border-r bg-background p-6 lg:block lg:w-96">
           <div className="mb-6 rounded-lg bg-primary/10 p-4">
-            <Link href={`/course/${unit.course._id}`} className="text-primary/80 text-xl font-bold">
+            <Link
+              href={`/course/${unit.course._id}`}
+              className="text-primary/80 text-xl font-bold"
+            >
               {unit.course.name}
             </Link>
-            <p className="mt-1 text-primary/60 text-sm">
-              {unit.name}
-            </p>
+            <p className="mt-1 text-primary/60 text-sm">{unit.name}</p>
           </div>
           <div className="ml-4 max-w-[calc(100%-2rem)] space-y-4">
             {unit.lessons.map((lesson, index) => (
@@ -115,7 +116,8 @@ export function UnitPageClient({
                       <div className="text-left">
                         <div className="font-semibold">Lessons</div>
                         <div className="text-gray-500 text-sm">
-                          {unit.lessons.length} {unit.lessons.length === 1 ? 'lesson' : 'lessons'}
+                          {unit.lessons.length}{" "}
+                          {unit.lessons.length === 1 ? "lesson" : "lessons"}
                         </div>
                       </div>
                     </div>

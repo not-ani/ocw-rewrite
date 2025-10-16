@@ -18,7 +18,7 @@ import { CreateUnitDialog } from "@/components/dashboard/units/create-unit";
 import { UnitsTable } from "@/components/dashboard/units/units-table";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useSiteContext } from "@/lib/multi-tenant/context";
+import { useSite } from "@/lib/multi-tenant/context";
 
 function DashboardHeaderSkeleton() {
   return (
@@ -74,7 +74,7 @@ function DashboardContent({
   preloadedUnits: Preloaded<typeof api.units.getTableData>;
 }) {
   const user = useUser();
-  const subdomain = useSiteContext().subdomain;
+  const subdomain = useSite().subdomain;
   const roleFromClerk = user.user?.publicMetadata?.role;
   const userRole =
     typeof roleFromClerk === "string" ? roleFromClerk : undefined;
@@ -247,4 +247,3 @@ export function DashboardPageClient({
     </div>
   );
 }
-

@@ -31,12 +31,18 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { useSiteContext } from "@/lib/multi-tenant/context";
+import { useSite } from "@/lib/multi-tenant/context";
 
 const lessonFormSchema = z.object({
   name: z.string().min(1, "Lesson name is required").max(200),
   isPublished: z.boolean(),
-  contentType: z.enum(["google_docs", "notion", "quizlet", "tiptap", "flashcard"]),
+  contentType: z.enum([
+    "google_docs",
+    "notion",
+    "quizlet",
+    "tiptap",
+    "flashcard",
+  ]),
   embedUrl: z.string().optional(),
 });
 
@@ -73,23 +79,34 @@ function LessonEditForm({
   lessonId,
   school,
 }: {
-  lesson: {
-    _id?: Id<"lessons">;
-    name?: string;
-    isPublished?: boolean;
-    contentType?: "google_docs" | "notion" | "quizlet" | "tiptap" | "flashcard";
-    courseId?: Id<"courses">;
-    unitId?: Id<"units">;
-    order?: number;
-    pureLink?: boolean;
-    content?: unknown;
-  } | null | undefined;
-  embed: {
-    _id?: Id<"lessonEmbeds">;
-    embedUrl?: string;
-    password?: string;
-    lessonId?: Id<"lessons">;
-  } | null | undefined;
+  lesson:
+    | {
+        _id?: Id<"lessons">;
+        name?: string;
+        isPublished?: boolean;
+        contentType?:
+          | "google_docs"
+          | "notion"
+          | "quizlet"
+          | "tiptap"
+          | "flashcard";
+        courseId?: Id<"courses">;
+        unitId?: Id<"units">;
+        order?: number;
+        pureLink?: boolean;
+        content?: unknown;
+      }
+    | null
+    | undefined;
+  embed:
+    | {
+        _id?: Id<"lessonEmbeds">;
+        embedUrl?: string;
+        password?: string;
+        lessonId?: Id<"lessons">;
+      }
+    | null
+    | undefined;
   courseId: Id<"courses">;
   lessonId: Id<"lessons">;
   school: string;
@@ -171,12 +188,16 @@ function LessonEditForm({
               type="button"
               variant="outline"
               size="sm"
-              onClick={() => router.push(`/course/${courseId}/dashboard/unit/${lesson.unitId}?school=${school}`)}
+              onClick={() =>
+                router.push(
+                  `/course/${courseId}/dashboard/unit/${lesson.unitId}?school=${school}`,
+                )
+              }
             >
               View Unit
             </Button>
           </div>
-          
+
           <div className="space-y-4">
             <FormField
               control={form.control}
@@ -270,14 +291,20 @@ function LessonEditForm({
 
           <div className="mt-6 flex items-center gap-3">
             <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+              {isSubmitting && (
+                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              )}
               <Save className="mr-2 h-4 w-4" />
               Save Changes
             </Button>
             <Button
               type="button"
               variant="outline"
-              onClick={() => router.push(`/course/${courseId}/${lesson.unitId}/${lessonId}?school=${school}`)}
+              onClick={() =>
+                router.push(
+                  `/course/${courseId}/${lesson.unitId}/${lessonId}?school=${school}`,
+                )
+              }
             >
               Preview Lesson
             </Button>
@@ -301,7 +328,7 @@ export function LessonPageClient({
   const data = usePreloadedQuery(preloadedLesson);
   const lesson = data?.lesson;
   const embed = data?.embed;
-  const school = useSiteContext().subdomain;
+  const school = useSite().subdomain;
 
   return (
     <div className="mx-auto w-full max-w-7xl p-4 sm:p-6">
@@ -311,7 +338,9 @@ export function LessonPageClient({
           size="sm"
           onClick={() => {
             if (lesson?.unitId) {
-              router.push(`/course/${courseId}/dashboard/unit/${lesson.unitId}?school=${school}`);
+              router.push(
+                `/course/${courseId}/dashboard/unit/${lesson.unitId}?school=${school}`,
+              );
             } else {
               router.push(`/course/${courseId}/dashboard`);
             }

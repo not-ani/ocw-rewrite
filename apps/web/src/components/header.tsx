@@ -16,12 +16,12 @@ import {
   NavigationMenuTrigger,
   navigationMenuTriggerStyle,
 } from "./ui/navigation-menu";
-import { useSiteContext } from "@/lib/multi-tenant/context";
+import { useSite } from "@/lib/multi-tenant/context";
 import type { UrlObject } from "url";
 
 function Header() {
   const route = usePathname();
-  const { user, siteConfig } = useSiteContext();
+  const { user, siteConfig } = useSite();
 
   const isCoursesPage = route.endsWith("/courses");
 
@@ -43,7 +43,7 @@ function Header() {
           title: "For teachers",
           href: "/teachers",
         },
-       
+
         {
           title: "Contributors",
           href: "/contributors",
@@ -83,7 +83,9 @@ function Header() {
                       asChild
                       className={navigationMenuTriggerStyle()}
                     >
-                      <Link href={item.href as unknown as UrlObject}>{item.title}</Link>
+                      <Link href={item.href as unknown as UrlObject}>
+                        {item.title}
+                      </Link>
                     </NavigationMenuLink>
                   </NavigationMenuItem>
                 ) : (
@@ -94,7 +96,9 @@ function Header() {
                         {item.items?.map((subItem) => (
                           <li key={subItem.title}>
                             <NavigationMenuLink asChild>
-                              <Link href={subItem.href as unknown as UrlObject}>{subItem.title}</Link>
+                              <Link href={subItem.href as unknown as UrlObject}>
+                                {subItem.title}
+                              </Link>
                             </NavigationMenuLink>
                           </li>
                         ))}
@@ -108,7 +112,9 @@ function Header() {
         </div>
         <div className="flex lg:justify-center">
           <Link href="/">
-            <p className="font-semibold">{(siteConfig?.school)?.toUpperCase()} OCW</p>
+            <p className="font-semibold">
+              {siteConfig?.school?.toUpperCase()} OCW
+            </p>
           </Link>
         </div>
         <div className="flex w-full justify-end gap-4">
