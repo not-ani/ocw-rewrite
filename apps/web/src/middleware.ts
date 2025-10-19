@@ -39,8 +39,16 @@ function extractSubdomain(request: NextRequest): string | null {
 
 export default clerkMiddleware(async (auth, req) => {
   const { pathname } = req.nextUrl;
+  
+  if (pathname.startsWith("/ocw-path-for-stuff")) {
+    return NextResponse.next();
+  }
+
   const subdomain = extractSubdomain(req);
 
+  if (subdomain === "clerk") { 
+    return NextResponse.next();
+  }
 
   if (subdomain) {
     if (pathname.startsWith("/ocw-admin")) {
