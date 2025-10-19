@@ -15,7 +15,7 @@ export function PostHogProvider({ children }: { children: React.ReactNode }) {
     posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
       api_host:
         `${host}/ocw-path-for-stuff`,
-      ui_host: "https://us.posthog.com",
+      ui_host: `${host}/ocw-path-for-stuff`,
       person_profiles: "always",
       capture_pageview: true,
     });
