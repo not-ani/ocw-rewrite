@@ -12,7 +12,7 @@ export const getLessonById = query({
 
     const lessonEmbed = await ctx.db
       .query("lessonEmbeds")
-      .withIndex("by_lesson_id_and_school", (q) => q.eq("lessonId", args.id).eq("school", args.school))
+      .withIndex("by_lesson_id", (q) => q.eq("lessonId", args.id))
       .first();
 
     return {
@@ -96,7 +96,7 @@ export const createOrUpdateEmbed = mutation({
 
     const existing = await ctx.db
       .query("lessonEmbeds")
-      .withIndex("by_lesson_id_and_school", (q) => q.eq("lessonId", args.lessonId).eq("school", args.school))
+      .withIndex("by_lesson_id", (q) => q.eq("lessonId", args.lessonId))
       .first();
 
     if (existing) {
@@ -127,7 +127,7 @@ export const getByUnit = query({
   handler: async (ctx, args) => {
     const lessons = await ctx.db
       .query("lessons")
-      .withIndex("by_unit_id_and_school", (q) => q.eq("unitId", args.unitId).eq("school", args.school))
+      .withIndex("by_unit_id", (q) => q.eq("unitId", args.unitId))
       .order("asc")
       .collect();
 
@@ -191,7 +191,7 @@ export const create = mutation({
 
     const existing = await ctx.db
       .query("lessons")
-      .withIndex("by_unit_id_and_school", (q) => q.eq("unitId", args.unitId).eq("school", args.school))
+      .withIndex("by_unit_id", (q) => q.eq("unitId", args.unitId))
       .collect();
     const order = existing.length;
 
@@ -319,7 +319,7 @@ export const remove = mutation({
     // Re-number remaining lessons within unit
     const remaining = await ctx.db
       .query("lessons")
-      .withIndex("by_unit_id_and_school", (q) => q.eq("unitId", lesson.unitId).eq("school", args.school))
+      .withIndex("by_unit_id", (q) => q.eq("unitId", lesson.unitId))
       .order("asc")
       .collect();
     for (const [index, l] of remaining.entries()) {

@@ -1,3 +1,4 @@
+// NOTE: all instances of id are deprecated and will be removed in a future migration, all fields that point to and id already refer the the _id that Convex generates
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 
@@ -36,10 +37,11 @@ export default defineSchema({
     school: v.string(),
   })
     .index("by_user_id_and_school", ["userId", "school"])
+    .index("by_user_id", ["userId"])
     .index("by_school", ["school"]),
   courses: defineTable({
-    id: v.optional(v.string()),
     subjectId: v.string(),
+    id: v.optional(v.string()),
     name: v.string(),
     aliases: v.array(v.string()),
     isPublic: v.boolean(),
@@ -81,20 +83,22 @@ export default defineSchema({
       )
     ),
   })
-    .index("by_course_id_and_school", ["courseId", "school"])
+    .index("by_course_id", ["courseId"])
+    .index("by_user_id", ["userId"])
     .index("by_user_id_and_school", ["userId", "school"])
     .index("by_course_and_user_and_school", ["courseId", "userId", "school"])
     .index("by_role_and_school", ["role", "school"]),
 
   units: defineTable({
-    id: v.optional(v.string()),
     school: v.string(),
+    id: v.optional(v.string()),
     courseId: v.id("courses"),
     name: v.string(),
     description: v.optional(v.string()),
     isPublished: v.boolean(),
     order: v.number(),
   })
+    .index("by_course_id", ["courseId"])
     .index("by_course_id_and_school", ["courseId", "school"])
     .index("by_course_and_order_and_school", ["courseId", "school", "order"])
     .index("by_is_published_and_school", ["isPublished", "school"])
@@ -125,9 +129,8 @@ export default defineSchema({
     name: v.string(),
     content: v.optional(v.any()), // JSONContent type
   })
-    .index("by_course_id_and_school", ["courseId", "school"])
-    .index("by_unit_id_and_school", ["unitId", "school"])
-    .index("by_unit_and_order_and_school", ["unitId", "order", "school"])
+    .index("by_course_id", ["courseId"])
+    .index("by_unit_id", ["unitId"])
     .index("by_is_published_and_school", ["isPublished", "school"])
     .index("by_content_type_and_school", ["contentType", "school"])
     .searchIndex("search_name", {
@@ -147,11 +150,12 @@ export default defineSchema({
     password: v.optional(v.string()),
     lessonId: v.id("lessons"),
     embedUrl: v.string(),
-  }).index("by_lesson_id_and_school", ["lessonId", "school"]),
+  }).index("by_lesson_id", ["lessonId"]),
 
   logs: defineTable({
     school: v.string(),
     userId: v.string(),
+    id: v.optional(v.string()),
     lessonId: v.optional(v.id("lessons")),
     unitId: v.optional(v.id("units")),
     courseId: v.optional(v.id("courses")),

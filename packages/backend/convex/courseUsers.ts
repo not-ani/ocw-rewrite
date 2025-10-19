@@ -64,7 +64,7 @@ export const countMembersByRole = query({
 
     const members = await ctx.db
       .query("courseUsers")
-      .withIndex("by_course_id_and_school", (q) => q.eq("courseId", args.courseId).eq("school", args.school))
+      .withIndex("by_course_id", (q) => q.eq("courseId", args.courseId))
       .collect();
 
     const counts = members.reduce(
@@ -102,7 +102,7 @@ export const listMembers = query({
 
     const members = await ctx.db
       .query("courseUsers")
-      .withIndex("by_course_id_and_school", (q) => q.eq("courseId", args.courseId).eq("school", args.school))
+      .withIndex("by_course_id", (q) => q.eq("courseId", args.courseId))
       .collect();
 
     return members.map((m) => ({

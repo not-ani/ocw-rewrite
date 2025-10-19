@@ -267,14 +267,14 @@ export const getCourseWithUnitsAndLessons = query({
 
     const units = await ctx.db
       .query("units")
-      .withIndex("by_course_and_order_and_school", (q) => q.eq("courseId", course._id).eq("school", args.school))
+      .withIndex("by_course_id", (q) => q.eq("courseId", course._id))
       .collect();
 
     const unitsWithLessons = await Promise.all(
       units.map(async (unit) => {
         const lessons = await ctx.db
           .query("lessons")
-          .withIndex("by_unit_id_and_school", (q) => q.eq("unitId", unit._id).eq("school", args.school))
+          .withIndex("by_unit_id", (q) => q.eq("unitId", unit._id))
           .filter((q) => q.eq(q.field("isPublished"), true))
           .collect();
 
@@ -309,12 +309,12 @@ export const getDashboardSummary = query({
 
     const units = await ctx.db
       .query("units")
-      .withIndex("by_course_id_and_school", (q) => q.eq("courseId", course._id).eq("school", args.school))
+      .withIndex("by_course_id", (q) => q.eq("courseId", course._id))
       .collect();
 
     const lessons = await ctx.db
       .query("lessons")
-      .withIndex("by_course_id_and_school", (q) => q.eq("courseId", course._id).eq("school", args.school))
+      .withIndex("by_course_id", (q) => q.eq("courseId", course._id))
       .collect();
 
     const publishedUnits = units.filter((u) => u.isPublished).length;
@@ -358,14 +358,14 @@ export const getSidebarData = query({
 
     const units = await ctx.db
       .query("units")
-      .withIndex("by_course_and_order_and_school", (q) => q.eq("courseId", args.courseId).eq("school", args.school))
+      .withIndex("by_course_id", (q) => q.eq("courseId", args.courseId))
       .collect();
 
     const result = await Promise.all(
       units.map(async (unit) => {
         const lessons = await ctx.db
           .query("lessons")
-          .withIndex("by_unit_and_order_and_school", (q) => q.eq("unitId", unit._id).eq("order", unit.order).eq("school", args.school))
+          .withIndex("by_unit_id", (q) => q.eq("unitId", unit._id))
           .filter((q) => q.eq(q.field("isPublished"), true))
           .collect();
 
@@ -373,7 +373,7 @@ export const getSidebarData = query({
           lessons.map(async (lesson) => {
             const embeds = await ctx.db
               .query("lessonEmbeds")
-              .withIndex("by_lesson_id_and_school", (q) => q.eq("lessonId", lesson._id).eq("school", args.school))
+              .withIndex("by_lesson_id", (q) => q.eq("lessonId", lesson._id))
               .unique();
 
             return {

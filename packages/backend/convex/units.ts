@@ -7,7 +7,7 @@ export const getTableData = query({
   handler: async (ctx, args) => {
     const units = await ctx.db
       .query("units")
-      .withIndex("by_course_id_and_school", (q) => q.eq("courseId", args.courseId).eq("school", args.school))
+      .withIndex("by_course_id", (q) => q.eq("courseId", args.courseId))
       .order("asc")
       .collect();
 
@@ -71,7 +71,7 @@ export const getUnitWithLessons = query({
 
     const lessons = await ctx.db
       .query("lessons")
-      .withIndex("by_unit_id_and_school", (q) => q.eq("unitId", unit._id).eq("school", args.school))
+      .withIndex("by_unit_id", (q) => q.eq("unitId", unit._id))
       .filter((q) => q.eq(q.field("isPublished"), true))
       .order("asc")
       .collect();
@@ -107,7 +107,7 @@ export const create = mutation({
 
     const count = await ctx.db
       .query("units")
-      .withIndex("by_course_id_and_school", (q) => q.eq("courseId", args.courseId).eq("school", args.school))
+      .withIndex("by_course_id", (q) => q.eq("courseId", args.courseId))
       .collect();
 
     const order = count.length;
@@ -227,10 +227,9 @@ export const remove = mutation({
 
     await ctx.db.delete(args.id);
 
-    // Re-number remaining units
     const remaining = await ctx.db
       .query("units")
-      .withIndex("by_course_id_and_school", (q) => q.eq("courseId", args.courseId).eq("school", args.school))
+      .withIndex("by_course_id", (q) => q.eq("courseId", args.courseId))
       .order("asc")
       .collect();
     for (const [index, u] of remaining.entries()) {
