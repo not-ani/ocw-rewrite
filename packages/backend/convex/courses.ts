@@ -401,7 +401,6 @@ export const getSidebarData = query({
       })
     );
 
-    console.log(result);
     return result;
   },
 });
