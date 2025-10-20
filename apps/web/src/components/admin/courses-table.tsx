@@ -225,14 +225,14 @@ export function CoursesTable({ courses }: CoursesTableProps) {
       <TableHeader>
         {({ headerGroup }) => (
           <TableHeaderGroup key={headerGroup.id} headerGroup={headerGroup}>
-            {({ header }) => <TableHead header={header} />}
+            {({ header }) => <TableHead key={header.id} header={header} />}
           </TableHeaderGroup>
         )}
       </TableHeader>
       <TableBody>
         {({ row }) => (
           <TableRow key={row.id} row={row}>
-            {({ cell }) => <TableCell cell={cell} />}
+            {({ cell }) => <TableCell key={cell.id} cell={cell} />}
           </TableRow>
         )}
       </TableBody>

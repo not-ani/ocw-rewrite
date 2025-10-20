@@ -42,11 +42,12 @@ export async function GET() {
       firstName: user.firstName ?? "",
       lastName: user.lastName ?? "",
       fullName:
-        `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim() ||
+        user.fullName ??
         "Unknown User",
       imageUrl: user.imageUrl,
       createdAt: user.createdAt,
     }));
+    console.log("formattedUsers", formattedUsers);
 
     return NextResponse.json(formattedUsers);
   } catch (error) {

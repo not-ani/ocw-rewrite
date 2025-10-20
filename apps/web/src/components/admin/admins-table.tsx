@@ -211,14 +211,14 @@ export function AdminsTable({ adminsWithUsers }: AdminsTableProps) {
     >
       <TableHeader>
         {({ headerGroup }) => (
-          <TableHeaderGroup headerGroup={headerGroup}>
+          <TableHeaderGroup key={headerGroup.id} headerGroup={headerGroup}>
             {({ header }) => <TableHead key={header.id} header={header} />}
           </TableHeaderGroup>
         )}
       </TableHeader>
       <TableBody>
         {({ row }) => (
-          <TableRow row={row}>
+          <TableRow key={row.id} row={row}>
             {({ cell }) => <TableCell key={cell.id} cell={cell} />}
           </TableRow>
         )}

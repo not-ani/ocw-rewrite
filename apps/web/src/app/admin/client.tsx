@@ -42,15 +42,23 @@ export function AdminPageClient({
   }, []);
 
   const existingAdminIds = useMemo(
-    () => new Set(admins.map((admin) => admin.userId)),
+    () => new Set(admins.map((admin) => {
+      // Extract the Clerk user ID from the tokenIdentifier (format: "issuer|userId")
+      return admin.userId.split("|").pop() ?? admin.userId;
+    })),
     [admins],
   );
 
   const adminsWithUsers = useMemo(() => {
-    return admins.map((admin) => ({
-      admin,
-      clerkUser: clerkUsers.find((user) => user.id === admin.userId) ?? null,
-    }));
+    return admins.map((admin) => {
+      // Extract the Clerk user ID from the tokenIdentifier (format: "issuer|userId")
+      const clerkUserId = admin.userId.split("|").pop() ?? admin.userId;
+      
+      return {
+        admin,
+        clerkUser: clerkUsers.find((user) => user.id === clerkUserId) ?? null,
+      };
+    });
   }, [admins, clerkUsers]);
 
   return (

@@ -73,7 +73,7 @@ function LinkTabsTab({
   className,
   href,
   orientation = "horizontal",
-  exact = false,
+  exact = true,
   ...props
 }: LinkTabsTabProps) {
   const pathname = usePathname();
