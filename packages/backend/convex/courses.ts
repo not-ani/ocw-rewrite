@@ -22,12 +22,16 @@ export const getPaginatedCourses = query({
     if (search?.trim()) {
       allCourses = await ctx.db
         .query("courses")
-        .withSearchIndex("search_name", (q) => q.search("name", search.trim()).eq("school", school))
+        .withSearchIndex("search_name", (q) =>
+          q.search("name", search.trim()).eq("school", school),
+        )
         .collect();
     } else {
       allCourses = await ctx.db
         .query("courses")
-        .withIndex("by_is_public_and_school", (q) => q.eq("isPublic", true).eq("school", school))
+        .withIndex("by_is_public_and_school", (q) =>
+          q.eq("isPublic", true).eq("school", school),
+        )
         .collect();
     }
 
@@ -49,44 +53,56 @@ type SearchEntityKind = "course" | "unit" | "lesson";
 
 type SearchResult =
   | {
-    type: "course";
-    id: Id<"courses">;
-    name: string;
-    description: string;
-    unitLength: number;
-  }
+      type: "course";
+      id: Id<"courses">;
+      name: string;
+      description: string;
+      unitLength: number;
+    }
   | {
-    type: "unit";
-    id: Id<"units">;
-    name: string;
-    courseId: Id<"courses">;
-    courseName: string;
-  }
+      type: "unit";
+      id: Id<"units">;
+      name: string;
+      courseId: Id<"courses">;
+      courseName: string;
+    }
   | {
-    type: "lesson";
-    id: Id<"lessons">;
-    name: string;
-    courseId: Id<"courses">;
-    courseName: string;
-    unitId: Id<"units">;
-    unitName: string;
-  };
+      type: "lesson";
+      id: Id<"lessons">;
+      name: string;
+      courseId: Id<"courses">;
+      courseName: string;
+      unitId: Id<"units">;
+      unitName: string;
+    };
 
 const MAX_RESULTS_PER_GROUP = 5;
 
-async function searchCourses(db: QueryCtx["db"], term: string, limit: number, school: string) {
+async function searchCourses(
+  db: QueryCtx["db"],
+  term: string,
+  limit: number,
+  school: string,
+) {
   return await db
     .query("courses")
     .withSearchIndex("search_name", (q) =>
-      q.search("name", term).eq("isPublic", true).eq("school", school)
+      q.search("name", term).eq("isPublic", true).eq("school", school),
     )
     .take(limit);
 }
 
-async function searchUnits(db: QueryCtx["db"], term: string, limit: number, school: string) {
+async function searchUnits(
+  db: QueryCtx["db"],
+  term: string,
+  limit: number,
+  school: string,
+) {
   const matches = await db
     .query("units")
-    .withSearchIndex("search_name", (q) => q.search("name", term).eq("school", school))
+    .withSearchIndex("search_name", (q) =>
+      q.search("name", term).eq("school", school),
+    )
     .take(limit * 3);
 
   return matches.filter((unit) => unit.isPublished).slice(0, limit);
@@ -96,11 +112,13 @@ async function searchLessons(
   db: QueryCtx["db"],
   term: string,
   limit: number,
-  school: string
+  school: string,
 ) {
   const matches = await db
     .query("lessons")
-    .withSearchIndex("search_name", (q) => q.search("name", term).eq("school", school))
+    .withSearchIndex("search_name", (q) =>
+      q.search("name", term).eq("school", school),
+    )
     .take(limit * 3);
 
   return matches.filter((lesson) => lesson.isPublished).slice(0, limit);
@@ -110,7 +128,7 @@ function formatResults(
   courses: Doc<"courses">[],
   units: Doc<"units">[],
   lessons: Doc<"lessons">[],
-  school: string
+  school: string,
 ): SearchResult[] {
   const courseResults: SearchResult[] = courses.map((course) => ({
     type: "course",
@@ -144,7 +162,7 @@ function formatResults(
 async function hydrateResults(
   db: QueryCtx["db"],
   results: SearchResult[],
-  school: string
+  school: string,
 ): Promise<SearchResult[]> {
   const courseIds = new Set<Id<"courses">>();
   const unitIds = new Set<Id<"units">>();
@@ -159,7 +177,7 @@ async function hydrateResults(
   }
 
   const courses = await Promise.all(
-    [...courseIds].map((courseId) => db.get(courseId))
+    [...courseIds].map((courseId) => db.get(courseId)),
   );
 
   const units = await Promise.all([...unitIds].map((unitId) => db.get(unitId)));
@@ -167,14 +185,17 @@ async function hydrateResults(
   const courseById = new Map(
     courses
       .filter((course): course is Doc<"courses"> => Boolean(course))
-      .map((course) => [course._id, course])
+      .map((course) => [course._id, course]),
   );
   const unitById = new Map(
     units
       .filter(
-        (unit): unit is Doc<"units"> => Boolean(unit) && Boolean(unit?.isPublished) && Boolean(unit?.school === school)
+        (unit): unit is Doc<"units"> =>
+          Boolean(unit) &&
+          Boolean(unit?.isPublished) &&
+          Boolean(unit?.school === school),
       )
-      .map((unit) => [unit._id, unit])
+      .map((unit) => [unit._id, unit]),
   );
 
   return results
@@ -218,7 +239,9 @@ export const searchEntities = query({
   args: {
     term: v.string(),
     include: v.optional(
-      v.array(v.union(v.literal("course"), v.literal("unit"), v.literal("lesson"))),
+      v.array(
+        v.union(v.literal("course"), v.literal("unit"), v.literal("lesson")),
+      ),
     ),
     school: v.string(),
   },
@@ -230,12 +253,16 @@ export const searchEntities = query({
     }
 
     const include = new Set<SearchEntityKind>(
-      (args.include ?? ["course", "unit", "lesson"]) as SearchEntityKind[]
+      (args.include ?? ["course", "unit", "lesson"]) as SearchEntityKind[],
     );
 
     const [courses, units, lessons] = await Promise.all([
-      include.has("course") ? searchCourses(ctx.db, term, MAX_RESULTS_PER_GROUP, args.school) : [],
-      include.has("unit") ? searchUnits(ctx.db, term, MAX_RESULTS_PER_GROUP, args.school) : [],
+      include.has("course")
+        ? searchCourses(ctx.db, term, MAX_RESULTS_PER_GROUP, args.school)
+        : [],
+      include.has("unit")
+        ? searchUnits(ctx.db, term, MAX_RESULTS_PER_GROUP, args.school)
+        : [],
       include.has("lesson")
         ? searchLessons(ctx.db, term, MAX_RESULTS_PER_GROUP, args.school)
         : [],
@@ -292,7 +319,7 @@ export const getCourseWithUnitsAndLessons = query({
             contentType: lesson.contentType,
           })),
         };
-      })
+      }),
     );
 
     return { ...course, _id: course._id, units: unitsWithLessons };
@@ -300,7 +327,11 @@ export const getCourseWithUnitsAndLessons = query({
 });
 
 export const getDashboardSummary = query({
-  args: { courseId: v.id("courses"), userRole: v.optional(v.string()), school: v.string() },
+  args: {
+    courseId: v.id("courses"),
+    userRole: v.optional(v.string()),
+    school: v.string(),
+  },
   handler: async (ctx, args) => {
     const course = await ctx.db.get(args.courseId);
 
@@ -326,7 +357,9 @@ export const getDashboardSummary = query({
 
     const last10Logs = await ctx.db
       .query("logs")
-      .withIndex("by_course_id_and_school", (q) => q.eq("courseId", course._id).eq("school", args.school))
+      .withIndex("by_course_id_and_school", (q) =>
+        q.eq("courseId", course._id).eq("school", args.school),
+      )
       .order("desc")
       .take(10);
 
@@ -363,6 +396,7 @@ export const getSidebarData = query({
     const units = await ctx.db
       .query("units")
       .withIndex("by_course_id", (q) => q.eq("courseId", args.courseId))
+      .filter((q) => q.eq(q.field("isPublished"), true))
       .collect();
 
     const result = await Promise.all(
@@ -388,7 +422,7 @@ export const getSidebarData = query({
               unitId: lesson.unitId,
               embeds,
             };
-          })
+          }),
         );
 
         return {
@@ -402,7 +436,7 @@ export const getSidebarData = query({
           },
           lessons: lessonsWithEmbeds,
         };
-      })
+      }),
     );
 
     return result;
@@ -418,7 +452,7 @@ export const getBreadcrumbData = query({
   },
   handler: async (ctx, args) => {
     const course = await ctx.db.get(args.courseId);
-    
+
     if (!course || course.school !== args.school) {
       return null;
     }
@@ -451,7 +485,7 @@ export const getBreadcrumbData = query({
           id: lesson._id,
           name: lesson.name,
         };
-        
+
         if (!args.unitId && lesson.unitId) {
           const unit = await ctx.db.get(lesson.unitId);
           if (unit && unit.school === args.school) {
@@ -472,13 +506,17 @@ export const normalizeUnitLengths = mutation({
   args: { school: v.string() },
   handler: async (ctx, args) => {
     const allCourses = await ctx.db.query("courses").collect();
-    const courses = allCourses.filter((course) => course.school === args.school);
+    const courses = allCourses.filter(
+      (course) => course.school === args.school,
+    );
 
     const updates = await Promise.all(
       courses.map(async (course) => {
         const unitCount = await ctx.db
           .query("units")
-          .withIndex("by_course_id_and_school", (q) => q.eq("courseId", course._id).eq("school", args.school))
+          .withIndex("by_course_id_and_school", (q) =>
+            q.eq("courseId", course._id).eq("school", args.school),
+          )
           .collect()
           .then((units) => units.length);
 
@@ -490,7 +528,7 @@ export const normalizeUnitLengths = mutation({
           oldUnitLength: course.unitLength,
           newUnitLength: unitCount,
         };
-      })
+      }),
     );
 
     return {
