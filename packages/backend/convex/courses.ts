@@ -271,6 +271,7 @@ export const getCourseWithUnitsAndLessons = query({
     const units = await ctx.db
       .query("units")
       .withIndex("by_course_id", (q) => q.eq("courseId", course._id))
+      .filter((q) => q.eq(q.field("isPublished"), true))
       .collect();
 
     const unitsWithLessons = await Promise.all(
