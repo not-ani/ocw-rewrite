@@ -7,16 +7,18 @@ import { usePostHog } from "posthog-js/react";
 import posthog from "posthog-js";
 import { PostHogProvider as PHProvider } from "posthog-js/react";
 import { useSession } from "@clerk/nextjs";
+import { env } from "process";
 
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
-    posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
-      api_host:
-        `/ocw-path-for-stuff`,
-      ui_host: `/ocw-path-for-stuff`,
-      person_profiles: "always",
-      capture_pageview: true,
-    });
+    if (typeof window !== "undefined") {
+      posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
+        api_host: `${env.NEXT_PUBLIC_APP_BASE_URL}/ocw-path-for-stuff`,
+        ui_host: `${env.NEXT_PUBLIC_APP_BASE_URL}/ocw-path-for-stuff`,
+        person_profiles: "always",
+        capture_pageview: true,
+      });
+    }
   }, []);
 
   return (
