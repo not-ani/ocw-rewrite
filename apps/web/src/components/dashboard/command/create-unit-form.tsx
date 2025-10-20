@@ -22,11 +22,12 @@ import {
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useSite } from "@/lib/multi-tenant/context";
 
 const formSchema = z.object({
   unitName: z.string().min(3, "Unit name must be at least 3 characters").max(50),
   description: z.string().optional(),
-  isPublished: z.boolean().default(false),
+  isPublished: z.boolean().default(false).optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -43,6 +44,8 @@ export function CreateUnitInlineForm({
   onCancel,
 }: CreateUnitInlineFormProps) {
   const createUnit = useMutation(api.units.create);
+  const { subdomain } = useSite();
+
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -60,6 +63,7 @@ export function CreateUnitInlineForm({
     try {
       await createUnit({
         courseId,
+        school: subdomain,
         unitName: values.unitName,
         description: values.description,
         isPublished: values.isPublished,

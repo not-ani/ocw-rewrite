@@ -266,3 +266,14 @@ export const siteConfigMigration = migrations.define({
     }
   },
 });
+
+
+export const setUnitLengthDefaultValue = migrations.define({
+  table: "courses",
+  migrateOne: async (ctx, doc) => {
+    const units = await ctx.db.query("units").withIndex("by_course_id", (q) => q.eq("courseId", doc._id)).collect();
+    await ctx.db.patch(doc._id, {
+      unitLength: units.length,
+    });
+  },
+});

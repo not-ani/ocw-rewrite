@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { HomeIcon, SidebarIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useMemo } from "react";
@@ -19,15 +19,21 @@ import { useSidebar } from "@/components/ui/sidebar";
 import DashboardCommand from "@/components/dashboard/dashboard-command";
 import Link from "next/link";
 import { cn } from "@/lib/utils";
+import { useSite } from "@/lib/multi-tenant/context";
 
 export function CourseDashboardHeader() {
   const { toggleSidebar } = useSidebar();
   const pathname = usePathname();
+  const { subdomain } = useSite();
+
+  if (!subdomain) {
+    return null;
+  }
 
   const routeParams = useMemo(() => {
-    const parts = pathname.split('/').filter(Boolean);
+    const parts = pathname.split("/").filter(Boolean);
 
-    if (parts[0] !== 'course' || !parts[1]) {
+    if (parts[0] !== "course" || !parts[1]) {
       return null;
     }
 
@@ -35,11 +41,11 @@ export function CourseDashboardHeader() {
     let unitId: Id<"units"> | undefined;
     let lessonId: Id<"lessons"> | undefined;
 
-    if (parts[3] === 'unit' && parts[4]) {
+    if (parts[3] === "unit" && parts[4]) {
       unitId = parts[4] as Id<"units">;
     }
 
-    if (parts[3] === 'lesson' && parts[4]) {
+    if (parts[3] === "lesson" && parts[4]) {
       lessonId = parts[4] as Id<"lessons">;
     }
 
@@ -48,18 +54,21 @@ export function CourseDashboardHeader() {
 
   const breadcrumbData = useQuery(
     api.courses.getBreadcrumbData,
-    routeParams ? {
-      courseId: routeParams.courseId,
-      unitId: routeParams.unitId,
-      lessonId: routeParams.lessonId,
-    } : "skip"
+    routeParams
+      ? {
+          courseId: routeParams.courseId,
+          unitId: routeParams.unitId,
+          lessonId: routeParams.lessonId,
+          school: subdomain,
+        }
+      : "skip"
   );
 
   const pageType = useMemo(() => {
-    if (!routeParams) return 'unknown';
-    if (routeParams.lessonId) return 'lesson';
-    if (routeParams.unitId) return 'unit';
-    return 'dashboard';
+    if (!routeParams) return "unknown";
+    if (routeParams.lessonId) return "lesson";
+    if (routeParams.unitId) return "unit";
+    return "dashboard";
   }, [routeParams]);
 
   const isLoading = routeParams && breadcrumbData === undefined;
@@ -85,27 +94,33 @@ export function CourseDashboardHeader() {
             ) : breadcrumbData?.course ? (
               <>
                 <BreadcrumbItem>
-                  <BreadcrumbLink href={`/course/${breadcrumbData.course.id}/dashboard`}>
+                  <BreadcrumbLink
+                    href={`/course/${breadcrumbData.course.id}/dashboard`}
+                  >
                     {breadcrumbData.course.name}
                   </BreadcrumbLink>
                 </BreadcrumbItem>
 
-                {breadcrumbData.unit && pageType !== 'unit' && (
+                {breadcrumbData.unit && pageType !== "unit" && (
                   <>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                      <BreadcrumbLink href={`/course/${breadcrumbData.course.id}/dashboard/unit/${breadcrumbData.unit.id}`}>
+                      <BreadcrumbLink
+                        href={`/course/${breadcrumbData.course.id}/dashboard/unit/${breadcrumbData.unit.id}`}
+                      >
                         {breadcrumbData.unit.name}
                       </BreadcrumbLink>
                     </BreadcrumbItem>
                   </>
                 )}
 
-                {breadcrumbData.unit && pageType === 'unit' && (
+                {breadcrumbData.unit && pageType === "unit" && (
                   <>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                      <BreadcrumbPage>{breadcrumbData.unit.name}</BreadcrumbPage>
+                      <BreadcrumbPage>
+                        {breadcrumbData.unit.name}
+                      </BreadcrumbPage>
                     </BreadcrumbItem>
                   </>
                 )}
@@ -114,12 +129,14 @@ export function CourseDashboardHeader() {
                   <>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
-                      <BreadcrumbPage>{breadcrumbData.lesson.name}</BreadcrumbPage>
+                      <BreadcrumbPage>
+                        {breadcrumbData.lesson.name}
+                      </BreadcrumbPage>
                     </BreadcrumbItem>
                   </>
                 )}
 
-                {pageType === 'dashboard' && (
+                {pageType === "dashboard" && (
                   <>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>

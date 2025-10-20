@@ -7,6 +7,7 @@ import { Loader2 } from "lucide-react";
 import { useMemo } from "react";
 import { AddUserDialog } from "@/components/dashboard/users/add-user-dialog";
 import { UsersTable } from "@/components/dashboard/users/users-table";
+import { useSite } from "@/lib/multi-tenant/context";
 
 type ClerkUser = {
   id: string;
@@ -27,7 +28,8 @@ export function UsersClient({
   allClerkUsers,
   canManageUsers,
 }: UsersClientProps) {
-  const members = useQuery(api.courseUsers.listMembers, { courseId });
+  const { subdomain } = useSite();
+  const members = useQuery(api.courseUsers.listMembers, { courseId, school: subdomain });
 
   const usersWithMembership = useMemo(() => {
     if (!members) return [];

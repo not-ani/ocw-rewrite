@@ -120,6 +120,10 @@ export const create = mutation({
       order,
     });
 
+    await ctx.db.patch(args.courseId, {
+      unitLength: (await ctx.db.query("units").withIndex("by_course_id", (q) => q.eq("courseId", args.courseId)).collect()).length,
+    });
+
     await ctx.db.insert("logs", {
       userId: (await ctx.auth.getUserIdentity())?.subject ?? "unknown",
       courseId: args.courseId,

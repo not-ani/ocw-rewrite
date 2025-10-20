@@ -32,6 +32,7 @@ import {
   ComboboxGroup,
   ComboboxItem,
 } from "@/components/ui/kibo-ui/combobox";
+import { useSite } from "@/lib/multi-tenant/context";
 
 const formSchema = z.object({
   name: z.string().min(3, "Lesson name must be at least 3 characters").max(200),
@@ -53,8 +54,9 @@ export function CreateLessonInlineForm({
   onCancel,
 }: CreateLessonInlineFormProps) {
   const createLesson = useMutation(api.lesson.create);
+  const { subdomain } = useSite();
   
-  const units = useQuery(api.units.getTableData, { courseId });
+  const units = useQuery(api.units.getTableData, { courseId, school: subdomain });
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -83,6 +85,7 @@ export function CreateLessonInlineForm({
         unitId: values.unitId as Id<"units">,
         name: values.name,
         embedRaw: values.embedRaw,
+        school: subdomain,
       });
       toast.success("Lesson created successfully!");
       onSuccess();
