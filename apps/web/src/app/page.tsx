@@ -4,13 +4,41 @@ import { Card, CardContent } from "@/components/ui/card";
 import { useQuery } from "convex/react";
 import { api } from "@ocw-rewrite/backend/convex/_generated/api";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Separator } from "@/components/ui/separator";
 
 export default function Page() {
   const sites = useQuery(api.site.getSites);
   return (
     <div className="container mx-auto flex h-screen w-full flex-col items-center gap-4 pt-10">
       <h1 className="text-4xl font-bold"> The OpenCourseWare Project </h1>
-      <p className="text-lg"> Welcome to the OpenCourseWare Project </p>
+      <p className="text-lg text-center text-muted-foreground leading-relaxed max-w-lg">
+        OCW is a multi-tenant, school-agnostic platform that empowers educators to create, share, and distribute
+        high-quality educational content. Built with modern web technologies, it provides a seamless experience
+        for both content creators and learners.
+      </p>
+      <p className="text-sm text-muted-foreground">
+        A project of{" "}
+        <Link 
+          href="https://csforco.org" 
+          target="_blank" 
+          rel="noopener noreferrer"
+          className="underline hover:text-foreground transition-colors"
+        >
+          CS for CO
+        </Link>
+      </p>
+      <Separator className="my-4 max-w-lg" />
+      <h1 className="text-3xl font-bold">Want to add your school?</h1>
+      <p className="text-lg text-center text-muted-foreground leading-relaxed max-w-lg">
+        If you want to add your school to the list, please fill out this form:
+        {" "}
+        <Link href="https://forms.gle/6uzDkmrrAqanHqVn7" target="_blank" rel="noopener noreferrer" className="underline hover:text-foreground transition-colors">
+          here
+        </Link>.
+      </p>
+
+      <Separator className="my-4 max-w-lg" />
+      <h1 className="text-3xl font-bold">Schools</h1>
       <div className="grid grid-cols-2 gap-4">
         {sites
           ? sites.map((site) => (
