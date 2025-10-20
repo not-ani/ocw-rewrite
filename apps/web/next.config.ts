@@ -11,11 +11,11 @@ const nextConfig: NextConfig = {
   async rewrites() {
     return [
       {
-        source: "/ocw-path-for-stuff/static/:path*",
+        source: "/undefined/ocw-path-for-stuff/static/:path*",
         destination: "https://us-assets.i.posthog.com/static/:path*",
       },
       {
-        source: "/ocw-path-for-stuff/:path*",
+        source: "/undefined/ocw-path-for-stuff/:path*",
         destination: "https://us.i.posthog.com/:path*",
       },
     ];
