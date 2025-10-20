@@ -38,6 +38,7 @@ import {
   TableProvider,
   TableRow,
 } from "@/components/ui/kibo-ui/table";
+import { useSite } from "@/lib/multi-tenant/context";
 
 type SiteAdmin = Doc<"siteUser">;
 
@@ -68,11 +69,11 @@ function RemoveAdminButton({
   const [isOpen, setIsOpen] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
   const removeAdmin = useMutation(api.admin.removeSiteAdmin);
-
+  const { subdomain } = useSite();
   const handleRemove = async () => {
     setIsRemoving(true);
     try {
-      await removeAdmin({ userId });
+      await removeAdmin({ userId, school: subdomain });
       toast.success("Admin removed successfully");
       setIsOpen(false);
     } catch (error) {

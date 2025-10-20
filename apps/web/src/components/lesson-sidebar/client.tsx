@@ -14,6 +14,7 @@ import {
 import { GetIcon } from "./icons";
 import type { SidebarData } from "./types";
 import Link from "next/link";
+import type { Route } from "next";
 
 const Overlay = ({
   data,
@@ -203,9 +204,9 @@ function UnitLessonNav({
                     rel={lesson.pureLink ? "noopener noreferrer" : undefined}
                     target={lesson.pureLink ? "_blank" : undefined}
                     href={
-                      lesson.pureLink
+                      (lesson.pureLink
                         ? (lesson?.embeds?.embedUrl ?? "#")
-                        : `/course/${courseId}/${lesson.unitId}/${lesson.id}`
+                        : (`/course/${courseId}/${lesson.unitId}/${lesson.id}` as Route)) as Route
                     }
                   >
                     <GetIcon type={lesson.contentType} />

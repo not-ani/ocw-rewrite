@@ -30,6 +30,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { useSite } from "@/lib/multi-tenant/context";
 
 type ClerkUser = {
   id: string;
@@ -52,7 +53,7 @@ export function AddAdminDialog({
   const [comboboxOpen, setComboboxOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [isAdding, setIsAdding] = useState(false);
-
+  const { subdomain } = useSite();
   const addAdmin = useMutation(api.admin.addSiteAdmin);
 
   const eligibleUsers = availableUsers.filter(
@@ -69,7 +70,7 @@ export function AddAdminDialog({
 
     setIsAdding(true);
     try {
-      await addAdmin({ userId: selectedUserId });
+      await addAdmin({ userId: selectedUserId, school: subdomain });
       toast.success("Admin added successfully");
       setOpen(false);
       setSelectedUserId("");

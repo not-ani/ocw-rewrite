@@ -34,6 +34,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useSite } from "@/lib/multi-tenant/context";
 
 const addUserSchema = z.object({
   userId: z.string().min(1, "User ID is required"),
@@ -63,6 +64,7 @@ export function AddUserDialog({
 }: AddUserDialogProps) {
   const [open, setOpen] = useState(false);
   const addOrUpdateMember = useMutation(api.courseUsers.addOrUpdateMember);
+  const { subdomain } = useSite();
 
   const form = useForm<AddUserFormValues>({
     resolver: zodResolver(addUserSchema),
@@ -78,6 +80,7 @@ export function AddUserDialog({
         courseId,
         userId: values.userId,
         role: values.role,
+        school: subdomain,
       });
 
       if (result?.created) {

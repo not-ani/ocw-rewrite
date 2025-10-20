@@ -9,7 +9,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint --fix .",
     "format": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\"",
-    "format:fix": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\" --fix"
+    "format:fix": "prettier --write \"**/*.{js,jsx,ts,tsx,json,md}\" --fix",
+    "type-check": "tsc --noEmit"
   },
   "dependencies": {
     "@base-ui-components/react": "1.0.0-beta.4",

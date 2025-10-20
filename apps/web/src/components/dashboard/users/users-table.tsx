@@ -45,6 +45,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { useSite } from "@/lib/multi-tenant/context";
 
 type ClerkUser = {
   id: string;
@@ -85,7 +86,7 @@ function RoleSelect({
 }) {
   const [isUpdating, setIsUpdating] = useState(false);
   const updateMember = useMutation(api.courseUsers.addOrUpdateMember);
-
+  const { subdomain } = useSite();
   const handleRoleChange = async (newRole: "admin" | "editor" | "user") => {
     if (newRole === currentRole) return;
 
@@ -95,6 +96,7 @@ function RoleSelect({
         courseId,
         userId,
         role: newRole,
+        school: subdomain,
       });
       toast.success("Role updated successfully");
     } catch (error) {
@@ -136,11 +138,11 @@ function RemoveUserButton({
   const [isOpen, setIsOpen] = useState(false);
   const [isRemoving, setIsRemoving] = useState(false);
   const removeMember = useMutation(api.courseUsers.removeMember);
-
+  const { subdomain } = useSite();
   const handleRemove = async () => {
     setIsRemoving(true);
     try {
-      await removeMember({ courseId, userId });
+      await removeMember({ courseId, userId, school: subdomain });
       toast.success("User removed from course");
       setIsOpen(false);
     } catch (error) {
