@@ -78,7 +78,7 @@ type ConfirmationDialog = {
 function SortableLessonRow({
   row,
   courseId,
-  unitId,
+  unitId: _unitId,
   onUpdateLesson,
   onRemoveLesson,
 }: {
@@ -130,7 +130,7 @@ function SortableLessonRow({
         isOpen: true,
         title: "Unpublish Lesson",
         description: `Are you sure you want to unpublish "${lesson.name}"? Students will no longer be able to access this lesson.`,
-        action: handleUnpublish,
+        action: () => void handleUnpublish(),
       });
     } else {
       await onUpdateLesson({
@@ -151,7 +151,7 @@ function SortableLessonRow({
       isOpen: true,
       title: "Delete Lesson",
       description: `Are you sure you want to delete "${lesson.name}"? This action cannot be undone.`,
-      action: handleDelete,
+      action: () => void handleDelete(),
     });
   }, [lesson.name, handleDelete]);
 
@@ -324,7 +324,7 @@ export function LessonsTable({
       <div className="rounded-lg border py-12 text-center">
         <p className="text-muted-foreground">No lessons created yet.</p>
         <p className="text-muted-foreground mt-2 text-sm">
-          Click "Add Lesson" to get started.
+          Click &quot;Add Lesson&quot; to get started.
         </p>
       </div>
     );

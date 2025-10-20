@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { useQuery, useMutation } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "@ocw-rewrite/backend/convex/_generated/api";
 import type { Id } from "@ocw-rewrite/backend/convex/_generated/dataModel";
 import {
@@ -13,7 +13,6 @@ import {
   ArrowRightIcon,
   BookOpenIcon,
 } from "lucide-react";
-import { toast } from "sonner";
 
 import {
   CommandDialog,
@@ -25,7 +24,6 @@ import {
   CommandSeparator,
 } from "@/components/ui/command";
 import { useDebouncedValue } from "@/hooks/use-debounce";
-import { Skeleton } from "@/components/ui/skeleton";
 import { CreateUnitInlineForm } from "@/components/dashboard/command/create-unit-form";
 import { CreateLessonInlineForm } from "@/components/dashboard/command/create-lesson-form";
 

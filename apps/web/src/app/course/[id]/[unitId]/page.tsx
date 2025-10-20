@@ -3,7 +3,6 @@ import type { Id } from "@ocw-rewrite/backend/convex/_generated/dataModel";
 import { preloadQuery } from "convex/nextjs";
 import { UnitPageClient } from "./client";
 import { extractSubdomain } from "@/lib/multi-tenant/server";
-import { isValidConvexId } from "@/lib/convex-utils";
 
 export default async function Page({
   params,

@@ -1,7 +1,7 @@
 "use client";
 
 import { usePreloadedQuery, type Preloaded } from "convex/react";
-import { api } from "@ocw-rewrite/backend/convex/_generated/api";
+import { type api } from "@ocw-rewrite/backend/convex/_generated/api";
 import {
   Card,
   CardDescription,

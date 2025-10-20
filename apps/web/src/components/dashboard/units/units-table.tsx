@@ -125,7 +125,7 @@ function SortableUnitRow({
         isOpen: true,
         title: "Unpublish Unit",
         description: `Are you sure you want to unpublish "${unit.name}"? Students will no longer be able to access this unit.`,
-        action: handleUnpublish,
+        action: () => void handleUnpublish(),
       });
     } else {
       await onUpdateUnit({
@@ -140,7 +140,7 @@ function SortableUnitRow({
       isOpen: true,
       title: "Delete Unit",
       description: `Are you sure you want to delete "${unit.name}"? This action cannot be undone and will also delete all lessons in this unit.`,
-      action: handleDelete,
+      action: () => void handleDelete(),
     });
   }, [unit.name, handleDelete]);
 

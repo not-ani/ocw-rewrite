@@ -26,11 +26,9 @@ export function CourseDashboardHeader() {
   const pathname = usePathname();
   const { subdomain } = useSite();
 
-  if (!subdomain) {
-    return null;
-  }
-
   const routeParams = useMemo(() => {
+    if (!subdomain) return null;
+    
     const parts = pathname.split("/").filter(Boolean);
 
     if (parts[0] !== "course" || !parts[1]) {
@@ -50,11 +48,11 @@ export function CourseDashboardHeader() {
     }
 
     return { courseId, unitId, lessonId };
-  }, [pathname]);
+  }, [pathname, subdomain]);
 
   const breadcrumbData = useQuery(
     api.courses.getBreadcrumbData,
-    routeParams
+    routeParams && subdomain
       ? {
           courseId: routeParams.courseId,
           unitId: routeParams.unitId,
@@ -72,6 +70,10 @@ export function CourseDashboardHeader() {
   }, [routeParams]);
 
   const isLoading = routeParams && breadcrumbData === undefined;
+
+  if (!subdomain) {
+    return null;
+  }
 
   return (
     <header className="bg-background sticky top-0 z-50 flex w-full items-center border-b">

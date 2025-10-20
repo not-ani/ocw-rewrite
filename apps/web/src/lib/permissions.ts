@@ -1,7 +1,7 @@
 import "server-only";
 
 import { clerkClient } from "@clerk/nextjs/server";
-import { fetchQuery, preloadQuery } from "convex/nextjs";
+import { fetchQuery } from "convex/nextjs";
 import { api } from "@ocw-rewrite/backend/convex/_generated/api";
 import type { Id } from "@ocw-rewrite/backend/convex/_generated/dataModel";
 import { getAuthToken } from "./auth";

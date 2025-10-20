@@ -19,6 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { LessonRow } from "./lesson-row";
 import { Loader2 } from "lucide-react";
+import { useSite } from "@/lib/multi-tenant/context";
 
 export function LessonsCard({
   selectedUnitId,
@@ -46,17 +47,18 @@ export function LessonsCard({
   }) => Promise<void>;
   onUpdateEmbed: (lessonId: Id<"lessons">, raw: string) => Promise<void>;
 }) {
+  const { subdomain } = useSite();
   const [newLessonName, setNewLessonName] = useState("");
   const [newLessonEmbed, setNewLessonEmbed] = useState("");
 
   const lessons = useQuery(
     api.lesson.getByUnit,
     selectedUnitId
-      ? ({ unitId: selectedUnitId } as { unitId: Id<"units"> })
+      ? ({ unitId: selectedUnitId, school: subdomain } as { unitId: Id<"units">; school: string })
       : ("skip" as const),
   );
 
-  const lessonList = lessons ?? [];
+  const lessonList = useMemo(() => lessons ?? [], [lessons]);
   const lessonIds = useMemo(
     () => lessonList.map((l) => String(l.id)),
     [lessonList],

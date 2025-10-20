@@ -69,7 +69,7 @@ export function UsersClient({
         <div className="text-center">
           <h3 className="text-lg font-semibold">Access Denied</h3>
           <p className="text-muted-foreground text-sm">
-            You don't have permission to view course members.
+            You don&apos;t have permission to view course members.
           </p>
         </div>
       </div>

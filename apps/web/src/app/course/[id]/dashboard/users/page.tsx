@@ -1,6 +1,4 @@
-import { api } from "@ocw-rewrite/backend/convex/_generated/api";
 import type { Id } from "@ocw-rewrite/backend/convex/_generated/dataModel";
-import { preloadQuery } from "convex/nextjs";
 import { redirect, notFound } from "next/navigation";
 import { SignInButton } from "@clerk/nextjs";
 import { UsersClient } from "./client";
@@ -43,7 +41,7 @@ export default async function UsersPage({
     notFound();
   }
 
-  const { authorized, membership } = await checkUserManagementPermission(
+  const { authorized } = await checkUserManagementPermission(
     courseId as Id<"courses">,
   );
 
@@ -52,12 +50,6 @@ export default async function UsersPage({
   }
 
   const allClerkUsers = await getAllClerkUsers();
-
-  const preloadedMembers = await preloadQuery(
-    api.courseUsers.listMembers,
-    { courseId: courseId as Id<"courses">, school: subdomain },
-    { token },
-  );
 
   return (
     <div className="mx-auto w-full max-w-7xl p-4 sm:p-6">

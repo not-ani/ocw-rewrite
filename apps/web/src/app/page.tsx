@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { useQuery } from "convex/react";
 import { api } from "@ocw-rewrite/backend/convex/_generated/api";
 import { Skeleton } from "@/components/ui/skeleton";

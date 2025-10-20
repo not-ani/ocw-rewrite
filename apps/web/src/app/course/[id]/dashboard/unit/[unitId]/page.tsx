@@ -9,7 +9,7 @@ import { notFound } from "next/navigation";
 import { isValidConvexId } from "@/lib/convex-utils";
 
 export async function generateMetadata({
-  params,
+  params: _params,
 }: {
   params: Promise<{ id: string; unitId: string }>;
 }): Promise<Metadata> {

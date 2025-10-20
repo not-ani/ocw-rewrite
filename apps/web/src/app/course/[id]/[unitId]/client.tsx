@@ -11,7 +11,6 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Header } from "@/components/header";
 import Link from "next/link";
-import { useSite } from "@/lib/multi-tenant/context";
 
 type UnitWithLessons = Preloaded<typeof api.units.getUnitWithLessons>;
 
@@ -64,7 +63,6 @@ export function UnitPageClient({
   preloadedUnit: UnitWithLessons;
 }) {
   const unit = usePreloadedQuery(preloadedUnit);
-  const school = useSite().subdomain;
   if (!unit) {
     return <UnitPageSkeleton />;
   }

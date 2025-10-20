@@ -13,7 +13,7 @@ import {
   useQuery,
 } from "convex/react";
 import Link from "next/link";
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { CreateUnitDialog } from "@/components/dashboard/units/create-unit";
 import { UnitsTable } from "@/components/dashboard/units/units-table";
 import { Button } from "@/components/ui/button";
@@ -95,13 +95,13 @@ function DashboardContent({
     null,
   );
 
-  const unitList = units ?? [];
+  const unitList = useMemo(() => units ?? [], [units]);
 
   useEffect(() => {
     if (!selectedUnitId && unitList[0]) {
       setSelectedUnitId(unitList[0].id as Id<"units">);
     }
-  }, [selectedUnitId, unitList]);
+  }, [selectedUnitId, unitList, setSelectedUnitId]);
 
   const handleUpdateUnit = useCallback(
     async (payload: {
@@ -114,7 +114,7 @@ function DashboardContent({
         data: { id: payload.id, ...payload.data },
       });
     },
-    [updateUnit, courseId],
+    [updateUnit, courseId, subdomain],
   );
 
   const handleRemoveUnit = useCallback(
@@ -122,14 +122,14 @@ function DashboardContent({
       await removeUnit({ courseId, id, school: subdomain });
       setSelectedUnitId((prev) => (prev === id ? null : prev));
     },
-    [removeUnit, courseId],
+    [removeUnit, courseId, subdomain],
   );
 
   const handleReorderUnits = useCallback(
     async (data: { id: Id<"units">; position: number }[]) => {
       await reorderUnits({ courseId, data, school: subdomain });
     },
-    [reorderUnits, courseId],
+    [reorderUnits, courseId, subdomain],
   );
 
   if (!user.isLoaded) {

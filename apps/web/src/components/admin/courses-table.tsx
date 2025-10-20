@@ -1,7 +1,7 @@
 "use client";
 
 import { api } from "@ocw-rewrite/backend/convex/_generated/api";
-import type { Doc, Id } from "@ocw-rewrite/backend/convex/_generated/dataModel";
+import type { Doc } from "@ocw-rewrite/backend/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import { MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -86,7 +86,7 @@ function CourseActionsCell({ course }: { course: Course }) {
       isOpen: true,
       title: "Unpublish Course",
       description: `Are you sure you want to unpublish "${course.name}"? Students will no longer be able to access this course.`,
-      action: handleStatusToggle,
+      action: () => void handleStatusToggle(),
     });
   }, [course.name, handleStatusToggle]);
 

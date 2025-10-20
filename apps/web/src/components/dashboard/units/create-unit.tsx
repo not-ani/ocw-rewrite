@@ -1,5 +1,4 @@
 "use client";
-import { useUser } from "@clerk/nextjs";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "@ocw-rewrite/backend/convex/_generated/api";
 import type { Id } from "@ocw-rewrite/backend/convex/_generated/dataModel";
@@ -23,6 +22,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import { useParams } from "next/navigation";
+import { useSite } from "@/lib/multi-tenant/context";
 
 const formSchema = z.object({
   unitName: z.string().min(1).min(3).max(50),
@@ -36,6 +36,7 @@ type CreateUnitFormProps = {
 };
 
 export function CreateUnitForm({ callback, courseId }: CreateUnitFormProps) {
+  const { subdomain } = useSite();
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
   });
@@ -48,6 +49,7 @@ export function CreateUnitForm({ callback, courseId }: CreateUnitFormProps) {
       mutate({
         ...values,
         courseId,
+        school: subdomain,
       });
     } catch (_error) {
       toast.error("Failed to submit the form. Please try again.");
@@ -144,7 +146,7 @@ export function CreateUnitDialog() {
         <Button variant={"outline"}>Create Unit</Button>
       </DialogTrigger>
       <DialogContent>
-        <CreateUnitForm callback={changeOpen} courseId={id} />
+        <CreateUnitForm callback={changeOpen} courseId={id as Id<"courses">} />
       </DialogContent>
     </Dialog>
   );

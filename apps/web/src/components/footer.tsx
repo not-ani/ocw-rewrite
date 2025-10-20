@@ -27,7 +27,7 @@ export default function FooterSections() {
 
   return (
     <>
-      {footerData.map((section, index) => (
+      {footerData.map((section) => (
         <div key={section.title}>
           <h5 className="mb-4 text-lg font-semibold">{section.title}</h5>
           {section.content && (

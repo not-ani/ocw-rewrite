@@ -76,7 +76,7 @@ export const Embed: React.FC<EmbedLoaderProps> = memo(function Embed({
                 <p className="font-medium">Loading content...</p>
                 <ul className="text-muted-foreground mt-2 text-sm">
                   <li>If this takes a long time, try turning off your VPN</li>
-                  <li>Or click the "Open in new tab" button</li>
+                  <li>Or click the &quot;Open in new tab&quot; button</li>
                 </ul>
               </div>
             </div>
