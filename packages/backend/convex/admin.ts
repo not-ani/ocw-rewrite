@@ -28,20 +28,6 @@ async function assertSiteAdmin(ctx: QueryCtx, args: { school: string }) {
  */
 export const getAllCourses = query({
   args: { school: v.string() },
-  returns: v.array(
-    v.object({
-      _id: v.id("courses"),
-      _creationTime: v.number(),
-      id: v.optional(v.string()),
-      subjectId: v.string(),
-      name: v.string(),
-      aliases: v.array(v.string()),
-      isPublic: v.boolean(),
-      imageUrl: v.optional(v.string()),
-      unitLength: v.number(),
-      description: v.string(),
-    })
-  ),
   handler: async (ctx, args) => {
     await assertSiteAdmin(ctx, args);
 
@@ -60,7 +46,6 @@ export const updateCourseStatus = mutation({
     isPublic: v.boolean(),
     school: v.string(),
   },
-  returns: v.null(),
   handler: async (ctx, args) => {
     await assertSiteAdmin(ctx, args);
 
@@ -77,14 +62,6 @@ export const updateCourseStatus = mutation({
  */
 export const getAllSiteAdmins = query({
   args: { school: v.string() },
-  returns: v.array(
-    v.object({
-      _id: v.id("siteUser"),
-      _creationTime: v.number(),
-      userId: v.string(),
-      role: v.union(v.literal("admin")),
-    })
-  ),
   handler: async (ctx, args) => {
     await assertSiteAdmin(ctx, args);
 
@@ -105,7 +82,6 @@ export const addSiteAdmin = mutation({
     userId: v.string(),
     school: v.string(),
   },
-  returns: v.id("siteUser"),
   handler: async (ctx, args) => {
     await assertSiteAdmin(ctx, args);
 
@@ -137,7 +113,6 @@ export const removeSiteAdmin = mutation({
     userId: v.string(),
     school: v.string(),
   },
-  returns: v.null(),
   handler: async (ctx, args) => {
     const identity = await assertSiteAdmin(ctx, args);
 
@@ -166,7 +141,6 @@ export const removeSiteAdmin = mutation({
  */
 export const isSiteAdmin = query({
   args: { school: v.string() },
-  returns: v.boolean(),
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
     

@@ -4,6 +4,7 @@ import { preloadQuery } from "convex/nextjs";
 import { DashboardPageClient } from "./client";
 import { getAuthToken } from "@/lib/auth";
 import { extractSubdomain } from "@/lib/multi-tenant/server";
+import { isValidConvexId } from "@/lib/convex-utils";
 
 export default async function Dashboard({
   params,
@@ -11,13 +12,18 @@ export default async function Dashboard({
   params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
-  const courseId = id as Id<"courses">;
-
   const token = await getAuthToken();
   const subdomain = await extractSubdomain();
+  
   if (!subdomain) {
     return null;
   }
+
+  if (!isValidConvexId(id)) {
+    return null;
+  }
+
+  const courseId = id as Id<"courses">;
 
   const [preloadedDashboard, preloadedUnits] = await Promise.all([
     preloadQuery(api.courses.getDashboardSummary, {

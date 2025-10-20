@@ -5,6 +5,8 @@ import { UnitPageClient } from "./client";
 import type { Metadata } from "next";
 import { getAuthToken } from "@/lib/auth";
 import { extractSubdomain } from "@/lib/multi-tenant/server";
+import { notFound } from "next/navigation";
+import { isValidConvexId } from "@/lib/convex-utils";
 
 export async function generateMetadata({
   params,
@@ -24,13 +26,20 @@ export default async function UnitPage({
   params: Promise<{ id: string; unitId: string }>;
 }) {
   const { id, unitId } = await params;
-  const courseId = id as Id<"courses">;
 
   const token = await getAuthToken();
   const subdomain = await extractSubdomain();
+  
   if (!subdomain) {
     return null;
   }
+
+  if (!isValidConvexId(id) || !isValidConvexId(unitId)) {
+    notFound();
+  }
+
+  const courseId = id as Id<"courses">;
+
   const [preloadedUnit, preloadedLessons] = await Promise.all([
     preloadQuery(api.units.getById, {
       id: unitId as Id<"units">,

@@ -8,6 +8,7 @@ import { extractSubdomain } from "@/lib/multi-tenant/server";
 export default async function AdminPage() {
   const token = await getAuthToken();
   const subdomain = await extractSubdomain();
+
   if (!subdomain) {
     redirect("/");
   }

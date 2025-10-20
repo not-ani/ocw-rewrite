@@ -4,6 +4,7 @@ import { preloadQuery } from "convex/nextjs";
 import type { Metadata } from "next";
 import { LessonPageClient } from "./client";
 import { extractSubdomain } from "@/lib/multi-tenant/server";
+import { isValidConvexId } from "@/lib/convex-utils";
 
 export async function generateMetadata({
   params
@@ -12,7 +13,7 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { lessonId } = await params;
   const subdomain = await extractSubdomain();
-  if (!subdomain) {
+  if (!subdomain || !isValidConvexId(lessonId)) {
     return {
       title: "Lesson",
       description: "View and study this lesson",
@@ -49,6 +50,11 @@ export default async function Page({
   const subdomain = await extractSubdomain();
 
   if (!subdomain) {
+    return null;
+  }
+
+  // Validate IDs before passing to Convex
+  if (!isValidConvexId(id) || !isValidConvexId(lessonId)) {
     return null;
   }
 

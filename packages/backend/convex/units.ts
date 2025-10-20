@@ -55,7 +55,7 @@ export const searchByCourse = query({
 });
 
 export const getUnitWithLessons = query({
-  args: { id: v.id("units"), school: v.string() },
+  args: { id: v.id("units") },
   handler: async (ctx, args) => {
     const unit = await ctx.db.get(args.id);
 

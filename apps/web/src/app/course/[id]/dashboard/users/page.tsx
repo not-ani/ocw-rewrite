@@ -1,11 +1,13 @@
 import { api } from "@ocw-rewrite/backend/convex/_generated/api";
 import type { Id } from "@ocw-rewrite/backend/convex/_generated/dataModel";
 import { preloadQuery } from "convex/nextjs";
-import { redirect } from "next/navigation";
+import { redirect, notFound } from "next/navigation";
 import { SignInButton } from "@clerk/nextjs";
 import { UsersClient } from "./client";
 import { checkUserManagementPermission, getAllClerkUsers } from "@/lib/permissions";
 import { getAuthToken } from "@/lib/auth";
+import { isValidConvexId } from "@/lib/convex-utils";
+import { extractSubdomain } from "@/lib/multi-tenant/server";
 
 export default async function UsersPage({
   params,
@@ -14,6 +16,7 @@ export default async function UsersPage({
 }) {
   const { id: courseId } = await params;
   const token = await getAuthToken();
+  const subdomain = await extractSubdomain();
 
   if (!token) {
     return (
@@ -29,6 +32,13 @@ export default async function UsersPage({
     );
   }
 
+  if (!subdomain) {
+    notFound();
+  }
+
+  if (!isValidConvexId(courseId)) {
+    notFound();
+  }
 
   const { authorized, membership } = await checkUserManagementPermission(
     courseId as Id<"courses">
@@ -42,7 +52,7 @@ export default async function UsersPage({
 
   const preloadedMembers = await preloadQuery(
     api.courseUsers.listMembers,
-    { courseId: courseId as Id<"courses"> },
+    { courseId: courseId as Id<"courses">, school: subdomain },
     { token }
   );
 
