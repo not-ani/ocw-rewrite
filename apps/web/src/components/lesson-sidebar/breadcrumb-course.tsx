@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import type { api } from "@ocw-rewrite/backend/convex/_generated/api";
 import { usePreloadedQuery, type Preloaded } from "convex/react";
 import { cache } from "react";
@@ -18,15 +18,14 @@ type PreloadedSidebar = Preloaded<typeof api.courses.getSidebarData>;
 
 const getCurrentLesson = cache((data: SidebarData, lessonId: string) => {
   return data.flatMap((unit) =>
-    unit.lessons.filter((lesson) => lesson.id === lessonId)
+    unit.lessons.filter((lesson) => lesson.id === lessonId),
   )[0]?.name;
 });
 
-
-export const BreadcrumbCourse = ({ 
-  preloadedSidebar 
-}: { 
-  preloadedSidebar: PreloadedSidebar 
+export const BreadcrumbCourse = ({
+  preloadedSidebar,
+}: {
+  preloadedSidebar: PreloadedSidebar;
 }) => {
   const { lessonId } = useParams<{ id: string; lessonId: string }>();
 

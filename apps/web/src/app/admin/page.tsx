@@ -20,7 +20,7 @@ export default async function AdminPage() {
   const isSiteAdmin = await fetchQuery(
     api.admin.isSiteAdmin,
     { school: subdomain },
-    { token }
+    { token },
   );
 
   if (!isSiteAdmin) {
@@ -30,17 +30,17 @@ export default async function AdminPage() {
   const preloadedCourses = await preloadQuery(
     api.admin.getAllCourses,
     { school: subdomain },
-    { token }
+    { token },
   );
 
   const preloadedAdmins = await preloadQuery(
     api.admin.getAllSiteAdmins,
     { school: subdomain },
-    { token }
+    { token },
   );
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <AdminPageClient
         preloadedCourses={preloadedCourses}
         preloadedAdmins={preloadedAdmins}
@@ -48,4 +48,3 @@ export default async function AdminPage() {
     </div>
   );
 }
-

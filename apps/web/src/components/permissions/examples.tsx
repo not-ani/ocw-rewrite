@@ -1,6 +1,6 @@
 /**
  * PERMISSION WRAPPER EXAMPLES
- * 
+ *
  * This file contains practical examples of how to use the permission
  * wrappers throughout your application. Copy these patterns as needed.
  */
@@ -13,15 +13,15 @@ import { Button } from "@/components/ui/button";
 // EXAMPLE 1: Wrapper Component - Hide UI for unauthorized users
 // ============================================================================
 
-export function DeleteUnitButton({ courseId, unitId }: { 
-  courseId: Id<"courses">; 
-  unitId: Id<"units">; 
+export function DeleteUnitButton({
+  courseId,
+  unitId,
+}: {
+  courseId: Id<"courses">;
+  unitId: Id<"units">;
 }) {
   return (
-    <PermissionWrapper 
-      courseId={courseId} 
-      requiredPermission="delete_unit"
-    >
+    <PermissionWrapper courseId={courseId} requiredPermission="delete_unit">
       <Button variant="destructive">Delete Unit</Button>
     </PermissionWrapper>
   );
@@ -53,11 +53,11 @@ export function CourseActions({ courseId }: { courseId: Id<"courses"> }) {
       <PermissionWrapper courseId={courseId} requiredPermission="create_unit">
         <Button>Create Unit</Button>
       </PermissionWrapper>
-      
+
       <PermissionWrapper courseId={courseId} requiredPermission="manage_users">
         <Button>Manage Users</Button>
       </PermissionWrapper>
-      
+
       <PermissionWrapper courseId={courseId} requiredRole="admin">
         <Button variant="destructive">Delete Course</Button>
       </PermissionWrapper>
@@ -70,12 +70,12 @@ export function CourseActions({ courseId }: { courseId: Id<"courses"> }) {
 // ============================================================================
 
 export function DashboardHeader({ courseId }: { courseId: Id<"courses"> }) {
-  const { 
-    hasPermission, 
-    isAdmin, 
+  const {
+    hasPermission,
+    isAdmin,
     isAdminOrEditor,
     canManageUsers,
-    membership 
+    membership,
   } = usePermission(courseId);
 
   // Don't show anything while loading
@@ -86,18 +86,14 @@ export function DashboardHeader({ courseId }: { courseId: Id<"courses"> }) {
   return (
     <div>
       <h1>Dashboard</h1>
-      
+
       {/* Conditional rendering based on role */}
       {isAdmin() && (
-        <p className="text-sm text-muted-foreground">
-          You have admin access
-        </p>
+        <p className="text-muted-foreground text-sm">You have admin access</p>
       )}
 
       {/* Conditional rendering based on permission */}
-      {hasPermission("manage_course") && (
-        <Button>Course Settings</Button>
-      )}
+      {hasPermission("manage_course") && <Button>Course Settings</Button>}
 
       {/* Multiple conditions */}
       {(isAdminOrEditor() || hasPermission("create_lesson")) && (
@@ -105,9 +101,7 @@ export function DashboardHeader({ courseId }: { courseId: Id<"courses"> }) {
       )}
 
       {/* Convenience method */}
-      {canManageUsers() && (
-        <Button>Manage Users</Button>
-      )}
+      {canManageUsers() && <Button>Manage Users</Button>}
     </div>
   );
 }
@@ -116,12 +110,12 @@ export function DashboardHeader({ courseId }: { courseId: Id<"courses"> }) {
 // EXAMPLE 5: Hook with Business Logic
 // ============================================================================
 
-export function LessonEditor({ 
-  courseId, 
-  lessonId 
-}: { 
-  courseId: Id<"courses">; 
-  lessonId: Id<"lessons">; 
+export function LessonEditor({
+  courseId,
+  lessonId,
+}: {
+  courseId: Id<"courses">;
+  lessonId: Id<"lessons">;
 }) {
   const { hasPermission, isAdmin } = usePermission(courseId);
 
@@ -167,24 +161,24 @@ export function AdminPanel({ courseId }: { courseId: Id<"courses"> }) {
       courseId={courseId}
       requiredRole="admin"
       fallback={
-        <div className="text-center p-8">
+        <div className="p-8 text-center">
           <p className="text-muted-foreground">Admin access required</p>
         </div>
       }
     >
       <div className="space-y-4">
         <h2>Admin Panel</h2>
-        
+
         {/* Even within admin panel, can check specific permissions */}
-        <PermissionWrapper 
-          courseId={courseId} 
+        <PermissionWrapper
+          courseId={courseId}
           requiredPermission="manage_course"
         >
           <Button>Course Settings</Button>
         </PermissionWrapper>
 
-        <PermissionWrapper 
-          courseId={courseId} 
+        <PermissionWrapper
+          courseId={courseId}
           requiredPermission="manage_users"
         >
           <Button>User Management</Button>
@@ -213,7 +207,7 @@ export function AdvancedEditor({ courseId }: { courseId: Id<"courses"> }) {
     <div>
       <div className="flex items-center justify-between">
         <span>Role: {userRole}</span>
-        
+
         <div className="flex gap-2">
           {canEdit && <Button>Edit</Button>}
           {canPublish && <Button>Publish</Button>}
@@ -242,7 +236,7 @@ export function UnitForm({ courseId }: { courseId: Id<"courses"> }) {
     <form>
       {/* Form fields */}
       <input type="text" placeholder="Unit name" />
-      
+
       {canCreate && <Button type="submit">Create Unit</Button>}
       {canEdit && <Button type="submit">Update Unit</Button>}
     </form>
@@ -257,21 +251,20 @@ export function UnitForm({ courseId }: { courseId: Id<"courses"> }) {
  * 1. Use <PermissionWrapper> for declarative UI hiding
  *    - Simple show/hide based on role or permission
  *    - Great for buttons, menu items, sections
- * 
+ *
  * 2. Use usePermission() hook for:
  *    - Complex conditional logic
  *    - Multiple permission checks
  *    - Business logic that needs permission data
  *    - Accessing membership data
- * 
+ *
  * 3. Always handle loading state (when membership is undefined)
- * 
+ *
  * 4. Remember: Admin and Editor roles have ALL permissions by default
- * 
+ *
  * 5. For server-side protection, use functions from @/lib/permissions:
  *    - checkUserManagementPermission()
  *    - checkAdminOrEditorPermission()
- * 
+ *
  * 6. Client-side checks are for UX only - always validate on server!
  */
-

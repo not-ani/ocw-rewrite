@@ -24,10 +24,13 @@ export async function generateMetadata() {
   if (!subdomain || subdomain === "www") {
     return {
       title: "The OpenCourseWare Project",
-      description: "The OpenCourseWare Project is a platform for free, high-quality resources to students at all levels of education",
+      description:
+        "The OpenCourseWare Project is a platform for free, high-quality resources to students at all levels of education",
     };
   }
-  const siteConfig = await fetchQuery(api.site.getSiteConfig, { school: subdomain });
+  const siteConfig = await fetchQuery(api.site.getSiteConfig, {
+    school: subdomain,
+  });
   return {
     title: `${siteConfig?.schoolName} OpenCourseWare`,
     descption: `${siteConfig?.schoolName} OpenCourseWare is a platform for free, high-quality resources to students at ${siteConfig?.schoolName}`,
@@ -48,7 +51,7 @@ export default async function RootLayout({
       >
         <ClerkProvider>
           <Providers>
-            <div className="grid bg-background grid-rows-[auto_1fr] h-screen">
+            <div className="bg-background grid h-screen grid-rows-[auto_1fr]">
               <NuqsAdapter>
                 <PostHogProvider>
                   <SiteContextProvider subdomain={subdomain}>

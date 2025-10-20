@@ -73,7 +73,7 @@ function AdminsTableSkeleton() {
 
 export default function AdminLoadingPage() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <div className="mx-auto w-full max-w-7xl space-y-8 p-4 sm:p-6">
         <HeaderSkeleton />
         <CoursesTableSkeleton />
@@ -82,4 +82,3 @@ export default function AdminLoadingPage() {
     </div>
   );
 }
-

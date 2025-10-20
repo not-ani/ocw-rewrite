@@ -169,7 +169,7 @@ export function CoursesTable({ courses }: CoursesTableProps) {
             onClick={() => router.push(`/course/${course._id}/dashboard`)}
           >
             <div className="font-medium">{course.name}</div>
-            <div className="line-clamp-1 text-muted-foreground text-sm">
+            <div className="text-muted-foreground line-clamp-1 text-sm">
               {course.description}
             </div>
           </div>

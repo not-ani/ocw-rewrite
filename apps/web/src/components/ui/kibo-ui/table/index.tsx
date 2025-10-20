@@ -70,7 +70,7 @@ export function TableProvider<TData, TValue>({
     getSortedRowModel: getSortedRowModel(),
     onSortingChange: (updater) => {
       setSorting((prev) =>
-        typeof updater === "function" ? updater(prev) : updater
+        typeof updater === "function" ? updater(prev) : updater,
       );
     },
     state: {
@@ -164,7 +164,7 @@ export function TableColumnHeader<TData, TValue>({
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button
-            className="-ml-3 h-8 data-[state=open]:bg-accent"
+            className="data-[state=open]:bg-accent -ml-3 h-8"
             size="sm"
             variant="ghost"
           >
@@ -180,11 +180,11 @@ export function TableColumnHeader<TData, TValue>({
         </DropdownMenuTrigger>
         <DropdownMenuContent align="start">
           <DropdownMenuItem onClick={handleSortAsc}>
-            <ArrowUpIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+            <ArrowUpIcon className="text-muted-foreground/70 mr-2 h-3.5 w-3.5" />
             Asc
           </DropdownMenuItem>
           <DropdownMenuItem onClick={handleSortDesc}>
-            <ArrowDownIcon className="mr-2 h-3.5 w-3.5 text-muted-foreground/70" />
+            <ArrowDownIcon className="text-muted-foreground/70 mr-2 h-3.5 w-3.5" />
             Desc
           </DropdownMenuItem>
         </DropdownMenuContent>

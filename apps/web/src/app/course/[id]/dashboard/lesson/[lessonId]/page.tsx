@@ -27,10 +27,14 @@ export default async function LessonPage({
   const courseId = id as Id<"courses">;
 
   const token = await getAuthToken();
-  const preloadedLesson = await preloadQuery(api.lesson.getLessonById, {
-    id: lessonId as Id<"lessons">,
-    school: subdomain,
-  }, {token: token});
+  const preloadedLesson = await preloadQuery(
+    api.lesson.getLessonById,
+    {
+      id: lessonId as Id<"lessons">,
+      school: subdomain,
+    },
+    { token: token },
+  );
 
   return (
     <LessonPageClient

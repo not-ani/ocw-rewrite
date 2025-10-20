@@ -155,7 +155,7 @@ function DashboardContent({
   if (!isAuthorized) {
     return (
       <div className="mx-auto max-w-xl text-center">
-        <h1 className="mb-2 font-semibold text-2xl">Access denied</h1>
+        <h1 className="mb-2 text-2xl font-semibold">Access denied</h1>
         <p className="text-muted-foreground">
           You do not have permission to view this course dashboard.
         </p>
@@ -171,7 +171,7 @@ function DashboardContent({
   if (!dashboard) {
     return (
       <div className="mx-auto max-w-xl text-center">
-        <h1 className="mb-2 font-semibold text-2xl">No data</h1>
+        <h1 className="mb-2 text-2xl font-semibold">No data</h1>
         <p className="text-muted-foreground">Dashboard could not be loaded.</p>
       </div>
     );
@@ -182,7 +182,7 @@ function DashboardContent({
       <Suspense fallback={<DashboardHeaderSkeleton />}>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="font-bold text-2xl">{dashboard.course.name}</h1>
+            <h1 className="text-2xl font-bold">{dashboard.course.name}</h1>
             <p className="text-muted-foreground text-sm">Manage units</p>
           </div>
           <div className="flex items-center justify-evenly gap-3">
@@ -230,7 +230,7 @@ export function DashboardPageClient({
 
       <Unauthenticated>
         <div className="mx-auto max-w-xl text-center">
-          <h1 className="mb-2 font-semibold text-2xl">Sign in required</h1>
+          <h1 className="mb-2 text-2xl font-semibold">Sign in required</h1>
           <p className="text-muted-foreground">Sign in to access dashboards.</p>
           <div className="mt-4 inline-flex">
             <SignInButton />

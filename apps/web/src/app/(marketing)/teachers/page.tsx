@@ -1,9 +1,8 @@
-
 export default function RouteComponent() {
   return (
-    <div className="min-h-screen bg-background px-4 py-12 sm:px-6 lg:px-8">
+    <div className="bg-background min-h-screen px-4 py-12 sm:px-6 lg:px-8">
       <div className="mx-auto max-w-4xl">
-        <h1 className="mb-8 text-center font-bold text-3xl text-foreground tracking-tight">
+        <h1 className="text-foreground mb-8 text-center text-3xl font-bold tracking-tight">
           For Teachers
         </h1>
         <p className="">
@@ -14,7 +13,7 @@ export default function RouteComponent() {
           learn from and engage with.
         </p>
         <br />
-        <h1 className="mb-8 text-center font-bold text-3xl tracking-tight">
+        <h1 className="mb-8 text-center text-3xl font-bold tracking-tight">
           Content on the platform
         </h1>
         <p className="leading-relaxed">
@@ -26,7 +25,7 @@ export default function RouteComponent() {
           tempted to cheat. We have implemented strict policies to prevent any
           form of pedagogical emparment
         </p>
-        <h1 className="mb-8 pt-8 text-center font-bold text-3xl tracking-tight">
+        <h1 className="mb-8 pt-8 text-center text-3xl font-bold tracking-tight">
           We would love to work with you!
         </h1>
         <p>

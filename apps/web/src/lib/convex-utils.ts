@@ -5,7 +5,7 @@
  */
 export function isValidConvexId(id: string | undefined | null): boolean {
   if (!id) return false;
-  
+
   // Convex IDs have a specific format - they should be longer than 10 characters
   // and should not contain special characters that would indicate a malformed URL
   return (
@@ -16,4 +16,3 @@ export function isValidConvexId(id: string | undefined | null): boolean {
     id !== "null"
   );
 }
-

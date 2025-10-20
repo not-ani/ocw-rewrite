@@ -11,13 +11,22 @@ export default async function SiteContentPage() {
       <div className="p-6">
         <div className="text-center">
           <h1 className="text-2xl font-bold">Error</h1>
-          <p className="text-muted-foreground">Could not determine school subdomain</p>
+          <p className="text-muted-foreground">
+            Could not determine school subdomain
+          </p>
         </div>
       </div>
     );
   }
 
-  const preloadedSiteConfig = await preloadQuery(api.site.getSiteConfig, { school });
+  const preloadedSiteConfig = await preloadQuery(api.site.getSiteConfig, {
+    school,
+  });
 
-  return <SiteContentClient school={school} preloadedSiteConfig={preloadedSiteConfig} />;
+  return (
+    <SiteContentClient
+      school={school}
+      preloadedSiteConfig={preloadedSiteConfig}
+    />
+  );
 }

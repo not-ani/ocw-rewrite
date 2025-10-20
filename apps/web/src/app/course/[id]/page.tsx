@@ -6,9 +6,9 @@ import { extractSubdomain } from "@/lib/multi-tenant/server";
 import { isValidConvexId } from "@/lib/convex-utils";
 
 export default async function Page({
-  params
+  params,
 }: {
-  params: Promise<{ id: string }>
+  params: Promise<{ id: string }>;
 }) {
   const { id } = await params;
 
@@ -21,14 +21,13 @@ export default async function Page({
     return null;
   }
 
-  const preloadedCourse = await preloadQuery(api.courses.getCourseWithUnitsAndLessons, {
-    id: id as Id<"courses">,
-    school: subdomain,
-  })
+  const preloadedCourse = await preloadQuery(
+    api.courses.getCourseWithUnitsAndLessons,
+    {
+      id: id as Id<"courses">,
+      school: subdomain,
+    },
+  );
 
-  return (
-    <CoursePageClient
-      preloadedCourse={preloadedCourse}
-    />
-  )
+  return <CoursePageClient preloadedCourse={preloadedCourse} />;
 }

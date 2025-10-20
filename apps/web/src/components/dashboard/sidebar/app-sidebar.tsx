@@ -1,9 +1,5 @@
-"use client"
-import {
-  Frame,
-  SettingsIcon,
-  Users2Icon,
-} from "lucide-react";
+"use client";
+import { Frame, SettingsIcon, Users2Icon } from "lucide-react";
 import {
   Sidebar,
   SidebarContent,
@@ -12,7 +8,6 @@ import {
 import { NavProjects } from "./nav-projects";
 import { useParams } from "next/navigation";
 import type { Id } from "@ocw-rewrite/backend/convex/_generated/dataModel";
-
 
 function getUrls(path: string) {
   return [
@@ -31,7 +26,7 @@ function getUrls(path: string) {
       url: `/course/${path}/dashboard/settings`,
       icon: SettingsIcon,
     },
-  ]
+  ];
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
@@ -46,8 +41,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       <SidebarContent>
         <NavProjects projects={urls} />
       </SidebarContent>
-      <SidebarFooter>
-      </SidebarFooter>
+      <SidebarFooter></SidebarFooter>
     </Sidebar>
   );
 }

@@ -12,12 +12,14 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Header } from "@/components/header";
 import Link from "next/link";
 
-type CourseWithUnitsAndLessons = Preloaded<typeof api.courses.getCourseWithUnitsAndLessons>;
+type CourseWithUnitsAndLessons = Preloaded<
+  typeof api.courses.getCourseWithUnitsAndLessons
+>;
 
 export function CoursePageSkeleton() {
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
-      <aside className="hidden w-full border-b bg-background p-4 md:block md:w-96 md:border-r md:border-b-0 md:p-6">
+      <aside className="bg-background hidden w-full border-b p-4 md:block md:w-96 md:border-r md:border-b-0 md:p-6">
         <div className="mb-6">
           <Skeleton className="h-16 w-full rounded-lg" />
         </div>
@@ -31,7 +33,6 @@ export function CoursePageSkeleton() {
           ))}
         </div>
       </aside>
-
 
       <main className="flex-1 p-4 pt-6 md:p-6 md:pt-8">
         <Skeleton className="mb-6 h-10 w-3/4 sm:w-2/3 md:w-3/4" />
@@ -60,36 +61,34 @@ export function CoursePageSkeleton() {
   );
 }
 
-
 export function CoursePageClient({
-  preloadedCourse
+  preloadedCourse,
 }: {
-  preloadedCourse: CourseWithUnitsAndLessons
+  preloadedCourse: CourseWithUnitsAndLessons;
 }) {
-
   const course = usePreloadedQuery(preloadedCourse);
 
   if (!course) {
-    return <CoursePageSkeleton />
+    return <CoursePageSkeleton />;
   }
   return (
     <div>
       <Header />
       <div className="flex h-screen flex-1 border-t-1">
         {/* Sidebar */}
-        <div className="hidden border-r bg-background p-6 lg:block lg:w-96">
-          <div className="mb-6 rounded-lg bg-primary/10 p-4">
-            <h2 className="font-bold text-primary/80 text-xl">{course.name}</h2>
-            <p className="mt-1 text-primary/60 text-sm">
+        <div className="bg-background hidden border-r p-6 lg:block lg:w-96">
+          <div className="bg-primary/10 mb-6 rounded-lg p-4">
+            <h2 className="text-primary/80 text-xl font-bold">{course.name}</h2>
+            <p className="text-primary/60 mt-1 text-sm">
               {course.units.length} UNITS
             </p>
           </div>
           <div className="ml-4 max-w-[calc(100%-2rem)] space-y-4">
             {course.units.map((unit, index) => (
               <div className="text-sm" key={index}>
-                <div className="mb-1 text-foreground">UNIT {index + 1}</div>
+                <div className="text-foreground mb-1">UNIT {index + 1}</div>
                 <Link
-                  className="break-words text-foreground/80 hover:underline"
+                  className="text-foreground/80 break-words hover:underline"
                   href={`/course/${course._id}/${unit.id}`}
                 >
                   {unit.name}
@@ -101,7 +100,7 @@ export function CoursePageClient({
 
         {/* Main Content Area */}
         <div className="flex-1 p-6 pt-8">
-          <h1 className="mb-6 font-bold text-3xl text-foreground">
+          <h1 className="text-foreground mb-6 text-3xl font-bold">
             {course.name}
           </h1>
           <div className="gap-10">
@@ -111,12 +110,12 @@ export function CoursePageClient({
                   <AccordionItem className="rounded-lg border" value="unit-1">
                     <AccordionTrigger className="px-4 hover:no-underline">
                       <div className="flex items-center gap-4">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
+                        <div className="bg-primary text-primary-foreground flex h-8 w-8 items-center justify-center rounded-full">
                           {course.units.indexOf(unit) + 1}
                         </div>
                         <div className="text-left">
                           <div className="font-semibold">{unit.name}</div>
-                          <div className="text-gray-500 text-sm" />
+                          <div className="text-sm text-gray-500" />
                         </div>
                       </div>
                     </AccordionTrigger>
@@ -124,7 +123,7 @@ export function CoursePageClient({
                       <div className="space-y-3 py-2">
                         {unit.lessons.map((lesson) => (
                           <Link
-                            className="block text-foreground hover:underline"
+                            className="text-foreground block hover:underline"
                             key={lesson.id}
                             href={`/course/${course._id}/${unit.id}/${lesson.id}`}
                           >

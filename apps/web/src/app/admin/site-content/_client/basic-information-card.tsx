@@ -30,7 +30,11 @@ const basicInfoSchema = z.object({
   schoolName: z.string().min(1, "School name is required"),
   siteHero: z.string().optional(),
   siteLogo: z.string().url("Must be a valid URL").optional().or(z.literal("")),
-  siteContributeLink: z.string().url("Must be a valid URL").optional().or(z.literal("")),
+  siteContributeLink: z
+    .string()
+    .url("Must be a valid URL")
+    .optional()
+    .or(z.literal("")),
 });
 
 type BasicInfoFormValues = z.infer<typeof basicInfoSchema>;
@@ -175,4 +179,3 @@ export function BasicInformationCard({
     </Card>
   );
 }
-

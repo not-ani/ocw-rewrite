@@ -12,12 +12,16 @@ import { useParams } from "next/navigation";
 
 type PreloadedSidebar = Preloaded<typeof api.courses.getSidebarData>;
 
-export const LessonSidebarContent = ({ 
-  preloadedSidebar 
-}: { 
-  preloadedSidebar: PreloadedSidebar 
+export const LessonSidebarContent = ({
+  preloadedSidebar,
+}: {
+  preloadedSidebar: PreloadedSidebar;
 }) => {
-  const resolvedParams = useParams<{ id: string; unitId: string; lessonId: string }>();
+  const resolvedParams = useParams<{
+    id: string;
+    unitId: string;
+    lessonId: string;
+  }>();
   const { id: courseId, unitId, lessonId } = resolvedParams;
 
   const data = usePreloadedQuery(preloadedSidebar);

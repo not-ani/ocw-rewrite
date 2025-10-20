@@ -12,7 +12,7 @@ export default function LessonPageLoading() {
           <Skeleton className="h-6 w-32" />
           <Skeleton className="h-9 w-24" />
         </div>
-        
+
         <div className="space-y-4">
           <div className="space-y-2">
             <Skeleton className="h-5 w-24" />

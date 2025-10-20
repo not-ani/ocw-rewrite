@@ -98,7 +98,9 @@ function RoleSelect({
       });
       toast.success("Role updated successfully");
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to update role");
+      toast.error(
+        error instanceof Error ? error.message : "Failed to update role",
+      );
     } finally {
       setIsUpdating(false);
     }
@@ -142,7 +144,9 @@ function RemoveUserButton({
       toast.success("User removed from course");
       setIsOpen(false);
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to remove user");
+      toast.error(
+        error instanceof Error ? error.message : "Failed to remove user",
+      );
     } finally {
       setIsRemoving(false);
     }
@@ -175,8 +179,8 @@ function RemoveUserButton({
           <AlertDialogHeader>
             <AlertDialogTitle>Remove User</AlertDialogTitle>
             <AlertDialogDescription>
-              Are you sure you want to remove <strong>{userName}</strong> from this course?
-              This action cannot be undone.
+              Are you sure you want to remove <strong>{userName}</strong> from
+              this course? This action cannot be undone.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
@@ -195,7 +199,9 @@ function RemoveUserButton({
   );
 }
 
-function getRoleBadgeVariant(role: string): "default" | "secondary" | "destructive" {
+function getRoleBadgeVariant(
+  role: string,
+): "default" | "secondary" | "destructive" {
   switch (role) {
     case "admin":
       return "destructive";
@@ -210,7 +216,9 @@ export function UsersTable({ courseId, users, canEdit }: UsersTableProps) {
   const columns: ColumnDef<UserWithMembership>[] = [
     {
       accessorKey: "user",
-      header: ({ column }) => <TableColumnHeader column={column} title="User" />,
+      header: ({ column }) => (
+        <TableColumnHeader column={column} title="User" />
+      ),
       cell: ({ row }) => {
         const user = row.original.clerkUser;
         const initials = user.fullName
@@ -236,7 +244,9 @@ export function UsersTable({ courseId, users, canEdit }: UsersTableProps) {
     },
     {
       accessorKey: "role",
-      header: ({ column }) => <TableColumnHeader column={column} title="Role" />,
+      header: ({ column }) => (
+        <TableColumnHeader column={column} title="Role" />
+      ),
       cell: ({ row }) => {
         const role = row.original.membership.role;
         if (!canEdit) {
@@ -257,12 +267,16 @@ export function UsersTable({ courseId, users, canEdit }: UsersTableProps) {
     },
     {
       accessorKey: "status",
-      header: ({ column }) => <TableColumnHeader column={column} title="Status" />,
+      header: ({ column }) => (
+        <TableColumnHeader column={column} title="Status" />
+      ),
       cell: () => <Badge variant="outline">Active</Badge>,
     },
     {
       id: "actions",
-      header: ({ column }) => <TableColumnHeader column={column} title="Actions" />,
+      header: ({ column }) => (
+        <TableColumnHeader column={column} title="Actions" />
+      ),
       cell: ({ row }) => {
         if (!canEdit) return null;
         return (
@@ -297,4 +311,3 @@ export function UsersTable({ courseId, users, canEdit }: UsersTableProps) {
     </TableProvider>
   );
 }
-

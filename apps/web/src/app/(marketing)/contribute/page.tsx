@@ -20,7 +20,7 @@ export default function RouteComponent() {
     description:
       "Share your knowledge and expertise by contributing written content to our open courseware platform.",
     url: siteConfig?.siteContributeLink,
-    icon: <FileEdit className="h-8 w-8 text-primary" />,
+    icon: <FileEdit className="text-primary h-8 w-8" />,
   };
 
   return (
@@ -28,17 +28,17 @@ export default function RouteComponent() {
       <main className="container mx-auto px-4 py-12">
         <div className="space-y-6">
           <div className="space-y-2 text-center">
-            <h1 className="font-bold text-3xl tracking-tight sm:text-4xl md:text-5xl">
+            <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
               Contribute to {siteConfig?.schoolName} OpenCourseWare
             </h1>
-            <p className="mx-auto max-w-2xl text-muted-foreground">
+            <p className="text-muted-foreground mx-auto max-w-2xl">
               Join our community and help us improve {siteConfig?.schoolName}{" "}
               OpenCourseWare{" "}
             </p>
           </div>
 
           <section className="py-8">
-            <h2 className="mb-6 font-bold text-2xl">Contribution Forms</h2>
+            <h2 className="mb-6 text-2xl font-bold">Contribution Forms</h2>
             <div className="">
               <Card className="flex h-full flex-col">
                 <CardHeader>
@@ -74,7 +74,7 @@ export default function RouteComponent() {
           </section>
 
           <section className="py-8">
-            <h2 className="mb-6 font-bold text-2xl">Why Contribute?</h2>
+            <h2 className="mb-6 text-2xl font-bold">Why Contribute?</h2>
             <div className="grid gap-6 md:grid-cols-2">
               <Card>
                 <CardHeader>

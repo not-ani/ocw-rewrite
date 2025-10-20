@@ -61,7 +61,7 @@ export function CourseDashboardHeader() {
           lessonId: routeParams.lessonId,
           school: subdomain,
         }
-      : "skip"
+      : "skip",
   );
 
   const pageType = useMemo(() => {
@@ -74,7 +74,7 @@ export function CourseDashboardHeader() {
   const isLoading = routeParams && breadcrumbData === undefined;
 
   return (
-    <header className="sticky top-0 z-50 flex w-full items-center border-b bg-background">
+    <header className="bg-background sticky top-0 z-50 flex w-full items-center border-b">
       <div className="flex h-(--header-height) w-full items-center gap-2 px-4">
         <Button
           className="h-8 w-8"
@@ -89,7 +89,7 @@ export function CourseDashboardHeader() {
           <BreadcrumbList>
             {isLoading ? (
               <BreadcrumbItem>
-                <div className="h-4 w-32 animate-pulse rounded bg-muted" />
+                <div className="bg-muted h-4 w-32 animate-pulse rounded" />
               </BreadcrumbItem>
             ) : breadcrumbData?.course ? (
               <>
@@ -154,7 +154,7 @@ export function CourseDashboardHeader() {
           <Link
             className={cn(
               buttonVariants({ variant: "outline" }),
-              "p-2 font-medium text-sm"
+              "p-2 text-sm font-medium",
             )}
             href={"/"}
           >

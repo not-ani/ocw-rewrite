@@ -29,7 +29,10 @@ export function UsersClient({
   canManageUsers,
 }: UsersClientProps) {
   const { subdomain } = useSite();
-  const members = useQuery(api.courseUsers.listMembers, { courseId, school: subdomain });
+  const members = useQuery(api.courseUsers.listMembers, {
+    courseId,
+    school: subdomain,
+  });
 
   const usersWithMembership = useMemo(() => {
     if (!members) return [];
@@ -49,13 +52,13 @@ export function UsersClient({
 
   const existingUserIds = useMemo(
     () => new Set(members?.map((m) => m.userId) ?? []),
-    [members]
+    [members],
   );
 
   if (members === undefined) {
     return (
       <div className="flex min-h-[400px] items-center justify-center">
-        <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
+        <Loader2 className="text-muted-foreground h-8 w-8 animate-spin" />
       </div>
     );
   }
@@ -64,7 +67,7 @@ export function UsersClient({
     return (
       <div className="flex min-h-[400px] items-center justify-center">
         <div className="text-center">
-          <h3 className="font-semibold text-lg">Access Denied</h3>
+          <h3 className="text-lg font-semibold">Access Denied</h3>
           <p className="text-muted-foreground text-sm">
             You don't have permission to view course members.
           </p>
@@ -77,7 +80,7 @@ export function UsersClient({
     <div className="space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div className="space-y-1">
-          <h2 className="font-semibold text-2xl">Course Members</h2>
+          <h2 className="text-2xl font-semibold">Course Members</h2>
           <p className="text-muted-foreground text-sm">
             Manage users and their roles for this course
           </p>
@@ -100,8 +103,8 @@ export function UsersClient({
       {usersWithMembership.length === 0 && (
         <div className="flex min-h-[200px] items-center justify-center rounded-lg border border-dashed">
           <div className="text-center">
-            <h3 className="font-medium text-sm">No members yet</h3>
-            <p className="mt-1 text-muted-foreground text-xs">
+            <h3 className="text-sm font-medium">No members yet</h3>
+            <p className="text-muted-foreground mt-1 text-xs">
               Add users to this course to get started
             </p>
           </div>
@@ -110,4 +113,3 @@ export function UsersClient({
     </div>
   );
 }
-

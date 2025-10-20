@@ -35,7 +35,11 @@ export default async function EditButton({
 
   return (
     <div className="relative">
-      <PermissionWrapper courseId={id as Id<"courses">} requiredRole="editor" school={subdomain}>
+      <PermissionWrapper
+        courseId={id as Id<"courses">}
+        requiredRole="editor"
+        school={subdomain}
+      >
         <Link
           prefetch
           href={link}

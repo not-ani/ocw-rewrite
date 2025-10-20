@@ -53,13 +53,13 @@ export function LessonsCard({
     api.lesson.getByUnit,
     selectedUnitId
       ? ({ unitId: selectedUnitId } as { unitId: Id<"units"> })
-      : ("skip" as const)
+      : ("skip" as const),
   );
 
   const lessonList = lessons ?? [];
   const lessonIds = useMemo(
     () => lessonList.map((l) => String(l.id)),
-    [lessonList]
+    [lessonList],
   );
 
   const handleAdd = useCallback(async () => {
@@ -91,7 +91,7 @@ export function LessonsCard({
       }));
       await onReorderLesson({ unitId: selectedUnitId, data: payload });
     },
-    [lessonList, onReorderLesson, selectedUnitId]
+    [lessonList, onReorderLesson, selectedUnitId],
   );
 
   if (!selectedUnitId) {
@@ -180,7 +180,7 @@ export function LessonsCard({
             items={lessonIds}
             strategy={verticalListSortingStrategy}
           >
-            <div className="divide-y divide-border">
+            <div className="divide-border divide-y">
               {lessonList.map((l) => (
                 <LessonRow
                   key={String(l.id)}

@@ -90,12 +90,12 @@ function LessonEmbed({
   password,
 }: {
   contentType:
-  | "quizlet"
-  | "google_docs"
-  | "notion"
-  | "tiptap"
-  | "flashcard"
-  | undefined;
+    | "quizlet"
+    | "google_docs"
+    | "notion"
+    | "tiptap"
+    | "flashcard"
+    | undefined;
   embedId: string | null;
   password: string | null;
 }) {
@@ -117,7 +117,7 @@ function LessonEmbed({
 
 function Layout({
   children,
-  preloadedSidebar
+  preloadedSidebar,
 }: {
   children: React.ReactNode;
   preloadedSidebar: PreloadedSidebar;
@@ -149,7 +149,7 @@ function Layout({
                 <Link
                   className={cn(
                     buttonVariants({ variant: "outline" }),
-                    "p-2 font-medium text-sm"
+                    "p-2 text-sm font-medium",
                   )}
                   href={"/"}
                 >
@@ -168,7 +168,7 @@ function Layout({
 
 export function LessonPageClient({
   preloadedLesson,
-  preloadedSidebar
+  preloadedSidebar,
 }: {
   preloadedLesson: PreloadedLesson;
   preloadedSidebar: PreloadedSidebar;

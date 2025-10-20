@@ -7,9 +7,9 @@ import { extractSubdomain } from "@/lib/multi-tenant/server";
 import { isValidConvexId } from "@/lib/convex-utils";
 
 export async function generateMetadata({
-  params
+  params,
 }: {
-  params: Promise<{ id: string; unitId: string; lessonId: string }>
+  params: Promise<{ id: string; unitId: string; lessonId: string }>;
 }): Promise<Metadata> {
   const { lessonId } = await params;
   const subdomain = await extractSubdomain();
@@ -42,9 +42,9 @@ export async function generateMetadata({
 }
 
 export default async function Page({
-  params
+  params,
 }: {
-  params: Promise<{ id: string; unitId: string; lessonId: string }>
+  params: Promise<{ id: string; unitId: string; lessonId: string }>;
 }) {
   const { id, lessonId } = await params;
   const subdomain = await extractSubdomain();
@@ -66,7 +66,7 @@ export default async function Page({
     preloadQuery(api.courses.getSidebarData, {
       courseId: id as Id<"courses">,
       school: subdomain,
-    })
+    }),
   ]);
 
   return (

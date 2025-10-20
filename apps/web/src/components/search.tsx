@@ -237,16 +237,16 @@ function SearchResultsList({
                 onSelect={() => onNavigate(href)}
               >
                 <div className="flex min-w-0 flex-col">
-                  <span className="line-clamp-1 font-medium text-foreground">
+                  <span className="text-foreground line-clamp-1 font-medium">
                     {item.name}
                   </span>
                   {description ? (
-                    <span className="line-clamp-1 text-muted-foreground text-xs">
+                    <span className="text-muted-foreground line-clamp-1 text-xs">
                       {description}
                     </span>
                   ) : null}
                 </div>
-                <div className="flex items-center gap-1 text-muted-foreground text-xs">
+                <div className="text-muted-foreground flex items-center gap-1 text-xs">
                   <ArrowRightIcon size={14} aria-hidden="true" />
                   {badge ? <span>{badge}</span> : null}
                 </div>
@@ -329,7 +329,7 @@ export function Search() {
         </CommandList>
         {grouped.length > 0 ? <CommandSeparator aria-hidden="true" /> : null}
         {grouped.length > 0 ? (
-          <div className="flex items-center justify-between px-4 py-3 text-muted-foreground text-xs">
+          <div className="text-muted-foreground flex items-center justify-between px-4 py-3 text-xs">
             <span>
               Showing top results for “{debouncedTerm}”. Press Enter to open the
               first match.

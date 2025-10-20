@@ -25,7 +25,10 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useSite } from "@/lib/multi-tenant/context";
 
 const formSchema = z.object({
-  unitName: z.string().min(3, "Unit name must be at least 3 characters").max(50),
+  unitName: z
+    .string()
+    .min(3, "Unit name must be at least 3 characters")
+    .max(50),
   description: z.string().optional(),
   isPublished: z.boolean().default(false).optional(),
 });
@@ -45,7 +48,6 @@ export function CreateUnitInlineForm({
 }: CreateUnitInlineFormProps) {
   const createUnit = useMutation(api.units.create);
   const { subdomain } = useSite();
-
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -135,7 +137,7 @@ export function CreateUnitInlineForm({
             control={form.control}
             name="isPublished"
             render={({ field }) => (
-              <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+              <FormItem className="flex flex-row items-start space-y-0 space-x-3">
                 <FormControl>
                   <Checkbox
                     checked={field.value}
@@ -152,11 +154,7 @@ export function CreateUnitInlineForm({
           />
 
           <div className="flex gap-2 pt-2">
-            <Button
-              type="submit"
-              disabled={isSubmitting}
-              className="flex-1"
-            >
+            <Button type="submit" disabled={isSubmitting} className="flex-1">
               {isSubmitting ? (
                 <>
                   <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />

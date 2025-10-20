@@ -11,13 +11,13 @@ export default function Page() {
 
   return (
     <div>
-      <div className="min-h-screen bg-background px-4 py-12 sm:px-6 lg:px-8">
+      <div className="bg-background min-h-screen px-4 py-12 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-4xl">
-          <h1 className="mb-8 text-center font-bold text-3xl text-foreground tracking-tight">
+          <h1 className="text-foreground mb-8 text-center text-3xl font-bold tracking-tight">
             Contact Us
           </h1>
 
-          <div className="space-y-6 text-foreground/90 text-center">
+          <div className="text-foreground/90 space-y-6 text-center">
             <p className="leading-relaxed">
               If you have any questions or would like to get in touch with us,
               please feel free to contact our team members below or the
@@ -25,11 +25,11 @@ export default function Page() {
             </p>
           </div>
 
-          <div className="mt-16 border-gray-200 border-t pt-8 text-center">
-            <h2 className="mb-4 font-semibold text-2xl text-foreground">
+          <div className="mt-16 border-t border-gray-200 pt-8 text-center">
+            <h2 className="text-foreground mb-4 text-2xl font-semibold">
               Maintained By
             </h2>
-            <p className="mx-auto max-w-2xl text-foreground/90">
+            <p className="text-foreground/90 mx-auto max-w-2xl">
               This OpenCourseWare site is proudly maintained by{" "}
               {siteConfig?.schoolName} {club?.name}. For general inquiries about
               the site&apos;s maintenance or the organization, please contact:
@@ -43,15 +43,15 @@ export default function Page() {
           </div>
 
           {/* Centered People Section */}
-          <div className="mt-16 border-gray-200 border-t pt-8">
-            <h2 className="mb-8 font-semibold text-2xl text-foreground text-center">
+          <div className="mt-16 border-t border-gray-200 pt-8">
+            <h2 className="text-foreground mb-8 text-center text-2xl font-semibold">
               Our Team
             </h2>
-            <div className="grid grid-cols-1 gap-8 md:grid-cols-2 justify-items-center">
+            <div className="grid grid-cols-1 justify-items-center gap-8 md:grid-cols-2">
               {people?.map((person) => (
                 <Card
                   key={person.name}
-                  className="flex flex-col items-center justify-between h-full w-80 p-4 text-center"
+                  className="flex h-full w-80 flex-col items-center justify-between p-4 text-center"
                 >
                   <CardHeader className="flex flex-col items-center justify-center">
                     <Image
@@ -61,11 +61,11 @@ export default function Page() {
                       src="https://ugakd4mkxv.ufs.sh/f/QRXW6mPDvNgcf1bAHpXv5c4nkOatgwsmYj96KRpli3hUEdx1"
                       width={80}
                     />
-                    <h2 className="font-semibold text-foreground text-xl">
+                    <h2 className="text-foreground text-xl font-semibold">
                       {person.name}
                     </h2>
                   </CardHeader>
-                  <CardContent className="flex flex-col items-center justify-between flex-1">
+                  <CardContent className="flex flex-1 flex-col items-center justify-between">
                     <p className="text-foreground/90 flex-grow">
                       {person.description}
                     </p>

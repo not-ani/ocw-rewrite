@@ -47,9 +47,10 @@ export function ContributorsCard({
   contributors,
 }: ContributorsCardProps) {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [editingContributor, setEditingContributor] = useState<Contributor | null>(null);
+  const [editingContributor, setEditingContributor] =
+    useState<Contributor | null>(null);
   const [isAddingNew, setIsAddingNew] = useState(false);
-  
+
   const updateContributors = useMutation(api.site.updateContributors);
 
   const newContributorForm = useForm<ContributorFormValues>({
@@ -74,7 +75,7 @@ export function ContributorsCard({
 
   const handleSaveEdit = async () => {
     if (editingIndex === null || !editingContributor) return;
-    
+
     try {
       const updated = [...contributors];
       updated[editingIndex] = editingContributor;
@@ -88,7 +89,10 @@ export function ContributorsCard({
     }
   };
 
-  const handleUpdateEditingContributor = (field: keyof Contributor, value: string) => {
+  const handleUpdateEditingContributor = (
+    field: keyof Contributor,
+    value: string,
+  ) => {
     if (!editingContributor) return;
     setEditingContributor({ ...editingContributor, [field]: value });
   };
@@ -100,8 +104,8 @@ export function ContributorsCard({
 
   const handleSaveNewContributor = async (values: ContributorFormValues) => {
     try {
-      await updateContributors({ 
-        school, 
+      await updateContributors({
+        school,
         contributors: [
           ...contributors,
           {
@@ -109,8 +113,8 @@ export function ContributorsCard({
             role: values.role,
             avatar: values.avatar || "",
             description: values.description || "",
-          }
-        ]
+          },
+        ],
       });
       toast.success("Contributor added successfully");
       setIsAddingNew(false);
@@ -148,7 +152,7 @@ export function ContributorsCard({
             </CardDescription>
           </div>
           <Button onClick={handleAddContributor} size="sm">
-            <Plus className="h-4 w-4 mr-2" />
+            <Plus className="mr-2 h-4 w-4" />
             Add Contributor
           </Button>
         </div>
@@ -200,7 +204,7 @@ export function ContributorsCard({
                       }
                     />
                   ) : (
-                    <span className="text-xs truncate max-w-[200px] block">
+                    <span className="block max-w-[200px] truncate text-xs">
                       {contributor.avatar}
                     </span>
                   )}
@@ -210,7 +214,10 @@ export function ContributorsCard({
                     <Textarea
                       value={editingContributor.description}
                       onChange={(e) =>
-                        handleUpdateEditingContributor("description", e.target.value)
+                        handleUpdateEditingContributor(
+                          "description",
+                          e.target.value,
+                        )
                       }
                       rows={2}
                     />
@@ -267,7 +274,7 @@ export function ContributorsCard({
                     placeholder="Name"
                   />
                   {newContributorForm.formState.errors.name && (
-                    <p className="text-xs text-destructive mt-1">
+                    <p className="text-destructive mt-1 text-xs">
                       {newContributorForm.formState.errors.name.message}
                     </p>
                   )}
@@ -278,7 +285,7 @@ export function ContributorsCard({
                     placeholder="Role"
                   />
                   {newContributorForm.formState.errors.role && (
-                    <p className="text-xs text-destructive mt-1">
+                    <p className="text-destructive mt-1 text-xs">
                       {newContributorForm.formState.errors.role.message}
                     </p>
                   )}
@@ -289,7 +296,7 @@ export function ContributorsCard({
                     placeholder="Avatar URL"
                   />
                   {newContributorForm.formState.errors.avatar && (
-                    <p className="text-xs text-destructive mt-1">
+                    <p className="text-destructive mt-1 text-xs">
                       {newContributorForm.formState.errors.avatar.message}
                     </p>
                   )}
@@ -306,7 +313,9 @@ export function ContributorsCard({
                     <Button
                       size="icon"
                       variant="ghost"
-                      onClick={newContributorForm.handleSubmit(handleSaveNewContributor)}
+                      onClick={newContributorForm.handleSubmit(
+                        handleSaveNewContributor,
+                      )}
                       disabled={newContributorForm.formState.isSubmitting}
                     >
                       <Check className="h-4 w-4" />
@@ -328,4 +337,3 @@ export function ContributorsCard({
     </Card>
   );
 }
-

@@ -13,7 +13,6 @@ export async function generateMetadata({
 }: {
   params: Promise<{ id: string; unitId: string }>;
 }): Promise<Metadata> {
-  
   return {
     title: "Edit Unit",
     description: "Manage unit settings and lessons",
@@ -29,7 +28,7 @@ export default async function UnitPage({
 
   const token = await getAuthToken();
   const subdomain = await extractSubdomain();
-  
+
   if (!subdomain) {
     return null;
   }
@@ -41,14 +40,22 @@ export default async function UnitPage({
   const courseId = id as Id<"courses">;
 
   const [preloadedUnit, preloadedLessons] = await Promise.all([
-    preloadQuery(api.units.getById, {
-      id: unitId as Id<"units">,
-      school: subdomain
-    }, {token: token}),
-    preloadQuery(api.lesson.getByUnit, {
-      unitId: unitId as Id<"units">,
-      school: subdomain,
-    }, {token: token}),
+    preloadQuery(
+      api.units.getById,
+      {
+        id: unitId as Id<"units">,
+        school: subdomain,
+      },
+      { token: token },
+    ),
+    preloadQuery(
+      api.lesson.getByUnit,
+      {
+        unitId: unitId as Id<"units">,
+        school: subdomain,
+      },
+      { token: token },
+    ),
   ]);
 
   return (
