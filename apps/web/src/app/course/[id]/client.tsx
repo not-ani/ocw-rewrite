@@ -12,7 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Header } from "@/components/header";
 import Link from "next/link";
 
-type CourseWithUnitsAndLessons = Preloaded<typeof api.course.getWithUnitsAndLessons>;
+type CourseWithUnitsAndLessons = Preloaded<typeof api.courses.getCourseWithUnitsAndLessons>;
 
 export function CoursePageSkeleton() {
   return (
@@ -111,7 +111,7 @@ export function CoursePageClient({
                   <AccordionItem className="rounded-lg border" value="unit-1">
                     <AccordionTrigger className="px-4 hover:no-underline">
                       <div className="flex items-center gap-4">
-                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-primary-foreground">
                           {course.units.indexOf(unit) + 1}
                         </div>
                         <div className="text-left">
