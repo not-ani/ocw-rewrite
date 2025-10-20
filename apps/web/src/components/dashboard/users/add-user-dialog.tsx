@@ -27,7 +27,6 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -35,6 +34,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useSite } from "@/lib/multi-tenant/context";
 
 const addUserSchema = z.object({
   userId: z.string().min(1, "User ID is required"),
@@ -64,6 +64,7 @@ export function AddUserDialog({
 }: AddUserDialogProps) {
   const [open, setOpen] = useState(false);
   const addOrUpdateMember = useMutation(api.courseUsers.addOrUpdateMember);
+  const { subdomain } = useSite();
 
   const form = useForm<AddUserFormValues>({
     resolver: zodResolver(addUserSchema),
@@ -79,6 +80,7 @@ export function AddUserDialog({
         courseId,
         userId: values.userId,
         role: values.role,
+        school: subdomain,
       });
 
       if (result?.created) {
@@ -90,13 +92,15 @@ export function AddUserDialog({
       setOpen(false);
       form.reset();
     } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Failed to add user");
+      toast.error(
+        error instanceof Error ? error.message : "Failed to add user",
+      );
     }
   };
 
   // Filter out users already in the course
   const availableUsersToAdd = availableUsers.filter(
-    (user) => !existingUserIds.has(user.id)
+    (user) => !existingUserIds.has(user.id),
   );
 
   return (
@@ -134,14 +138,16 @@ export function AddUserDialog({
                     </FormControl>
                     <SelectContent>
                       {availableUsersToAdd.length === 0 ? (
-                        <div className="p-2 text-center text-muted-foreground text-sm">
+                        <div className="text-muted-foreground p-2 text-center text-sm">
                           No users available to add
                         </div>
                       ) : (
                         availableUsersToAdd.map((user) => (
                           <SelectItem key={user.id} value={user.id}>
                             <div className="flex items-center gap-2">
-                              <span className="font-medium">{user.fullName}</span>
+                              <span className="font-medium">
+                                {user.fullName}
+                              </span>
                               <span className="text-muted-foreground text-xs">
                                 ({user.email})
                               </span>
@@ -182,9 +188,15 @@ export function AddUserDialog({
                   </Select>
                   <FormDescription>
                     <div className="mt-1 space-y-1">
-                      <div><strong>User:</strong> Can view published content</div>
-                      <div><strong>Editor:</strong> Can create and edit content</div>
-                      <div><strong>Admin:</strong> Full access to course management</div>
+                      <div>
+                        <strong>User:</strong> Can view published content
+                      </div>
+                      <div>
+                        <strong>Editor:</strong> Can create and edit content
+                      </div>
+                      <div>
+                        <strong>Admin:</strong> Full access to course management
+                      </div>
                     </div>
                   </FormDescription>
                   <FormMessage />
@@ -213,4 +225,3 @@ export function AddUserDialog({
     </Dialog>
   );
 }
-

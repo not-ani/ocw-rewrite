@@ -183,7 +183,7 @@ function LessonEditForm({
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="rounded-lg border p-6">
           <div className="mb-4 flex items-center justify-between">
-            <h2 className="font-semibold text-lg">Lesson Settings</h2>
+            <h2 className="text-lg font-semibold">Lesson Settings</h2>
             <Button
               type="button"
               variant="outline"
@@ -266,7 +266,7 @@ function LessonEditForm({
               control={form.control}
               name="isPublished"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                <FormItem className="flex flex-row items-start space-y-0 space-x-3">
                   <FormControl>
                     <input
                       ref={field.ref}

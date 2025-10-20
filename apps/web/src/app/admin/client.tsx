@@ -1,6 +1,6 @@
 "use client";
 
-import { api } from "@ocw-rewrite/backend/convex/_generated/api";
+import { type api } from "@ocw-rewrite/backend/convex/_generated/api";
 import type { Preloaded } from "convex/react";
 import { usePreloadedQuery } from "convex/react";
 import { useEffect, useMemo, useState } from "react";
@@ -43,7 +43,7 @@ export function AdminPageClient({
 
   const existingAdminIds = useMemo(
     () => new Set(admins.map((admin) => admin.userId)),
-    [admins]
+    [admins],
   );
 
   const adminsWithUsers = useMemo(() => {
@@ -58,7 +58,7 @@ export function AdminPageClient({
       {/* Header */}
       <div className="flex flex-wrap items-center justify-between gap-4 border-b pb-6">
         <div className="space-y-1">
-          <h1 className="font-bold text-3xl">Site Administration</h1>
+          <h1 className="text-3xl font-bold">Site Administration</h1>
           <p className="text-muted-foreground">
             Manage courses and site administrators across the platform
           </p>
@@ -68,7 +68,7 @@ export function AdminPageClient({
       {/* Courses Section */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="font-semibold text-2xl">All Courses</h2>
+          <h2 className="text-2xl font-semibold">All Courses</h2>
           <p className="text-muted-foreground text-sm">
             {courses.length} {courses.length === 1 ? "course" : "courses"} total
           </p>
@@ -79,7 +79,7 @@ export function AdminPageClient({
       {/* Site Admins Section */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="font-semibold text-2xl">Site Administrators</h2>
+          <h2 className="text-2xl font-semibold">Site Administrators</h2>
           <AddAdminDialog
             availableUsers={clerkUsers}
             existingAdminIds={existingAdminIds}
@@ -90,4 +90,3 @@ export function AdminPageClient({
     </div>
   );
 }
-

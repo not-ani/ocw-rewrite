@@ -47,7 +47,7 @@ export function LessonRow({
       style={style}
     >
       <div className="flex items-center gap-3 py-2">
-        <div className="size-2 rounded-full bg-muted" />
+        <div className="bg-muted size-2 rounded-full" />
         <div>
           <div className="font-medium">{lesson.name}</div>
           <div className="text-muted-foreground text-xs capitalize">

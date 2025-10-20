@@ -13,7 +13,7 @@ export default function UsersPageLoading() {
         </div>
 
         <div className="rounded-lg border">
-          <div className="border-b bg-muted/50 p-4">
+          <div className="bg-muted/50 border-b p-4">
             <div className="grid grid-cols-12 gap-4">
               <Skeleton className="col-span-4 h-5 w-24" />
               <Skeleton className="col-span-3 h-5 w-20" />
@@ -21,7 +21,7 @@ export default function UsersPageLoading() {
               <Skeleton className="col-span-2 h-5 w-20" />
             </div>
           </div>
-          
+
           {[...Array(5)].map((_, i) => (
             <div key={i} className="border-b p-4 last:border-0">
               <div className="grid grid-cols-12 items-center gap-4">
@@ -32,15 +32,15 @@ export default function UsersPageLoading() {
                     <Skeleton className="h-3 w-40" />
                   </div>
                 </div>
-                
+
                 <div className="col-span-3">
                   <Skeleton className="h-6 w-16" />
                 </div>
-                
+
                 <div className="col-span-3">
                   <Skeleton className="h-6 w-20" />
                 </div>
-                
+
                 <div className="col-span-2 flex justify-end">
                   <Skeleton className="h-8 w-8" />
                 </div>
@@ -52,4 +52,3 @@ export default function UsersPageLoading() {
     </div>
   );
 }
-

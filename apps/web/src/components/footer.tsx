@@ -1,5 +1,6 @@
 import { SignInButton } from "@clerk/nextjs";
 import Link from "next/link";
+import type { Route } from "next";
 
 export default function FooterSections() {
   const footerData = [
@@ -27,7 +28,7 @@ export default function FooterSections() {
 
   return (
     <>
-      {footerData.map((section, index) => (
+      {footerData.map((section) => (
         <div key={section.title}>
           <h5 className="mb-4 text-lg font-semibold">{section.title}</h5>
           {section.content && (
@@ -38,7 +39,7 @@ export default function FooterSections() {
               {section.links.map((link) => (
                 <Link
                   key={link.text}
-                  href={link.href}
+                  href={link.href as Route}
                   prefetch
                   className="text-muted-foreground hover:text-primary block text-sm"
                   {...(link.href.startsWith("http")

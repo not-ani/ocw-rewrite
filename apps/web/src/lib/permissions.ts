@@ -1,7 +1,7 @@
 import "server-only";
 
 import { clerkClient } from "@clerk/nextjs/server";
-import { fetchQuery, preloadQuery } from "convex/nextjs";
+import { fetchQuery } from "convex/nextjs";
 import { api } from "@ocw-rewrite/backend/convex/_generated/api";
 import type { Id } from "@ocw-rewrite/backend/convex/_generated/dataModel";
 import { getAuthToken } from "./auth";
@@ -12,7 +12,7 @@ import { extractSubdomain } from "./multi-tenant/server";
  */
 export async function checkUserManagementPermission(courseId: Id<"courses">) {
   const token = await getAuthToken();
-  const subdomain =  await extractSubdomain();
+  const subdomain = await extractSubdomain();
   if (!subdomain) {
     return { authorized: false, membership: null } as const;
   }
@@ -23,17 +23,17 @@ export async function checkUserManagementPermission(courseId: Id<"courses">) {
   const siteUser = await fetchQuery(
     api.permissions.getSiteUser,
     { school: subdomain },
-    { token }
+    { token },
   );
 
   const membership = await fetchQuery(
     api.courseUsers.getMyMembership,
     { courseId, school: subdomain },
-    { token }
+    { token },
   );
 
   const membershipData = membership;
-  
+
   const isSiteAdmin = siteUser?.role === "admin";
   const isCourseAdmin = membershipData?.role === "admin";
   const isCourseEditor = membershipData?.role === "editor";
@@ -46,7 +46,10 @@ export async function checkUserManagementPermission(courseId: Id<"courses">) {
         membershipData.permissions.includes("manage_users")));
 
   if (isSiteAdmin) {
-    return { authorized: true, membership: { role: "admin", permissions: ["manage_users"] } } as const;
+    return {
+      authorized: true,
+      membership: { role: "admin", permissions: ["manage_users"] },
+    } as const;
   }
 
   return { authorized: canManage, membership: membershipData } as const;
@@ -65,23 +68,22 @@ export async function checkAdminOrEditorPermission(courseId: Id<"courses">) {
   const siteUser = await fetchQuery(
     api.permissions.getSiteUser,
     { school: subdomain },
-    { token }
+    { token },
   );
 
   const membership = await fetchQuery(
     api.courseUsers.getMyMembership,
     { courseId, school: subdomain },
-    { token }
+    { token },
   );
 
   const membershipData = membership;
-  
 
-  const isCourseAdmin = siteUser?.role === "admin" || membershipData?.role === "admin";
-  const isCourseEditor = siteUser?.role === "admin" || membershipData?.role === "editor";
-  const isAuthorized =
-    membershipData &&
-    (isCourseAdmin || isCourseEditor);
+  const isCourseAdmin =
+    siteUser?.role === "admin" || membershipData?.role === "admin";
+  const isCourseEditor =
+    siteUser?.role === "admin" || membershipData?.role === "editor";
+  const isAuthorized = membershipData && (isCourseAdmin || isCourseEditor);
 
   return { authorized: isAuthorized, membership: membershipData } as const;
 }
@@ -92,7 +94,7 @@ export async function checkAdminOrEditorPermission(courseId: Id<"courses">) {
  */
 export async function getAllClerkUsers() {
   const client = await clerkClient();
-  
+
   try {
     const { data: users } = await client.users.getUserList({
       limit: 100,
@@ -105,7 +107,9 @@ export async function getAllClerkUsers() {
       email: user.emailAddresses[0]?.emailAddress ?? "",
       firstName: user.firstName ?? "",
       lastName: user.lastName ?? "",
-      fullName: `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim() || "Unknown User",
+      fullName:
+        `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim() ||
+        "Unknown User",
       imageUrl: user.imageUrl,
       createdAt: user.createdAt,
     }));
@@ -120,7 +124,7 @@ export async function getAllClerkUsers() {
  */
 export async function getClerkUser(userId: string) {
   const client = await clerkClient();
-  
+
   try {
     const user = await client.users.getUser(userId);
     return {
@@ -129,7 +133,9 @@ export async function getClerkUser(userId: string) {
       email: user.emailAddresses[0]?.emailAddress ?? "",
       firstName: user.firstName ?? "",
       lastName: user.lastName ?? "",
-      fullName: `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim() || "Unknown User",
+      fullName:
+        `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim() ||
+        "Unknown User",
       imageUrl: user.imageUrl,
       createdAt: user.createdAt,
     };
@@ -138,4 +144,3 @@ export async function getClerkUser(userId: string) {
     return null;
   }
 }
-

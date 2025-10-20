@@ -19,6 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { LessonRow } from "./lesson-row";
 import { Loader2 } from "lucide-react";
+import { useSite } from "@/lib/multi-tenant/context";
 
 export function LessonsCard({
   selectedUnitId,
@@ -46,20 +47,21 @@ export function LessonsCard({
   }) => Promise<void>;
   onUpdateEmbed: (lessonId: Id<"lessons">, raw: string) => Promise<void>;
 }) {
+  const { subdomain } = useSite();
   const [newLessonName, setNewLessonName] = useState("");
   const [newLessonEmbed, setNewLessonEmbed] = useState("");
 
   const lessons = useQuery(
     api.lesson.getByUnit,
     selectedUnitId
-      ? ({ unitId: selectedUnitId } as { unitId: Id<"units"> })
-      : ("skip" as const)
+      ? ({ unitId: selectedUnitId, school: subdomain } as { unitId: Id<"units">; school: string })
+      : ("skip" as const),
   );
 
-  const lessonList = lessons ?? [];
+  const lessonList = useMemo(() => lessons ?? [], [lessons]);
   const lessonIds = useMemo(
     () => lessonList.map((l) => String(l.id)),
-    [lessonList]
+    [lessonList],
   );
 
   const handleAdd = useCallback(async () => {
@@ -91,7 +93,7 @@ export function LessonsCard({
       }));
       await onReorderLesson({ unitId: selectedUnitId, data: payload });
     },
-    [lessonList, onReorderLesson, selectedUnitId]
+    [lessonList, onReorderLesson, selectedUnitId],
   );
 
   if (!selectedUnitId) {
@@ -180,7 +182,7 @@ export function LessonsCard({
             items={lessonIds}
             strategy={verticalListSortingStrategy}
           >
-            <div className="divide-y divide-border">
+            <div className="divide-border divide-y">
               {lessonList.map((l) => (
                 <LessonRow
                   key={String(l.id)}

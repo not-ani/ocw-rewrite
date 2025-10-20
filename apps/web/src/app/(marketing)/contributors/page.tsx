@@ -14,18 +14,18 @@ export default function WritersTable() {
   return (
     <main className="bg-background min-h-screen">
       <div className="mx-auto max-w-4xl">
-        <div className="overflow-hidden bg-background rounded-2xl">
+        <div className="bg-background overflow-hidden rounded-2xl">
           {/* Table Header */}
           <div className="px-8 py-6">
             <div className="grid grid-cols-12 items-center gap-4">
               <div className="col-span-1" />
               <div className="col-span-5">
-                <span className="font-semibold text-gray-600 text-sm uppercase tracking-wide">
+                <span className="text-sm font-semibold tracking-wide text-gray-600 uppercase">
                   Name
                 </span>
               </div>
               <div className="col-span-5">
-                <span className="font-semibold text-gray-600 text-sm uppercase tracking-wide">
+                <span className="text-sm font-semibold tracking-wide text-gray-600 uppercase">
                   Role
                 </span>
               </div>
@@ -77,7 +77,7 @@ export default function WritersTable() {
                     {/* Name */}
                     <div className="col-span-5">
                       <h3
-                        className={`font-semibold transition-all duration-300 group-hover:text-foreground ${
+                        className={`group-hover:text-foreground font-semibold transition-all duration-300 ${
                           expandedId === writer.name
                             ? "text-foreground"
                             : "text-muted-foreground"
@@ -90,9 +90,9 @@ export default function WritersTable() {
                     {/* Role */}
                     <div className="col-span-5">
                       <span
-                        className={`transition-all duration-300 group-hover:text-foreground/90 ${
+                        className={`group-hover:text-foreground/90 transition-all duration-300 ${
                           expandedId === writer.name
-                            ? "font-medium text-accent-foreground/80"
+                            ? "text-accent-foreground/80 font-medium"
                             : "text-muted-foreground"
                         }`}
                       >
@@ -104,7 +104,7 @@ export default function WritersTable() {
                     <div className="col-span-1 flex justify-end">
                       <div
                         className={
-                          "text-muted-foreground transition-all duration-300 group-hover:text-foreground/90"
+                          "text-muted-foreground group-hover:text-foreground/90 transition-all duration-300"
                         }
                       >
                         {expandedId === writer.name ? (
@@ -136,7 +136,7 @@ export default function WritersTable() {
                       >
                         <div className="overflow-hidden rounded-2xl border">
                           {/* Card Header with Image */}
-                          <div className="relative h-48 bg-primary-foreground">
+                          <div className="bg-primary-foreground relative h-48">
                             <div className="absolute inset-0 flex items-center justify-center">
                               <img
                                 alt={writer.name}
@@ -149,10 +149,10 @@ export default function WritersTable() {
                           {/* Card Content */}
                           <div className="p-6">
                             <div className="mb-4 text-center">
-                              <h3 className="mb-1 font-bold text-xl">
+                              <h3 className="mb-1 text-xl font-bold">
                                 {writer.name}
                               </h3>
-                              <span className="font-medium text-primary/70">
+                              <span className="text-primary/70 font-medium">
                                 {writer.role}
                               </span>
                             </div>

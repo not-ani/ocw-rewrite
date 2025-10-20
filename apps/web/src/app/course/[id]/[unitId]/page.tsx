@@ -1,13 +1,11 @@
-
 import { api } from "@ocw-rewrite/backend/convex/_generated/api";
 import type { Id } from "@ocw-rewrite/backend/convex/_generated/dataModel";
 import { preloadQuery } from "convex/nextjs";
 import { UnitPageClient } from "./client";
 import { extractSubdomain } from "@/lib/multi-tenant/server";
-import { isValidConvexId } from "@/lib/convex-utils";
 
 export default async function Page({
-  params
+  params,
 }: {
   params: Promise<{ id: string; unitId: string }>;
 }) {
@@ -17,15 +15,9 @@ export default async function Page({
     return null;
   }
 
-  
-
   const preloadedUnit = await preloadQuery(api.units.getUnitWithLessons, {
     id: unitId as Id<"units">,
-  })
+  });
 
-  return (
-    <UnitPageClient
-      preloadedUnit={preloadedUnit}
-    />
-  )
+  return <UnitPageClient preloadedUnit={preloadedUnit} />;
 }

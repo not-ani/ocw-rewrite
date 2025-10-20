@@ -7,7 +7,6 @@ function extractSubdomain(request: NextRequest): string | null {
   const host = request.headers.get("host") || "";
   const hostname = host.split(":")[0];
 
-
   if (url.includes("localhost") || url.includes("127.0.0.1")) {
     const fullUrlMatch = url.match(/http:\/\/([^.]+)\.localhost/);
     if (fullUrlMatch && fullUrlMatch[1]) {
@@ -33,20 +32,19 @@ function extractSubdomain(request: NextRequest): string | null {
     hostname !== `www.${rootDomainFormatted}` &&
     hostname.endsWith(`.${rootDomainFormatted}`);
 
-
   return isSubdomain ? hostname.replace(`.${rootDomainFormatted}`, "") : null;
 }
 
 export default clerkMiddleware(async (auth, req) => {
   const { pathname } = req.nextUrl;
-  
+
   if (pathname.startsWith("/ocw-path-for-stuff")) {
     return NextResponse.next();
   }
 
   const subdomain = extractSubdomain(req);
 
-  if (subdomain === "clerk") { 
+  if (subdomain === "clerk") {
     return NextResponse.next();
   }
 

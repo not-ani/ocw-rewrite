@@ -10,4 +10,3 @@ export type PersonContact = {
   email: string;
   description: string;
 };
-

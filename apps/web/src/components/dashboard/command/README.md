@@ -5,17 +5,20 @@ A powerful, all-in-one command palette for the OCW dashboard. Provides quick sea
 ## Features
 
 ### 🔍 Search & Navigation
+
 - **Real-time Search**: Search for Units and Lessons with instant results
 - **Debounced Queries**: Efficient search with 300ms debounce to reduce backend load
 - **Context-Aware**: Automatically scopes search to the current course
 - **Smart Navigation**: Click any result to instantly navigate to that Unit or Lesson
 
 ### ✨ Quick Actions
+
 - **Create Unit**: Inline form with validation for creating new units
 - **Create Lesson**: Inline form with Unit selection via Combobox
 - **Keyboard Shortcuts**: Open with `⌘K` (Mac) or `Ctrl+K` (Windows/Linux)
 
 ### 🎨 User Experience
+
 - **Loading States**: Elegant loading skeletons while fetching data
 - **Empty States**: Helpful messages when no results are found
 - **Error Handling**: Toast notifications for success/error states
@@ -36,11 +39,13 @@ dashboard-command.tsx          # Main command palette component
 ### Backend Queries
 
 **Units:**
+
 - `api.units.searchByCourse` - Search units within a course
 - `api.units.getTableData` - Get all units for Combobox dropdown
 - `api.units.create` - Create new unit
 
 **Lessons:**
+
 - `api.lesson.searchByCourse` - Search lessons within a course
 - `api.lesson.create` - Create new lesson
 
@@ -97,6 +102,7 @@ type CommandMode = "search" | "create-unit" | "create-lesson";
 ### Form Schemas
 
 **Unit Form:**
+
 ```typescript
 {
   unitName: string (min: 3, max: 50)
@@ -106,6 +112,7 @@ type CommandMode = "search" | "create-unit" | "create-lesson";
 ```
 
 **Lesson Form:**
+
 ```typescript
 {
   name: string (min: 3, max: 200)
@@ -123,23 +130,25 @@ type CommandMode = "search" | "create-unit" | "create-lesson";
 
 ## Keyboard Shortcuts
 
-| Shortcut | Action |
-|----------|--------|
-| `⌘K` / `Ctrl+K` | Open command palette |
-| `Esc` | Close command palette |
-| `↑` / `↓` | Navigate results |
-| `Enter` | Select result/action |
+| Shortcut        | Action                |
+| --------------- | --------------------- |
+| `⌘K` / `Ctrl+K` | Open command palette  |
+| `Esc`           | Close command palette |
+| `↑` / `↓`       | Navigate results      |
+| `Enter`         | Select result/action  |
 
 ## Extending the Command Palette
 
 ### Adding New Commands
 
 1. Update the `CommandMode` type:
+
 ```typescript
 type CommandMode = "search" | "create-unit" | "create-lesson" | "your-new-mode";
 ```
 
 2. Add a new quick action:
+
 ```typescript
 <CommandItem onSelect={() => setMode("your-new-mode")}>
   <YourIcon size={16} />
@@ -148,6 +157,7 @@ type CommandMode = "search" | "create-unit" | "create-lesson" | "your-new-mode";
 ```
 
 3. Add the corresponding UI in the dialog:
+
 ```typescript
 {mode === "your-new-mode" && (
   <YourComponent onSuccess={handleSuccess} onCancel={() => setMode("search")} />
@@ -160,16 +170,18 @@ To add search for another entity type (e.g., "Resources"):
 
 1. Create a backend search query in Convex
 2. Add the query to the component:
+
 ```typescript
 const resources = useQuery(
   api.resources.searchByCourse,
   courseId && debouncedSearch.trim() && mode === "search"
     ? { courseId, searchTerm: debouncedSearch }
-    : "skip"
+    : "skip",
 );
 ```
 
 3. Display results in a new group:
+
 ```typescript
 {resources && resources.length > 0 && (
   <CommandGroup heading="Resources">
@@ -190,16 +202,19 @@ const resources = useQuery(
 ## Troubleshooting
 
 ### Command palette doesn't open
+
 - Verify you're on a dashboard page (`/course/[id]/dashboard/*`)
 - Check browser console for JavaScript errors
 - Ensure courseId is being extracted correctly from pathname
 
 ### Search not working
+
 - Verify backend queries are deployed
 - Check Convex dashboard for query errors
 - Ensure search indexes are set up in schema
 
 ### Combobox not loading units
+
 - Verify `api.units.getTableData` query exists
 - Check that courseId is being passed correctly
 - Look for network errors in browser dev tools

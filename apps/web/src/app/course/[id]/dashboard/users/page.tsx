@@ -1,10 +1,11 @@
-import { api } from "@ocw-rewrite/backend/convex/_generated/api";
 import type { Id } from "@ocw-rewrite/backend/convex/_generated/dataModel";
-import { preloadQuery } from "convex/nextjs";
 import { redirect, notFound } from "next/navigation";
 import { SignInButton } from "@clerk/nextjs";
 import { UsersClient } from "./client";
-import { checkUserManagementPermission, getAllClerkUsers } from "@/lib/permissions";
+import {
+  checkUserManagementPermission,
+  getAllClerkUsers,
+} from "@/lib/permissions";
 import { getAuthToken } from "@/lib/auth";
 import { isValidConvexId } from "@/lib/convex-utils";
 import { extractSubdomain } from "@/lib/multi-tenant/server";
@@ -22,8 +23,8 @@ export default async function UsersPage({
     return (
       <div className="mx-auto flex min-h-[400px] max-w-xl items-center justify-center p-4">
         <div className="text-center">
-          <h1 className="mb-2 font-semibold text-2xl">Sign in required</h1>
-          <p className="mb-4 text-muted-foreground">
+          <h1 className="mb-2 text-2xl font-semibold">Sign in required</h1>
+          <p className="text-muted-foreground mb-4">
             Sign in to manage course members.
           </p>
           <SignInButton />
@@ -40,8 +41,8 @@ export default async function UsersPage({
     notFound();
   }
 
-  const { authorized, membership } = await checkUserManagementPermission(
-    courseId as Id<"courses">
+  const { authorized } = await checkUserManagementPermission(
+    courseId as Id<"courses">,
   );
 
   if (!authorized) {
@@ -49,12 +50,6 @@ export default async function UsersPage({
   }
 
   const allClerkUsers = await getAllClerkUsers();
-
-  const preloadedMembers = await preloadQuery(
-    api.courseUsers.listMembers,
-    { courseId: courseId as Id<"courses">, school: subdomain },
-    { token }
-  );
 
   return (
     <div className="mx-auto w-full max-w-7xl p-4 sm:p-6">

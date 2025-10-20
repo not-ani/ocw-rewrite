@@ -22,16 +22,19 @@ export const SiteContextProvider = ({
   children: React.ReactNode;
   subdomain: string | null;
 }) => {
+  const siteConfig = useQuery(
+    api.site.getSiteConfig,
+    subdomain ? { school: subdomain } : "skip",
+  );
+
+  const user = useQuery(
+    api.permissions.getSiteUser,
+    subdomain ? { school: subdomain } : "skip",
+  );
+
   if (!subdomain) {
     return <>{children}</>;
   }
-  const siteConfig = useQuery(api.site.getSiteConfig, {
-    school: subdomain,
-  });
-
-  const user = useQuery(api.permissions.getSiteUser, {
-    school: subdomain,
-  });
 
   return (
     <SiteContext.Provider
@@ -53,4 +56,3 @@ export const useSite = () => {
   }
   return context;
 };
-

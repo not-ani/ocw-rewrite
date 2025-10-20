@@ -6,9 +6,8 @@ import type { Id } from "@ocw-rewrite/backend/convex/_generated/dataModel";
 import type { Preloaded } from "convex/react";
 import { useMutation, usePreloadedQuery } from "convex/react";
 import { ArrowLeft, Loader2, Save } from "lucide-react";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Suspense, useCallback, useEffect, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -162,7 +161,7 @@ function UnitEditForm({
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         <div className="rounded-lg border p-6">
-          <h2 className="mb-4 font-semibold text-lg">Unit Settings</h2>
+          <h2 className="mb-4 text-lg font-semibold">Unit Settings</h2>
 
           <div className="space-y-4">
             <FormField
@@ -204,7 +203,7 @@ function UnitEditForm({
               control={form.control}
               name="isPublished"
               render={({ field }) => (
-                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                <FormItem className="flex flex-row items-start space-y-0 space-x-3">
                   <FormControl>
                     <input
                       type="checkbox"
@@ -270,7 +269,7 @@ export function UnitPageClient({
         data: { id: payload.id, ...payload.data },
       });
     },
-    [updateLesson, courseId],
+    [updateLesson, courseId, school],
   );
 
   const handleRemoveLesson = useCallback(
@@ -278,17 +277,17 @@ export function UnitPageClient({
       await removeLesson({ courseId, id, school });
       toast.success("Lesson deleted");
     },
-    [removeLesson, courseId],
+    [removeLesson, courseId, school],
   );
 
   const handleReorderLessons = useCallback(
     async (data: { id: Id<"lessons">; position: number }[]) => {
       await reorderLessons({ courseId, unitId, data, school });
     },
-    [reorderLessons, courseId, unitId],
+    [reorderLessons, courseId, unitId, school],
   );
 
-  const lessonList = lessons ?? [];
+  const lessonList = useMemo(() => lessons ?? [], [lessons]);
 
   return (
     <div className="mx-auto w-full max-w-7xl p-4 sm:p-6">
@@ -318,7 +317,7 @@ export function UnitPageClient({
             <Suspense fallback={<LessonsTableSkeleton />}>
               <div className="space-y-4">
                 <div className="flex items-center justify-between">
-                  <h2 className="font-semibold text-lg">Lessons</h2>
+                  <h2 className="text-lg font-semibold">Lessons</h2>
                   <CreateLessonDialog courseId={courseId} unitId={unitId} />
                 </div>
                 <LessonsTable

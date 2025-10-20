@@ -22,7 +22,7 @@ export async function GET() {
     const isSiteAdmin = await fetchQuery(
       api.admin.isSiteAdmin,
       { school: subdomain },
-      { token }
+      { token },
     );
 
     if (!isSiteAdmin) {
@@ -53,8 +53,7 @@ export async function GET() {
     console.error("Error fetching Clerk users:", error);
     return NextResponse.json(
       { error: "Failed to fetch users" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
-

@@ -70,13 +70,13 @@ export const Embed: React.FC<EmbedLoaderProps> = memo(function Embed({
       {isLoading && !hasError ? (
         <div aria-live="polite" className="loader" role="status">
           {loaderComponent ?? (
-            <div className="flex h-full w-full flex-col items-center justify-center rounded-xl bg-muted/20">
-              <LoaderCircleIcon className="mb-4 h-8 w-8 animate-spin text-primary" />
+            <div className="bg-muted/20 flex h-full w-full flex-col items-center justify-center rounded-xl">
+              <LoaderCircleIcon className="text-primary mb-4 h-8 w-8 animate-spin" />
               <div className="text-center">
                 <p className="font-medium">Loading content...</p>
-                <ul className="mt-2 text-muted-foreground text-sm">
+                <ul className="text-muted-foreground mt-2 text-sm">
                   <li>If this takes a long time, try turning off your VPN</li>
-                  <li>Or click the "Open in new tab" button</li>
+                  <li>Or click the &quot;Open in new tab&quot; button</li>
                 </ul>
               </div>
             </div>

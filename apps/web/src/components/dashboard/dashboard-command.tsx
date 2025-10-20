@@ -2,7 +2,7 @@
 
 import * as React from "react";
 import { usePathname, useRouter } from "next/navigation";
-import { useQuery, useMutation } from "convex/react";
+import { useQuery } from "convex/react";
 import { api } from "@ocw-rewrite/backend/convex/_generated/api";
 import type { Id } from "@ocw-rewrite/backend/convex/_generated/dataModel";
 import {
@@ -13,7 +13,6 @@ import {
   ArrowRightIcon,
   BookOpenIcon,
 } from "lucide-react";
-import { toast } from "sonner";
 
 import {
   CommandDialog,
@@ -25,7 +24,6 @@ import {
   CommandSeparator,
 } from "@/components/ui/command";
 import { useDebouncedValue } from "@/hooks/use-debounce";
-import { Skeleton } from "@/components/ui/skeleton";
 import { CreateUnitInlineForm } from "@/components/dashboard/command/create-unit-form";
 import { CreateLessonInlineForm } from "@/components/dashboard/command/create-lesson-form";
 
@@ -71,14 +69,14 @@ export default function DashboardCommand() {
     api.units.searchByCourse,
     courseId && debouncedSearch.trim() && mode === "search"
       ? { courseId, searchTerm: debouncedSearch }
-      : "skip"
+      : "skip",
   );
 
   const lessons = useQuery(
     api.lesson.searchByCourse,
     courseId && debouncedSearch.trim() && mode === "search"
       ? { courseId, searchTerm: debouncedSearch }
-      : "skip"
+      : "skip",
   );
 
   const isSearching =
@@ -148,12 +146,14 @@ export default function DashboardCommand() {
               <CommandEmpty>
                 {isSearching ? (
                   <div className="flex flex-col items-center gap-2 py-6">
-                    <Loader2Icon className="h-6 w-6 animate-spin text-muted-foreground" />
-                    <p className="text-sm text-muted-foreground">Searching...</p>
+                    <Loader2Icon className="text-muted-foreground h-6 w-6 animate-spin" />
+                    <p className="text-muted-foreground text-sm">
+                      Searching...
+                    </p>
                   </div>
                 ) : (
                   <div className="py-6 text-center">
-                    <p className="text-sm text-muted-foreground">
+                    <p className="text-muted-foreground text-sm">
                       {debouncedSearch.trim()
                         ? "No results found."
                         : "Type to search or select a quick action below."}
@@ -187,7 +187,7 @@ export default function DashboardCommand() {
                 </CommandItem>
               </CommandGroup>
 
-              {(units?.length || lessons?.length) ? (
+              {units?.length || lessons?.length ? (
                 <>
                   <CommandSeparator />
 
@@ -230,7 +230,7 @@ export default function DashboardCommand() {
                           />
                           <div className="flex flex-col">
                             <span>{lesson.name}</span>
-                            <span className="text-xs text-muted-foreground">
+                            <span className="text-muted-foreground text-xs">
                               in {lesson.unitName}
                             </span>
                           </div>

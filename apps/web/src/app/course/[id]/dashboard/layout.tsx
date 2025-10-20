@@ -1,7 +1,6 @@
 import { AppSidebar } from "@/components/dashboard/sidebar/app-sidebar";
-import { CourseDashboardHeader} from "@/components/dashboard/sidebar/course-dashboard-header";
+import { CourseDashboardHeader } from "@/components/dashboard/sidebar/course-dashboard-header";
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-
 
 export default function DashboardLayout({
   children,
@@ -14,9 +13,7 @@ export default function DashboardLayout({
         <CourseDashboardHeader />
         <div className="flex flex-1">
           <AppSidebar />
-          <SidebarInset>
-            {children}
-          </SidebarInset>
+          <SidebarInset>{children}</SidebarInset>
         </div>
       </SidebarProvider>
     </div>

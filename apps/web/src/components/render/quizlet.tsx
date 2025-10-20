@@ -24,7 +24,7 @@ export const QuizletEmbed = memo(function QuizletEmbed({
   return (
     <div className="flex h-screen flex-col">
       <div className="flex flex-row items-center justify-between p-4">
-        <h3 className="font-bold text-3xl">Quizlet (Flashcards)</h3>
+        <h3 className="text-3xl font-bold">Quizlet (Flashcards)</h3>
         <a
           className={buttonVariants({
             variant: "default",

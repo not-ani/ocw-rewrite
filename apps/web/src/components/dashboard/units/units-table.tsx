@@ -125,7 +125,7 @@ function SortableUnitRow({
         isOpen: true,
         title: "Unpublish Unit",
         description: `Are you sure you want to unpublish "${unit.name}"? Students will no longer be able to access this unit.`,
-        action: handleUnpublish,
+        action: () => void handleUnpublish(),
       });
     } else {
       await onUpdateUnit({
@@ -140,14 +140,14 @@ function SortableUnitRow({
       isOpen: true,
       title: "Delete Unit",
       description: `Are you sure you want to delete "${unit.name}"? This action cannot be undone and will also delete all lessons in this unit.`,
-      action: handleDelete,
+      action: () => void handleDelete(),
     });
   }, [unit.name, handleDelete]);
 
   return (
     <>
       <tr
-        className={`transition-colors hover:bg-muted/50 ${
+        className={`hover:bg-muted/50 transition-colors ${
           isDragging ? "opacity-50" : ""
         }`}
         onClick={() =>
@@ -159,7 +159,7 @@ function SortableUnitRow({
         <TableCell className="p-0">
           <div className="flex w-full items-center gap-3 px-4 py-3">
             <button
-              className="cursor-grab touch-none rounded p-1 hover:bg-muted"
+              className="hover:bg-muted cursor-grab touch-none rounded p-1"
               type="button"
               {...attributes}
               {...listeners}
@@ -168,7 +168,7 @@ function SortableUnitRow({
                 e.stopPropagation();
               }}
             >
-              <GripVerticalIcon className="h-4 w-4 text-muted-foreground" />
+              <GripVerticalIcon className="text-muted-foreground h-4 w-4" />
             </button>
             <div className="flex flex-col">
               <span className="font-medium">{unit.name}</span>
@@ -254,7 +254,7 @@ export function UnitsTable({
   const sensors = useSensors(
     useSensor(MouseSensor),
     useSensor(TouchSensor),
-    useSensor(KeyboardSensor)
+    useSensor(KeyboardSensor),
   );
 
   // Keep local copy in sync with server updates
@@ -269,10 +269,10 @@ export function UnitsTable({
       }
 
       const oldIndex = localUnits.findIndex(
-        (u) => String(u.id) === String(active.id)
+        (u) => String(u.id) === String(active.id),
       );
       const newIndex = localUnits.findIndex(
-        (u) => String(u.id) === String(over.id)
+        (u) => String(u.id) === String(over.id),
       );
 
       if (oldIndex === -1 || newIndex === -1) {
@@ -297,7 +297,7 @@ export function UnitsTable({
         setLocalUnits(prev);
       }
     },
-    [localUnits, onReorder]
+    [localUnits, onReorder],
   );
 
   if (localUnits.length === 0) {

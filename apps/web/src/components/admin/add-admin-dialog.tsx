@@ -30,6 +30,7 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { cn } from "@/lib/utils";
+import { useSite } from "@/lib/multi-tenant/context";
 
 type ClerkUser = {
   id: string;
@@ -52,11 +53,11 @@ export function AddAdminDialog({
   const [comboboxOpen, setComboboxOpen] = useState(false);
   const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [isAdding, setIsAdding] = useState(false);
-
+  const { subdomain } = useSite();
   const addAdmin = useMutation(api.admin.addSiteAdmin);
 
   const eligibleUsers = availableUsers.filter(
-    (user) => !existingAdminIds.has(user.id)
+    (user) => !existingAdminIds.has(user.id),
   );
 
   const selectedUser = eligibleUsers.find((user) => user.id === selectedUserId);
@@ -69,13 +70,13 @@ export function AddAdminDialog({
 
     setIsAdding(true);
     try {
-      await addAdmin({ userId: selectedUserId });
+      await addAdmin({ userId: selectedUserId, school: subdomain });
       toast.success("Admin added successfully");
       setOpen(false);
       setSelectedUserId("");
     } catch (error) {
       toast.error(
-        error instanceof Error ? error.message : "Failed to add admin"
+        error instanceof Error ? error.message : "Failed to add admin",
       );
     } finally {
       setIsAdding(false);
@@ -100,7 +101,7 @@ export function AddAdminDialog({
 
         <div className="space-y-4 py-4">
           <div className="space-y-2">
-            <label className="font-medium text-sm">Select User</label>
+            <label className="text-sm font-medium">Select User</label>
             <Popover open={comboboxOpen} onOpenChange={setComboboxOpen}>
               <PopoverTrigger asChild>
                 <Button
@@ -161,7 +162,7 @@ export function AddAdminDialog({
                                 "mr-2 h-4 w-4",
                                 selectedUserId === user.id
                                   ? "opacity-100"
-                                  : "opacity-0"
+                                  : "opacity-0",
                               )}
                             />
                             <Avatar className="mr-2 h-8 w-8">
@@ -204,4 +205,3 @@ export function AddAdminDialog({
     </Dialog>
   );
 }
-

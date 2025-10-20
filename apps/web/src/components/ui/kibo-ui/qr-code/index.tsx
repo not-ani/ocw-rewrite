@@ -49,7 +49,7 @@ export const QRCode = ({
 
         const foregroundOklch = getOklch(
           foregroundColor,
-          [0.21, 0.006, 285.885]
+          [0.21, 0.006, 285.885],
         );
         const backgroundOklch = getOklch(backgroundColor, [0.985, 0, 0]);
 

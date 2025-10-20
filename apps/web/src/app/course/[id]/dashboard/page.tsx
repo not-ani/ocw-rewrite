@@ -14,7 +14,7 @@ export default async function Dashboard({
   const { id } = await params;
   const token = await getAuthToken();
   const subdomain = await extractSubdomain();
-  
+
   if (!subdomain) {
     return null;
   }
@@ -26,12 +26,20 @@ export default async function Dashboard({
   const courseId = id as Id<"courses">;
 
   const [preloadedDashboard, preloadedUnits] = await Promise.all([
-    preloadQuery(api.courses.getDashboardSummary, {
-      courseId,
-      school: subdomain,
-      userRole: undefined, 
-    }, {token: token}),
-    preloadQuery(api.units.getTableData, { courseId, school: subdomain }, {token: token}),
+    preloadQuery(
+      api.courses.getDashboardSummary,
+      {
+        courseId,
+        school: subdomain,
+        userRole: undefined,
+      },
+      { token: token },
+    ),
+    preloadQuery(
+      api.units.getTableData,
+      { courseId, school: subdomain },
+      { token: token },
+    ),
   ]);
 
   return (

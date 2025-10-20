@@ -5,7 +5,6 @@ import { extractSubdomain } from "@/lib/multi-tenant/server";
 export default async function Page() {
   const subdomain = await extractSubdomain();
 
-
   if (!subdomain) {
     return <div>No subdomain found</div>;
   }

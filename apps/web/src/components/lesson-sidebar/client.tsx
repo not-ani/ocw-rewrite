@@ -14,6 +14,7 @@ import {
 import { GetIcon } from "./icons";
 import type { SidebarData } from "./types";
 import Link from "next/link";
+import type { Route } from "next";
 
 const Overlay = ({
   data,
@@ -28,7 +29,7 @@ const Overlay = ({
     <motion.div
       animate={{ opacity: 1 }}
       aria-modal="true"
-      className="fixed inset-0 z-50 flex items-center justify-center bg-background backdrop-blur-xs"
+      className="bg-background fixed inset-0 z-50 flex items-center justify-center backdrop-blur-xs"
       exit={{ opacity: 0 }}
       initial={{ opacity: 0 }}
       onClick={onClose}
@@ -37,20 +38,20 @@ const Overlay = ({
     >
       <motion.div
         animate={{ y: 0, opacity: 1 }}
-        className="max-h-[80vh] w-[90vw] max-w-md overflow-y-auto rounded-lg border border-sidebar-border bg-sidebar-background p-6 shadow-lg"
+        className="border-sidebar-border bg-sidebar-background max-h-[80vh] w-[90vw] max-w-md overflow-y-auto rounded-lg border p-6 shadow-lg"
         exit={{ y: "50px", opacity: 0 }}
         initial={{ y: "-50px", opacity: 0 }}
         onClick={(e) => e.stopPropagation()}
         transition={{ duration: 0.3 }}
       >
-        <h2 className="mb-4 font-semibold text-sidebar-foreground text-xl">
+        <h2 className="text-sidebar-foreground mb-4 text-xl font-semibold">
           Select Unit
         </h2>
         <ul className="space-y-1">
           {data.map((unit) => (
             <li key={unit.id}>
               <Button
-                className="w-full justify-start px-2 py-1.5 text-left text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground w-full justify-start px-2 py-1.5 text-left"
                 onClick={() => onSelectUnit(unit.id)}
                 variant="ghost"
               >
@@ -60,7 +61,7 @@ const Overlay = ({
           ))}
         </ul>
         <Button
-          className="mt-6 w-full border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+          className="border-sidebar-border text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground mt-6 w-full"
           onClick={onClose}
           variant="outline"
         >
@@ -89,23 +90,23 @@ function UnitLessonNav({
 
   const currentUnitIndex = useMemo(
     () => data.findIndex((unit) => unit.id === currentUnitId),
-    [data, currentUnitId]
+    [data, currentUnitId],
   );
 
   const currentUnit = useMemo(
     () => (currentUnitIndex !== -1 ? data[currentUnitIndex] : undefined),
-    [data, currentUnitIndex]
+    [data, currentUnitIndex],
   );
   const prevUnit = useMemo(
     () => (currentUnitIndex > 0 ? data[currentUnitIndex - 1] : undefined),
-    [data, currentUnitIndex]
+    [data, currentUnitIndex],
   );
   const nextUnit = useMemo(
     () =>
       currentUnitIndex !== -1 && currentUnitIndex < data.length - 1
         ? data[currentUnitIndex + 1]
         : undefined,
-    [data, currentUnitIndex]
+    [data, currentUnitIndex],
   );
 
   // Modified: Only update state, do not navigate
@@ -113,7 +114,7 @@ function UnitLessonNav({
     (newUnitId: string) => {
       setCurrentUnitId(newUnitId);
     },
-    [] // Removed courseId and router from dependencies
+    [], // Removed courseId and router from dependencies
   );
 
   const handleNextUnit = useCallback(() => {
@@ -144,16 +145,16 @@ function UnitLessonNav({
       handleUnitChange(unitId);
       setIsOverlayOpen(false);
     },
-    [handleUnitChange]
+    [handleUnitChange],
   );
 
   if (!currentUnit) {
-    return <div className="p-4 text-sidebar-foreground">Unit not found.</div>;
+    return <div className="text-sidebar-foreground p-4">Unit not found.</div>;
   }
 
   return (
     <>
-      <SidebarGroup className="sticky top-0 z-10 border-sidebar-border border-b bg-sidebar-background p-2">
+      <SidebarGroup className="border-sidebar-border bg-sidebar-background sticky top-0 z-10 border-b p-2">
         <div className="flex items-center justify-between">
           <Button
             aria-label="Previous Unit"
@@ -168,7 +169,7 @@ function UnitLessonNav({
           <Button
             aria-expanded={isOverlayOpen}
             aria-haspopup="dialog"
-            className="w-[20px] flex-1 truncate px-2 text-center font-medium text-sidebar-foreground text-sm hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+            className="text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground w-[20px] flex-1 truncate px-2 text-center text-sm font-medium"
             onClick={toggleOverlay}
             variant="ghost"
           >
@@ -203,9 +204,9 @@ function UnitLessonNav({
                     rel={lesson.pureLink ? "noopener noreferrer" : undefined}
                     target={lesson.pureLink ? "_blank" : undefined}
                     href={
-                      lesson.pureLink
+                      (lesson.pureLink
                         ? (lesson?.embeds?.embedUrl ?? "#")
-                        : `/course/${courseId}/${lesson.unitId}/${lesson.id}`
+                        : (`/course/${courseId}/${lesson.unitId}/${lesson.id}` as Route)) as Route
                     }
                   >
                     <GetIcon type={lesson.contentType} />

@@ -58,9 +58,10 @@ export function Pagination({
     <div className="flex flex-col items-center space-y-4">
       <div className="flex items-center space-x-2">
         <Button
-          className={`rounded-l-md h-10 w-20  px-3 py-2 font-medium text-sm`}
+          className={`h-10 w-20 rounded-l-md px-3 py-2 text-sm font-medium`}
           variant={"outline"}
-          onClick={() => onPageChange(currentPage - 1)} disabled={isPrevDisabled}
+          onClick={() => onPageChange(currentPage - 1)}
+          disabled={isPrevDisabled}
         >
           Previous
         </Button>
@@ -69,7 +70,7 @@ export function Pagination({
           p === "ellipsis" ? (
             <span
               aria-hidden
-              className="border border-gray-300 bg-background px-3 py-2 font-medium text-gray-500 text-sm"
+              className="bg-background border border-gray-300 px-3 py-2 text-sm font-medium text-gray-500"
               key={`el-${p}`}
             >
               ...
@@ -78,20 +79,21 @@ export function Pagination({
             <Button
               aria-current={p === currentPage ? "page" : undefined}
               aria-label={`Go to page ${p}`}
-              className={`border px-3 py-2 font-medium text-sm ${p === currentPage
-                ? "border-blue-500 bg-blue-50 text-blue-600"
-                : "border-gray-300 bg-background text-gray-500 hover:bg-gray-50 hover:text-gray-700"
-                }`}
+              className={`border px-3 py-2 text-sm font-medium ${
+                p === currentPage
+                  ? "border-blue-500 bg-blue-50 text-blue-600"
+                  : "bg-background border-gray-300 text-gray-500 hover:bg-gray-50 hover:text-gray-700"
+              }`}
               key={p}
               onClick={() => onPageChange(p)}
             >
               {p}
             </Button>
-          )
+          ),
         )}
 
         <Button
-          className="rounded-r-md px-3 py-2 font-medium text-sm h-10 w-20"
+          className="h-10 w-20 rounded-r-md px-3 py-2 text-sm font-medium"
           onClick={() => onPageChange(currentPage + 1)}
           variant={"outline"}
           disabled={isNextDisabled}

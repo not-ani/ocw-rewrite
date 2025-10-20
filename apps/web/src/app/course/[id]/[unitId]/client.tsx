@@ -11,14 +11,13 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import { Header } from "@/components/header";
 import Link from "next/link";
-import { useSite } from "@/lib/multi-tenant/context";
 
 type UnitWithLessons = Preloaded<typeof api.units.getUnitWithLessons>;
 
 export function UnitPageSkeleton() {
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
-      <aside className="hidden w-full border-b bg-background p-4 md:block md:w-96 md:border-r md:border-b-0 md:p-6">
+      <aside className="bg-background hidden w-full border-b p-4 md:block md:w-96 md:border-r md:border-b-0 md:p-6">
         <div className="mb-6">
           <Skeleton className="h-16 w-full rounded-lg" />
         </div>
@@ -64,7 +63,6 @@ export function UnitPageClient({
   preloadedUnit: UnitWithLessons;
 }) {
   const unit = usePreloadedQuery(preloadedUnit);
-  const school = useSite().subdomain;
   if (!unit) {
     return <UnitPageSkeleton />;
   }
@@ -74,22 +72,22 @@ export function UnitPageClient({
       <Header />
       <div className="flex h-screen flex-1 border-t-1">
         {/* Sidebar */}
-        <div className="hidden border-r bg-background p-6 lg:block lg:w-96">
-          <div className="mb-6 rounded-lg bg-primary/10 p-4">
+        <div className="bg-background hidden border-r p-6 lg:block lg:w-96">
+          <div className="bg-primary/10 mb-6 rounded-lg p-4">
             <Link
               href={`/course/${unit.course._id}`}
               className="text-primary/80 text-xl font-bold"
             >
               {unit.course.name}
             </Link>
-            <p className="mt-1 text-primary/60 text-sm">{unit.name}</p>
+            <p className="text-primary/60 mt-1 text-sm">{unit.name}</p>
           </div>
           <div className="ml-4 max-w-[calc(100%-2rem)] space-y-4">
             {unit.lessons.map((lesson, index) => (
               <div className="text-sm" key={lesson.id}>
-                <div className="mb-1 text-foreground">LESSON {index + 1}</div>
+                <div className="text-foreground mb-1">LESSON {index + 1}</div>
                 <Link
-                  className="break-words text-foreground/80 hover:underline"
+                  className="text-foreground/80 break-words hover:underline"
                   href={`/course/${unit.course._id}/${unit._id}/${lesson.id}`}
                 >
                   {lesson.name}
@@ -101,7 +99,7 @@ export function UnitPageClient({
 
         {/* Main Content Area */}
         <div className="flex-1 p-6 pt-8">
-          <h1 className="mb-6 font-bold text-3xl text-foreground">
+          <h1 className="text-foreground mb-6 text-3xl font-bold">
             {unit.name}
           </h1>
           <div className="gap-10">
@@ -110,12 +108,12 @@ export function UnitPageClient({
                 <AccordionItem className="rounded-lg border" value="lessons">
                   <AccordionTrigger className="px-4 hover:no-underline">
                     <div className="flex items-center gap-4">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white">
+                      <div className="bg-primary flex h-8 w-8 items-center justify-center rounded-full text-white">
                         {unit.lessons.length}
                       </div>
                       <div className="text-left">
                         <div className="font-semibold">Lessons</div>
-                        <div className="text-gray-500 text-sm">
+                        <div className="text-sm text-gray-500">
                           {unit.lessons.length}{" "}
                           {unit.lessons.length === 1 ? "lesson" : "lessons"}
                         </div>
@@ -126,7 +124,7 @@ export function UnitPageClient({
                     <div className="space-y-3 py-2">
                       {unit.lessons.map((lesson) => (
                         <Link
-                          className="block text-foreground hover:underline"
+                          className="text-foreground block hover:underline"
                           key={lesson.id}
                           href={`/course/${unit.course._id}/${unit._id}/${lesson.id}`}
                         >

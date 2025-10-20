@@ -14,8 +14,8 @@ A client component that conditionally renders children based on user's role and 
 import { PermissionWrapper } from "@/components/permissions";
 
 // Require admin role
-<PermissionWrapper 
-  courseId={courseId} 
+<PermissionWrapper
+  courseId={courseId}
   requiredRole="admin"
   fallback={<p>Admin access required</p>}
 >
@@ -23,16 +23,16 @@ import { PermissionWrapper } from "@/components/permissions";
 </PermissionWrapper>
 
 // Require specific permission
-<PermissionWrapper 
-  courseId={courseId} 
+<PermissionWrapper
+  courseId={courseId}
   requiredPermission="manage_users"
 >
   <ManageUsersButton />
 </PermissionWrapper>
 
 // Require editor or higher
-<PermissionWrapper 
-  courseId={courseId} 
+<PermissionWrapper
+  courseId={courseId}
   requiredRole="editor"
 >
   <EditButton />
@@ -57,14 +57,14 @@ A hook for programmatic permission checks in client components.
 import { usePermission } from "@/components/permissions";
 
 function MyComponent({ courseId }) {
-  const { 
+  const {
     membership,
-    hasRole, 
-    hasPermission, 
+    hasRole,
+    hasPermission,
     canManageUsers,
     isAdmin,
     isEditor,
-    isAdminOrEditor
+    isAdminOrEditor,
   } = usePermission(courseId);
 
   // Check role
@@ -99,7 +99,7 @@ import { checkUserManagementPermission } from "@/lib/permissions";
 
 export default async function Page({ params }) {
   const { authorized, membership } = await checkUserManagementPermission(
-    params.id as Id<"courses">
+    params.id as Id<"courses">,
   );
 
   if (!authorized) {
@@ -145,4 +145,3 @@ When checking `requiredRole`, users with higher roles will also pass the check.
 - `manage_course`
 
 Note: Admin and Editor roles automatically have all permissions.
-

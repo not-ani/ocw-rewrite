@@ -67,8 +67,8 @@ function Header() {
   const isCoursesPage = route.endsWith("/courses");
   const [isOpen, setOpen] = useState(false);
   return (
-    <header className={"flex bg-background"}>
-      <div className="flex min-h-20 px-5 w-full flex-row items-center justify-evenly gap-4 lg:grid lg:grid-cols-3">
+    <header className={"bg-background flex"}>
+      <div className="flex min-h-20 w-full flex-row items-center justify-evenly gap-4 px-5 lg:grid lg:grid-cols-3">
         <div className="hidden flex-row items-center justify-start gap-4 lg:flex">
           <NavigationMenu
             className="flex items-start justify-start"
@@ -134,7 +134,7 @@ function Header() {
             {isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
           </Button>
           {isOpen && (
-            <div className="container absolute top-20 right-0 flex w-full flex-col gap-8 border-t bg-background py-4 shadow-lg">
+            <div className="bg-background absolute top-20 right-0 container flex w-full flex-col gap-8 border-t py-4 shadow-lg">
               {navigationItems.map((item) => (
                 <div key={item.title}>
                   <div className="flex flex-col gap-2">
@@ -144,7 +144,7 @@ function Header() {
                         href={item.href as Route}
                       >
                         <span className="text-lg">{item.title}</span>
-                        <MoveRight className="h-4 w-4 stroke-1 text-muted-foreground" />
+                        <MoveRight className="text-muted-foreground h-4 w-4 stroke-1" />
                       </Link>
                     ) : (
                       <p className="text-lg">{item.title}</p>

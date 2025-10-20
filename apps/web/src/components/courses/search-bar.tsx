@@ -29,7 +29,7 @@ export function SearchBar({
         <Input
           aria-label="Search courses"
           autoComplete="off"
-          className="flex-1 border border-input bg-background px-4 py-2 outline-none focus:border-primary focus:ring-2 focus:ring-ring"
+          className="border-input bg-background focus:border-primary focus:ring-ring flex-1 border px-4 py-2 outline-none focus:ring-2"
           onChange={(e) => onChange(e.target.value)}
           placeholder={placeholder}
           type="search"

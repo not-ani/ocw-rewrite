@@ -1,5 +1,5 @@
-"use client"
-import Link from "next/link"
+"use client";
+import Link from "next/link";
 import { api } from "@ocw-rewrite/backend/convex/_generated/api";
 import { useQuery } from "convex/react";
 import { useCallback } from "react";
@@ -13,8 +13,8 @@ import { coursesSearchParams } from "./parser";
 
 export function CourseCardSkeleton() {
   return (
-    <div className="flex flex-col overflow-hidden rounded-lg bg-card shadow-md">
-      <div className="flex flex-col p-4 h-36">
+    <div className="bg-card flex flex-col overflow-hidden rounded-lg shadow-md">
+      <div className="flex h-36 flex-col p-4">
         {/* Title */}
         <Skeleton className="mb-2 h-6 w-3/4" />
 
@@ -34,7 +34,7 @@ export function CourseCardSkeleton() {
 
 function CoursesPageSkeleton() {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-8">
           <div className="max-w-md">
@@ -62,11 +62,7 @@ function CoursesPageSkeleton() {
   );
 }
 
-export function CoursesPage({
-  subdomain,
-}: {
-  subdomain: string ;
-}) {
+export function CoursesPage({ subdomain }: { subdomain: string }) {
   const [queryState, setQueryState] = useQueryStates(coursesSearchParams);
   const { page: currentPage, search: searchInput } = queryState;
   const debouncedSearch = useDebouncedValue(searchInput, SEARCH_DEBOUNCE_MS);
@@ -87,14 +83,14 @@ export function CoursesPage({
       void setQueryState({ page });
       window.scrollTo({ top: 0, behavior: "smooth" });
     },
-    [setQueryState]
+    [setQueryState],
   );
 
   const handleSearchChange = useCallback(
     (value: string) => {
       void setQueryState({ search: value, page: 1 });
     },
-    [setQueryState]
+    [setQueryState],
   );
 
   if (!coursesData) {
@@ -102,7 +98,7 @@ export function CoursesPage({
   }
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="bg-background min-h-screen">
       <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
         <div className="mb-8">
           <SearchBar
@@ -116,7 +112,7 @@ export function CoursesPage({
 
         {courses.length === 0 ? (
           <div className="py-12 text-center">
-            <p className="text-lg text-muted-foreground">
+            <p className="text-muted-foreground text-lg">
               {debouncedSearch
                 ? `No courses found for "${debouncedSearch}"`
                 : "No courses available"}
@@ -128,14 +124,14 @@ export function CoursesPage({
               {courses.map((course) => (
                 <Link
                   key={course._id}
-                  className="flex flex-col overflow-hidden rounded-lg bg-card shadow-md transition-shadow duration-200 hover:shadow-lg"
+                  className="bg-card flex flex-col overflow-hidden rounded-lg shadow-md transition-shadow duration-200 hover:shadow-lg"
                   href={`/course/${course._id}`}
                 >
-                  <div className="flex flex-col p-4 h-36">
-                    <h3 className="mb-2 line-clamp-2 font-semibold text-foreground text-lg">
+                  <div className="flex h-36 flex-col p-4">
+                    <h3 className="text-foreground mb-2 line-clamp-2 text-lg font-semibold">
                       {course.name}
                     </h3>
-                    <p className="mb-3 line-clamp-3 text-muted-foreground text-sm">
+                    <p className="text-muted-foreground mb-3 line-clamp-3 text-sm">
                       {course.description}
                     </p>
                     <div className="mt-auto flex items-center justify-between">
@@ -152,11 +148,10 @@ export function CoursesPage({
                 (_, index) => (
                   <div
                     key={`filler-${index}`}
-                    className="h-36 rounded-lg opacity-0 pointer-events-none"
+                    className="pointer-events-none h-36 rounded-lg opacity-0"
                   />
-                )
+                ),
               )}
-
             </div>
 
             {totalPages > 1 && (

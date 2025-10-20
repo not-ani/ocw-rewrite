@@ -1,9 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
-import {
-  SidebarInset,
-  SidebarProvider,
-} from "@/components/ui/sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 function BreadcrumbSkeleton() {
   return (
@@ -21,7 +18,7 @@ function BreadcrumbSkeleton() {
 
 function SidebarSkeleton() {
   return (
-    <div className="h-screen w-[21rem] border-r bg-background p-4">
+    <div className="bg-background h-screen w-[21rem] border-r p-4">
       <div className="space-y-4">
         <Skeleton className="h-16 w-full rounded-lg" />
         {Array.from({ length: 5 }).map((_, i) => (

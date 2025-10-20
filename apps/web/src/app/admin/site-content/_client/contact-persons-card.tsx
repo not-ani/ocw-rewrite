@@ -46,9 +46,11 @@ export function ContactPersonsCard({
   contacts,
 }: ContactPersonsCardProps) {
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
-  const [editingContact, setEditingContact] = useState<PersonContact | null>(null);
+  const [editingContact, setEditingContact] = useState<PersonContact | null>(
+    null,
+  );
   const [isAddingNew, setIsAddingNew] = useState(false);
-  
+
   const updatePersonsContact = useMutation(api.site.updatePersonsContact);
 
   const newContactForm = useForm<ContactFormValues>({
@@ -72,7 +74,7 @@ export function ContactPersonsCard({
 
   const handleSaveEdit = async () => {
     if (editingIndex === null || !editingContact) return;
-    
+
     try {
       const updated = [...contacts];
       updated[editingIndex] = editingContact;
@@ -86,7 +88,10 @@ export function ContactPersonsCard({
     }
   };
 
-  const handleUpdateEditingContact = (field: keyof PersonContact, value: string) => {
+  const handleUpdateEditingContact = (
+    field: keyof PersonContact,
+    value: string,
+  ) => {
     if (!editingContact) return;
     setEditingContact({ ...editingContact, [field]: value });
   };
@@ -98,16 +103,16 @@ export function ContactPersonsCard({
 
   const handleSaveNewContact = async (values: ContactFormValues) => {
     try {
-      await updatePersonsContact({ 
-        school, 
+      await updatePersonsContact({
+        school,
         personsContact: [
           ...contacts,
           {
             name: values.name,
             email: values.email,
             description: values.description || "",
-          }
-        ]
+          },
+        ],
       });
       toast.success("Contact added successfully");
       setIsAddingNew(false);
@@ -145,7 +150,7 @@ export function ContactPersonsCard({
             </CardDescription>
           </div>
           <Button onClick={handleAddContact} size="sm">
-            <Plus className="h-4 w-4 mr-2" />
+            <Plus className="mr-2 h-4 w-4" />
             Add Contact
           </Button>
         </div>
@@ -193,7 +198,10 @@ export function ContactPersonsCard({
                     <Textarea
                       value={editingContact.description}
                       onChange={(e) =>
-                        handleUpdateEditingContact("description", e.target.value)
+                        handleUpdateEditingContact(
+                          "description",
+                          e.target.value,
+                        )
                       }
                       rows={2}
                     />
@@ -250,7 +258,7 @@ export function ContactPersonsCard({
                     placeholder="Name"
                   />
                   {newContactForm.formState.errors.name && (
-                    <p className="text-xs text-destructive mt-1">
+                    <p className="text-destructive mt-1 text-xs">
                       {newContactForm.formState.errors.name.message}
                     </p>
                   )}
@@ -262,7 +270,7 @@ export function ContactPersonsCard({
                     placeholder="Email"
                   />
                   {newContactForm.formState.errors.email && (
-                    <p className="text-xs text-destructive mt-1">
+                    <p className="text-destructive mt-1 text-xs">
                       {newContactForm.formState.errors.email.message}
                     </p>
                   )}
@@ -279,7 +287,9 @@ export function ContactPersonsCard({
                     <Button
                       size="icon"
                       variant="ghost"
-                      onClick={newContactForm.handleSubmit(handleSaveNewContact)}
+                      onClick={newContactForm.handleSubmit(
+                        handleSaveNewContact,
+                      )}
                       disabled={newContactForm.formState.isSubmitting}
                     >
                       <Check className="h-4 w-4" />
@@ -301,4 +311,3 @@ export function ContactPersonsCard({
     </Card>
   );
 }
-

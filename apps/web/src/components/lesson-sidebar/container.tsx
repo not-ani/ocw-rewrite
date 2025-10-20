@@ -1,4 +1,4 @@
-"use client"
+"use client";
 import { UserButton } from "@clerk/nextjs";
 import { Suspense } from "react";
 import type { api } from "@ocw-rewrite/backend/convex/_generated/api";
@@ -35,10 +35,10 @@ function SidebarContentSkeleton() {
 }
 
 // Assuming SidebarProvider is wrapping the layout higher up
-export const LessonSidebarContainer = ({ 
-  preloadedSidebar 
-}: { 
-  preloadedSidebar: PreloadedSidebar 
+export const LessonSidebarContainer = ({
+  preloadedSidebar,
+}: {
+  preloadedSidebar: PreloadedSidebar;
 }) => {
   return (
     // Removed the outer div
