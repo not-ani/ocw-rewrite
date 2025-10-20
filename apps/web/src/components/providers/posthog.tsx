@@ -8,14 +8,12 @@ import posthog from "posthog-js";
 import { PostHogProvider as PHProvider } from "posthog-js/react";
 import { useSession } from "@clerk/nextjs";
 
-const host = process.env.NODE_ENV === "production" ? `https://${process.env.NEXT_PUBLIC_VERCEL_URL}` : `http://localhost:3001`;
-
 export function PostHogProvider({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     posthog.init(process.env.NEXT_PUBLIC_POSTHOG_KEY!, {
       api_host:
-        `${host}/ocw-path-for-stuff`,
-      ui_host: ``,
+        `/ocw-path-for-stuff`,
+      ui_host: `/ocw-path-for-stuff`,
       person_profiles: "always",
       capture_pageview: true,
     });
