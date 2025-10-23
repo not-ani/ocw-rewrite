@@ -26,6 +26,27 @@ export const getLessonById = query({
   },
 });
 
+export const getLessonMetadata = query({
+  args: {
+    id: v.id("lessons"),
+    school: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const lesson = await ctx.db.get(args.id);
+    
+    if (!lesson) {
+      return null;
+    }
+    
+    // Return only the essential data needed for metadata
+    return {
+      id: lesson._id,
+      name: lesson.name,
+      unitId: lesson.unitId,
+    };
+  },
+});
+
 function detectEmbed(input: string): {
   contentType: "google_docs" | "quizlet" | "notion" | "tiptap" | "flashcard";
   embedUrl?: string;

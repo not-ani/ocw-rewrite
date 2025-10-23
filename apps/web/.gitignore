@@ -50,6 +50,7 @@ next-env.d.ts
 .vscode/*
 !.vscode/extensions.json
 .idea
+!.cursor/*
 
 # Other
 dev-dist
@@ -58,3 +59,6 @@ dev-dist
 .dev.vars*
 
 .open-next
+
+# clerk configuration (can include secrets)
+/.clerk/

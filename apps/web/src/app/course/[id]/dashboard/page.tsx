@@ -5,6 +5,50 @@ import { DashboardPageClient } from "./client";
 import { getAuthToken } from "@/lib/auth";
 import { extractSubdomain } from "@/lib/multi-tenant/server";
 import { isValidConvexId } from "@/lib/convex-utils";
+import type { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  const { id } = await params;
+  const subdomain = await extractSubdomain();
+  
+  if (!subdomain || !isValidConvexId(id)) {
+    return {
+      title: "Course Dashboard | OpenCourseWare",
+      description: "Manage course content, units, and lessons",
+      robots: "noindex, nofollow",
+    };
+  }
+
+  try {
+    const preloadedCourse = await preloadQuery(
+      api.courses.getCourseWithUnitsAndLessons,
+      {
+        id: id as Id<"courses">,
+        school: subdomain,
+      },
+    );
+
+    const courseName = preloadedCourse._valueJSON
+      ? JSON.parse(preloadedCourse._valueJSON)?.course?.name
+      : "Course";
+
+    return {
+      title: `${courseName || "Course"} Dashboard | OpenCourseWare`,
+      description: `Manage ${courseName || "course"} content, units, and lessons`,
+      robots: "noindex, nofollow",
+    };
+  } catch {
+    return {
+      title: "Course Dashboard | OpenCourseWare",
+      description: "Manage course content, units, and lessons",
+      robots: "noindex, nofollow",
+    };
+  }
+}
 
 export default async function Dashboard({
   params,
