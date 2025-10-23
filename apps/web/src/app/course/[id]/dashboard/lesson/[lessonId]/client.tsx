@@ -36,13 +36,7 @@ import { useSite } from "@/lib/multi-tenant/context";
 const lessonFormSchema = z.object({
   name: z.string().min(1, "Lesson name is required").max(200),
   isPublished: z.boolean(),
-  contentType: z.enum([
-    "google_docs",
-    "notion",
-    "quizlet",
-    "tiptap",
-    "flashcard",
-  ]),
+  contentType: z.enum(["google_docs", "notion", "quizlet", "google_drive"]),
   embedUrl: z.string().optional(),
 });
 
@@ -84,12 +78,7 @@ function LessonEditForm({
         _id?: Id<"lessons">;
         name?: string;
         isPublished?: boolean;
-        contentType?:
-          | "google_docs"
-          | "notion"
-          | "quizlet"
-          | "tiptap"
-          | "flashcard";
+        contentType?: "google_docs" | "google_drive" | "notion" | "quizlet";
         courseId?: Id<"courses">;
         unitId?: Id<"units">;
         order?: number;
@@ -121,7 +110,7 @@ function LessonEditForm({
     defaultValues: {
       name: lesson?.name ?? "",
       isPublished: lesson?.isPublished ?? false,
-      contentType: lesson?.contentType ?? "tiptap",
+      contentType: lesson?.contentType ?? "google_docs",
       embedUrl: embed?.embedUrl ?? "",
     },
   });
@@ -227,10 +216,11 @@ function LessonEditForm({
                     </FormControl>
                     <SelectContent>
                       <SelectItem value="google_docs">Google Docs</SelectItem>
+                      <SelectItem value="google_drive">
+                        Google Drive (PDF)
+                      </SelectItem>
                       <SelectItem value="notion">Notion</SelectItem>
                       <SelectItem value="quizlet">Quizlet</SelectItem>
-                      <SelectItem value="tiptap">Rich Text Editor</SelectItem>
-                      <SelectItem value="flashcard">Flashcards</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormDescription>

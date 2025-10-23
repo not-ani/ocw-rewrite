@@ -1,3 +1,5 @@
+import z from "zod";
+
 /**
  * Validates if a string is a valid Convex ID format
  * @param id - The ID string to validate
@@ -16,3 +18,9 @@ export function isValidConvexId(id: string | undefined | null): boolean {
     id !== "null"
   );
 }
+
+export type EmbedContent =
+  | "google_docs"
+  | "google_drive"
+  | "notion"
+  | "quizlet";

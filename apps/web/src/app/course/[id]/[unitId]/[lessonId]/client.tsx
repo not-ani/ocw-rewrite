@@ -19,8 +19,10 @@ import Link from "next/link";
 import { HomeIcon } from "lucide-react";
 import { Search } from "@/components/search";
 import { Suspense } from "react";
+import type { FunctionReturnType } from "convex/server";
 
 type PreloadedLesson = Preloaded<typeof api.lesson.getLessonById>;
+type LessonReturnType = FunctionReturnType<typeof api.lesson.getLessonById>;
 type PreloadedSidebar = Preloaded<typeof api.courses.getSidebarData>;
 
 function LessonEmbedSkeleton() {
@@ -89,13 +91,7 @@ function LessonEmbed({
   embedId,
   password,
 }: {
-  contentType:
-    | "quizlet"
-    | "google_docs"
-    | "notion"
-    | "tiptap"
-    | "flashcard"
-    | undefined;
+  contentType: LessonReturnType["lesson"]["contentType"];
   embedId: string | null;
   password: string | null;
 }) {
@@ -105,6 +101,8 @@ function LessonEmbed({
         <QuizletEmbed embedId={embedId ?? null} password={password ?? null} />
       );
     case "google_docs":
+      return <GoogleDocsEmbed embedId={embedId ?? null} />;
+    case "google_drive":
       return <GoogleDocsEmbed embedId={embedId ?? null} />;
     default:
       return (

@@ -1,4 +1,4 @@
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { assertEditorOrAdmin, getRequesterRole } from "./permissions";
 
@@ -27,9 +27,9 @@ export const getLessonById = query({
 });
 
 function detectEmbed(input: string): {
-  contentType: "google_docs" | "quizlet" | "notion" | "tiptap" | "flashcard";
+  contentType: "google_docs" | "google_drive" | "quizlet" | "notion";
   embedUrl?: string;
-} | null {
+} {
   const iframeSrcMatch = input.match(/src="([^"]+)"/);
   const url = iframeSrcMatch ? iframeSrcMatch[1] : input.trim();
 
@@ -46,7 +46,7 @@ function detectEmbed(input: string): {
           embedUrl: `https://drive.google.com/file/d/${fileId}/preview`,
         };
       }
-      return { contentType: "google_docs", embedUrl: u.toString() };
+      return { contentType: "google_drive", embedUrl: u.toString() };
     }
 
     if (u.hostname.includes("docs.google.com")) {
@@ -57,14 +57,17 @@ function detectEmbed(input: string): {
       return { contentType: "quizlet", embedUrl: u.toString() };
     }
 
-    if (u.hostname.includes("notion.so") || u.hostname.includes("notion.site")) {
+    if (
+      u.hostname.includes("notion.so") ||
+      u.hostname.includes("notion.site")
+    ) {
       return { contentType: "notion", embedUrl: u.toString() };
     }
   } catch {
-    return null;
+    throw new ConvexError("No Valid Embed Detected");
   }
 
-  return null;
+  throw new ConvexError("No Valid Embed Detected");
 }
 
 export const createOrUpdateEmbed = mutation({
@@ -154,7 +157,7 @@ export const searchByCourse = query({
     const lessons = await ctx.db
       .query("lessons")
       .withSearchIndex("search_name", (q) =>
-        q.search("name", args.searchTerm).eq("courseId", args.courseId)
+        q.search("name", args.searchTerm).eq("courseId", args.courseId),
       )
       .take(10);
 
@@ -170,7 +173,7 @@ export const searchByCourse = query({
           isPublished: lesson.isPublished,
           contentType: lesson.contentType,
         };
-      })
+      }),
     );
 
     return lessonsWithUnits;
@@ -182,7 +185,7 @@ export const create = mutation({
     courseId: v.id("courses"),
     unitId: v.id("units"),
     name: v.string(),
-    embedRaw: v.optional(v.string()),
+    embedRaw: v.string(),
     school: v.string(),
   },
   handler: async (ctx, args) => {
@@ -195,13 +198,13 @@ export const create = mutation({
       .collect();
     const order = existing.length;
 
-    const detected = args.embedRaw ? detectEmbed(args.embedRaw) : null;
+    const detected = detectEmbed(args.embedRaw);
 
     const lessonId = await ctx.db.insert("lessons", {
       order,
       isPublished: false,
       pureLink: true,
-      contentType: detected?.contentType ?? "tiptap",
+      contentType: detected?.contentType,
       courseId: args.courseId,
       unitId: args.unitId,
       name: args.name,
