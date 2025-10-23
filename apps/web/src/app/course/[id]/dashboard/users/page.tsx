@@ -9,6 +9,19 @@ import {
 import { getAuthToken } from "@/lib/auth";
 import { isValidConvexId } from "@/lib/convex-utils";
 import { extractSubdomain } from "@/lib/multi-tenant/server";
+import type { Metadata } from "next";
+
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}): Promise<Metadata> {
+  return {
+    title: "Course Users | OpenCourseWare",
+    description: "Manage course members and user permissions",
+    robots: "noindex, nofollow",
+  };
+}
 
 export default async function UsersPage({
   params,

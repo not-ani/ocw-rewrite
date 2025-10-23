@@ -4,6 +4,13 @@ import { getAuthToken } from "@/lib/auth";
 import { AdminPageClient } from "./client";
 import { redirect } from "next/navigation";
 import { extractSubdomain } from "@/lib/multi-tenant/server";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Admin Dashboard | OpenCourseWare",
+  description: "Manage courses, users, and site administration",
+  robots: "noindex, nofollow",
+};
 
 export default async function AdminPage() {
   const token = await getAuthToken();

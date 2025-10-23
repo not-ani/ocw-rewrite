@@ -1,5 +1,17 @@
 import FooterSections from "@/components/footer";
 import { Header } from "@/components/header";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "OpenCourseWare - Free Educational Resources",
+  description: "Access free, high-quality educational resources and courses. OpenCourseWare provides students with comprehensive learning materials and tools.",
+  keywords: ["OpenCourseWare", "education", "free courses", "learning resources", "educational content"],
+  openGraph: {
+    title: "OpenCourseWare - Free Educational Resources",
+    description: "Access free, high-quality educational resources and courses.",
+    type: "website",
+  },
+};
 
 export default function Layout({ children }: { children: React.ReactNode }) {
   return (

@@ -2,6 +2,13 @@ import { SiteContentClient } from "./_client/client";
 import { extractSubdomain } from "@/lib/multi-tenant/server";
 import { preloadQuery } from "convex/nextjs";
 import { api } from "@ocw-rewrite/backend/convex/_generated/api";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Site Content | OpenCourseWare",
+  description: "Manage site content and configuration",
+  robots: "noindex, nofollow",
+};
 
 export default async function SiteContentPage() {
   const school = await extractSubdomain();

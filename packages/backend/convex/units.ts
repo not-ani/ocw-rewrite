@@ -54,6 +54,24 @@ export const searchByCourse = query({
   },
 });
 
+export const getUnitMetadata = query({
+  args: { id: v.id("units") },
+  handler: async (ctx, args) => {
+    const unit = await ctx.db.get(args.id);
+    
+    if (!unit) {
+      return null;
+    }
+    
+    // Return only the essential data needed for metadata
+    return {
+      id: unit._id,
+      name: unit.name,
+      courseId: unit.courseId,
+    };
+  },
+});
+
 export const getUnitWithLessons = query({
   args: { id: v.id("units") },
   handler: async (ctx, args) => {
