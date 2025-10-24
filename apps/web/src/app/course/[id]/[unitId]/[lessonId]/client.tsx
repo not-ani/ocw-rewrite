@@ -20,6 +20,8 @@ import { HomeIcon } from "lucide-react";
 import { Search } from "@/components/search";
 import { Suspense } from "react";
 import type { FunctionReturnType } from "convex/server";
+import { GoogleDriveEmbed } from "@/components/render/google-drive";
+import type { EmbedContent } from "@/lib/convex-utils";
 
 type PreloadedLesson = Preloaded<typeof api.lesson.getLessonById>;
 type LessonReturnType = FunctionReturnType<typeof api.lesson.getLessonById>;
@@ -91,7 +93,7 @@ function LessonEmbed({
   embedId,
   password,
 }: {
-  contentType: LessonReturnType["lesson"]["contentType"];
+  contentType: EmbedContent;
   embedId: string | null;
   password: string | null;
 }) {
@@ -103,7 +105,12 @@ function LessonEmbed({
     case "google_docs":
       return <GoogleDocsEmbed embedId={embedId ?? null} />;
     case "google_drive":
-      return <GoogleDocsEmbed embedId={embedId ?? null} />;
+      return (
+        <GoogleDriveEmbed
+          embedId={embedId ?? null}
+          password={password ?? null}
+        />
+      );
     default:
       return (
         <div className="flex h-[60vh] items-center justify-center rounded-lg border">
@@ -183,7 +190,7 @@ export function LessonPageClient({
         <Suspense fallback={<LessonEmbedSkeleton />}>
           <LessonEmbed
             contentType={lesson.lesson.contentType}
-            embedId={lesson.embed.embedUrl ?? null}
+            embedId={lesson.embed.embedUrl}
             password={lesson.embed.password ?? null}
           />
         </Suspense>

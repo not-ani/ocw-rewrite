@@ -15,13 +15,15 @@ export const getLessonById = query({
       .withIndex("by_lesson_id", (q) => q.eq("lessonId", args.id))
       .first();
 
+    if (!lesson) {
+      throw new ConvexError("Lesson not found");
+    }
+    if (!lessonEmbed) {
+      throw new ConvexError("Lesson embed not found");
+    }
     return {
-      lesson: {
-        ...lesson,
-      },
-      embed: {
-        ...lessonEmbed,
-      },
+      lesson,
+      embed: lessonEmbed,
     };
   },
 });
@@ -242,6 +244,7 @@ export const update = mutation({
       id: v.id("lessons"),
       name: v.optional(v.string()),
       isPublished: v.optional(v.boolean()),
+      contentType: v.optional(v.union(v.literal("google_docs"), v.literal("google_drive"), v.literal("notion"), v.literal("quizlet"))),
       unitId: v.optional(v.id("units")),
       content: v.optional(v.union(v.any(), v.null())),
     }),
@@ -254,15 +257,20 @@ export const update = mutation({
     if (!lesson) {
       throw new Error("Lesson not found");
     }
-    await ctx.db.patch(args.data.id, {
+    console.error("contentType", args.data.contentType);
+   await ctx.db.patch(args.data.id, {
       name: args.data.name ?? lesson.name,
       isPublished: args.data.isPublished ?? lesson.isPublished,
+      contentType: args.data.contentType ?? lesson.contentType,
       unitId: args.data.unitId ?? lesson.unitId,
       content:
         args.data.content === undefined
           ? lesson.content
           : (args.data.content ?? undefined),
     });
+
+    const updatedLesson = await ctx.db.get(args.data.id);
+    console.error("updatedLesson", updatedLesson?.contentType);
 
     await ctx.db.insert("logs", {
       userId: (await ctx.auth.getUserIdentity())?.subject ?? "unknown",
