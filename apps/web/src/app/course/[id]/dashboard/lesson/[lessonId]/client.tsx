@@ -37,8 +37,8 @@ import type { FunctionReturnType } from "convex/server";
 const lessonFormSchema = z.object({
   name: z.string().min(1, "Lesson name is required").max(200),
   isPublished: z.boolean(),
-  contentType: z.enum(["google_docs", "notion", "quizlet", "google_drive"]),
-  embedUrl: z.string().optional(),
+  contentType: z.enum(["google_docs", "notion", "quizlet", "google_drive", "other"]),
+  embedUrl: z.string(),
 });
 
 type LessonFormValues = z.infer<typeof lessonFormSchema>;
@@ -84,24 +84,6 @@ function LessonEditForm({
   const updateLesson = useMutation(api.lesson.update);
   const createOrUpdateEmbed = useMutation(api.lesson.createOrUpdateEmbed);
 
-  if (!lesson) {
-    return (
-      <div className="rounded-lg border p-6">
-        <p className="text-muted-foreground">Lesson not found</p>
-      </div>
-    );
-  }
-
-  console.log("Form initialization data:", { 
-    lesson, 
-    embed,
-    defaultValues: {
-      name: lesson.name,
-      isPublished: lesson.isPublished,
-      contentType: lesson.contentType,
-      embedUrl: embed?.embedUrl || "",
-    }
-  });
 
   const form = useForm<LessonFormValues>({
     resolver: zodResolver(lessonFormSchema),
@@ -112,14 +94,20 @@ function LessonEditForm({
       embedUrl: embed?.embedUrl || "",
     },
   });
-  const isSubmitting = form.formState.isSubmitting;
+
+  const canSubmit = form.formState.isValid;
+
+  if (!lesson) {
+    return (
+      <div className="rounded-lg border p-6">
+        <p className="text-muted-foreground">Lesson not found</p>
+      </div>
+    );
+  }
 
   const onSubmit = async (values: LessonFormValues) => {
     try {
-      console.error("Form submitted with values:", values);
-      console.error("Form state:", form.getValues());
-      console.error("Form errors:", form.formState.errors);
-      
+
       await updateLesson({
         courseId,
         school,
@@ -142,7 +130,7 @@ function LessonEditForm({
       toast.success("Lesson updated successfully");
     } catch (error) {
       toast.error("Failed to update lesson");
-      console.error(error);
+      console.error("Failed to update lesson", error);
     }
   };
 
@@ -200,6 +188,7 @@ function LessonEditForm({
                       </SelectItem>
                       <SelectItem value="notion">Notion</SelectItem>
                       <SelectItem value="quizlet">Quizlet</SelectItem>
+                      <SelectItem value="other">Other</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormDescription>
@@ -265,6 +254,7 @@ function LessonEditForm({
             </Button>
             <Button
               type="button"
+              disabled={canSubmit === false}
               variant="outline"
               onClick={() =>
                 router.push(
@@ -281,22 +271,25 @@ function LessonEditForm({
   );
 }
 
-export function LessonPageClient({
-  courseId,
-  lessonId,
-  preloadedLesson,
-}: {
+import { memo } from "react";
+
+type LessonPageClientProps = {
   courseId: Id<"courses">;
   lessonId: Id<"lessons">;
   preloadedLesson: Preloaded<typeof api.lesson.getLessonById>;
-}) {
+};
+
+export const LessonPageClient = memo(function LessonPageClient({
+  courseId,
+  lessonId,
+  preloadedLesson,
+}: LessonPageClientProps) {
   const router = useRouter();
   const data = usePreloadedQuery(preloadedLesson);
   const lesson = data?.lesson;
   const embed = data?.embed;
   const school = useSite().subdomain;
 
-  console.error("lesson", lesson);
   return (
     <div className="mx-auto w-full max-w-7xl p-4 sm:p-6">
       <div className="mb-6 flex items-center gap-3">
@@ -329,4 +322,4 @@ export function LessonPageClient({
       </Suspense>
     </div>
   );
-}
+});

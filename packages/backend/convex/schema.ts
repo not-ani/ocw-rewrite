@@ -124,6 +124,7 @@ export default defineSchema({
     contentType: v.union(
       v.literal("google_docs"),
       v.literal("google_drive"),
+      v.literal("other"),
       v.literal("notion"),
       v.literal("quizlet"),
     ),

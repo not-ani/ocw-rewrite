@@ -1,5 +1,5 @@
 "use client";
-import React, { useContext } from "react";
+import React, { useContext, useMemo } from "react";
 import { createContext } from "react";
 import type { FunctionReturnType } from "convex/server";
 import { api } from "@ocw-rewrite/backend/convex/_generated/api";
@@ -32,18 +32,22 @@ export const SiteContextProvider = ({
     subdomain ? { school: subdomain } : "skip",
   );
 
+  // Memoize the context value to prevent unnecessary re-renders
+  const contextValue = useMemo(
+    () => ({
+      siteConfig: siteConfig ?? null,
+      subdomain: subdomain ?? "",
+      user: user ? { isSiteAdmin: user.role === "admin" } : undefined,
+    }),
+    [siteConfig, subdomain, user]
+  );
+
   if (!subdomain) {
     return <>{children}</>;
   }
 
   return (
-    <SiteContext.Provider
-      value={{
-        siteConfig: siteConfig ?? null,
-        subdomain,
-        user: user ? { isSiteAdmin: user.role === "admin" } : undefined,
-      }}
-    >
+    <SiteContext.Provider value={contextValue}>
       {children}
     </SiteContext.Provider>
   );

@@ -23,7 +23,6 @@ const geistMono = Geist_Mono({
 export async function generateMetadata(): Promise<Metadata> {
   const subdomain = await extractSubdomain();
 
-  console.log("subdomain", subdomain);
   if (!subdomain || subdomain === "www" || subdomain === "localhost:3001" || subdomain === "ocwproject.org") {
     return {
       title: "The OpenCourseWare Project",
