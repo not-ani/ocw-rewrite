@@ -7,7 +7,7 @@ import type { Preloaded } from "convex/react";
 import { useMutation, usePreloadedQuery } from "convex/react";
 import { ArrowLeft, Loader2, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Suspense, useEffect, useState } from "react";
+import { Suspense } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -22,8 +22,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
   SelectContent,
@@ -31,18 +29,15 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Textarea } from "@/components/ui/textarea";
 import { useSite } from "@/lib/multi-tenant/context";
+import type { FunctionReturnType } from "convex/server";
 
 const lessonFormSchema = z.object({
   name: z.string().min(1, "Lesson name is required").max(200),
   isPublished: z.boolean(),
-  contentType: z.enum([
-    "google_docs",
-    "notion",
-    "quizlet",
-    "tiptap",
-    "flashcard",
-  ]),
+  contentType: z.enum(["google_docs", "notion", "quizlet", "google_drive"]),
   embedUrl: z.string().optional(),
 });
 
@@ -79,34 +74,8 @@ function LessonEditForm({
   lessonId,
   school,
 }: {
-  lesson:
-    | {
-        _id?: Id<"lessons">;
-        name?: string;
-        isPublished?: boolean;
-        contentType?:
-          | "google_docs"
-          | "notion"
-          | "quizlet"
-          | "tiptap"
-          | "flashcard";
-        courseId?: Id<"courses">;
-        unitId?: Id<"units">;
-        order?: number;
-        pureLink?: boolean;
-        content?: unknown;
-      }
-    | null
-    | undefined;
-  embed:
-    | {
-        _id?: Id<"lessonEmbeds">;
-        embedUrl?: string;
-        password?: string;
-        lessonId?: Id<"lessons">;
-      }
-    | null
-    | undefined;
+  lesson: FunctionReturnType<typeof api.lesson.getLessonById>["lesson"];
+  embed: FunctionReturnType<typeof api.lesson.getLessonById>["embed"];
   courseId: Id<"courses">;
   lessonId: Id<"lessons">;
   school: string;
@@ -114,45 +83,54 @@ function LessonEditForm({
   const router = useRouter();
   const updateLesson = useMutation(api.lesson.update);
   const createOrUpdateEmbed = useMutation(api.lesson.createOrUpdateEmbed);
-  const [isSubmitting, setIsSubmitting] = useState(false);
+
+  if (!lesson) {
+    return (
+      <div className="rounded-lg border p-6">
+        <p className="text-muted-foreground">Lesson not found</p>
+      </div>
+    );
+  }
+
+  console.log("Form initialization data:", { 
+    lesson, 
+    embed,
+    defaultValues: {
+      name: lesson.name,
+      isPublished: lesson.isPublished,
+      contentType: lesson.contentType,
+      embedUrl: embed?.embedUrl || "",
+    }
+  });
 
   const form = useForm<LessonFormValues>({
     resolver: zodResolver(lessonFormSchema),
     defaultValues: {
-      name: lesson?.name ?? "",
-      isPublished: lesson?.isPublished ?? false,
-      contentType: lesson?.contentType ?? "tiptap",
-      embedUrl: embed?.embedUrl ?? "",
+      name: lesson.name,
+      isPublished: lesson.isPublished,
+      contentType: lesson.contentType,
+      embedUrl: embed?.embedUrl || "",
     },
   });
-
-  // Update form when lesson data changes
-  useEffect(() => {
-    if (lesson) {
-      form.reset({
-        name: lesson.name,
-        isPublished: lesson.isPublished,
-        contentType: lesson.contentType,
-        embedUrl: embed?.embedUrl ?? "",
-      });
-    }
-  }, [lesson, embed, form]);
+  const isSubmitting = form.formState.isSubmitting;
 
   const onSubmit = async (values: LessonFormValues) => {
-    setIsSubmitting(true);
     try {
-      // Update lesson metadata
+      console.error("Form submitted with values:", values);
+      console.error("Form state:", form.getValues());
+      console.error("Form errors:", form.formState.errors);
+      
       await updateLesson({
         courseId,
         school,
         data: {
           id: lessonId,
           name: values.name,
+          contentType: values.contentType,
           isPublished: values.isPublished,
         },
       });
 
-      // Update embed URL if provided
       if (values.embedUrl && values.embedUrl.trim()) {
         await createOrUpdateEmbed({
           lessonId,
@@ -165,18 +143,8 @@ function LessonEditForm({
     } catch (error) {
       toast.error("Failed to update lesson");
       console.error(error);
-    } finally {
-      setIsSubmitting(false);
     }
   };
-
-  if (!lesson) {
-    return (
-      <div className="rounded-lg border p-6">
-        <p className="text-muted-foreground">Lesson not found</p>
-      </div>
-    );
-  }
 
   return (
     <Form {...form}>
@@ -227,10 +195,11 @@ function LessonEditForm({
                     </FormControl>
                     <SelectContent>
                       <SelectItem value="google_docs">Google Docs</SelectItem>
+                      <SelectItem value="google_drive">
+                        Google Drive (PDF)
+                      </SelectItem>
                       <SelectItem value="notion">Notion</SelectItem>
                       <SelectItem value="quizlet">Quizlet</SelectItem>
-                      <SelectItem value="tiptap">Rich Text Editor</SelectItem>
-                      <SelectItem value="flashcard">Flashcards</SelectItem>
                     </SelectContent>
                   </Select>
                   <FormDescription>
@@ -290,10 +259,7 @@ function LessonEditForm({
           </div>
 
           <div className="mt-6 flex items-center gap-3">
-            <Button type="submit" disabled={isSubmitting}>
-              {isSubmitting && (
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              )}
+            <Button type="submit">
               <Save className="mr-2 h-4 w-4" />
               Save Changes
             </Button>
@@ -330,6 +296,7 @@ export function LessonPageClient({
   const embed = data?.embed;
   const school = useSite().subdomain;
 
+  console.error("lesson", lesson);
   return (
     <div className="mx-auto w-full max-w-7xl p-4 sm:p-6">
       <div className="mb-6 flex items-center gap-3">

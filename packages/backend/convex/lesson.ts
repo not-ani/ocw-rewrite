@@ -1,4 +1,4 @@
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import { mutation, query } from "./_generated/server";
 import { assertEditorOrAdmin, getRequesterRole } from "./permissions";
 
@@ -15,21 +15,23 @@ export const getLessonById = query({
       .withIndex("by_lesson_id", (q) => q.eq("lessonId", args.id))
       .first();
 
+    if (!lesson) {
+      throw new ConvexError("Lesson not found");
+    }
+    if (!lessonEmbed) {
+      throw new ConvexError("Lesson embed not found");
+    }
     return {
-      lesson: {
-        ...lesson,
-      },
-      embed: {
-        ...lessonEmbed,
-      },
+      lesson,
+      embed: lessonEmbed,
     };
   },
 });
 
 function detectEmbed(input: string): {
-  contentType: "google_docs" | "quizlet" | "notion" | "tiptap" | "flashcard";
+  contentType: "google_docs" | "google_drive" | "quizlet" | "notion";
   embedUrl?: string;
-} | null {
+} {
   const iframeSrcMatch = input.match(/src="([^"]+)"/);
   const url = iframeSrcMatch ? iframeSrcMatch[1] : input.trim();
 
@@ -46,7 +48,7 @@ function detectEmbed(input: string): {
           embedUrl: `https://drive.google.com/file/d/${fileId}/preview`,
         };
       }
-      return { contentType: "google_docs", embedUrl: u.toString() };
+      return { contentType: "google_drive", embedUrl: u.toString() };
     }
 
     if (u.hostname.includes("docs.google.com")) {
@@ -57,14 +59,17 @@ function detectEmbed(input: string): {
       return { contentType: "quizlet", embedUrl: u.toString() };
     }
 
-    if (u.hostname.includes("notion.so") || u.hostname.includes("notion.site")) {
+    if (
+      u.hostname.includes("notion.so") ||
+      u.hostname.includes("notion.site")
+    ) {
       return { contentType: "notion", embedUrl: u.toString() };
     }
   } catch {
-    return null;
+    throw new ConvexError("No Valid Embed Detected");
   }
 
-  return null;
+  throw new ConvexError("No Valid Embed Detected");
 }
 
 export const createOrUpdateEmbed = mutation({
@@ -154,7 +159,7 @@ export const searchByCourse = query({
     const lessons = await ctx.db
       .query("lessons")
       .withSearchIndex("search_name", (q) =>
-        q.search("name", args.searchTerm).eq("courseId", args.courseId)
+        q.search("name", args.searchTerm).eq("courseId", args.courseId),
       )
       .take(10);
 
@@ -170,7 +175,7 @@ export const searchByCourse = query({
           isPublished: lesson.isPublished,
           contentType: lesson.contentType,
         };
-      })
+      }),
     );
 
     return lessonsWithUnits;
@@ -182,7 +187,7 @@ export const create = mutation({
     courseId: v.id("courses"),
     unitId: v.id("units"),
     name: v.string(),
-    embedRaw: v.optional(v.string()),
+    embedRaw: v.string(),
     school: v.string(),
   },
   handler: async (ctx, args) => {
@@ -195,13 +200,13 @@ export const create = mutation({
       .collect();
     const order = existing.length;
 
-    const detected = args.embedRaw ? detectEmbed(args.embedRaw) : null;
+    const detected = detectEmbed(args.embedRaw);
 
     const lessonId = await ctx.db.insert("lessons", {
       order,
       isPublished: false,
       pureLink: true,
-      contentType: detected?.contentType ?? "tiptap",
+      contentType: detected?.contentType,
       courseId: args.courseId,
       unitId: args.unitId,
       name: args.name,
@@ -239,6 +244,7 @@ export const update = mutation({
       id: v.id("lessons"),
       name: v.optional(v.string()),
       isPublished: v.optional(v.boolean()),
+      contentType: v.optional(v.union(v.literal("google_docs"), v.literal("google_drive"), v.literal("notion"), v.literal("quizlet"))),
       unitId: v.optional(v.id("units")),
       content: v.optional(v.union(v.any(), v.null())),
     }),
@@ -251,15 +257,20 @@ export const update = mutation({
     if (!lesson) {
       throw new Error("Lesson not found");
     }
-    await ctx.db.patch(args.data.id, {
+    console.error("contentType", args.data.contentType);
+   await ctx.db.patch(args.data.id, {
       name: args.data.name ?? lesson.name,
       isPublished: args.data.isPublished ?? lesson.isPublished,
+      contentType: args.data.contentType ?? lesson.contentType,
       unitId: args.data.unitId ?? lesson.unitId,
       content:
         args.data.content === undefined
           ? lesson.content
           : (args.data.content ?? undefined),
     });
+
+    const updatedLesson = await ctx.db.get(args.data.id);
+    console.error("updatedLesson", updatedLesson?.contentType);
 
     await ctx.db.insert("logs", {
       userId: (await ctx.auth.getUserIdentity())?.subject ?? "unknown",

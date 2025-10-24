@@ -247,12 +247,15 @@ export const siteConfigMigration = migrations.define({
     }
     if (doc.school === "ct") {
       await ctx.db.patch(doc._id, {
-        contributors: [{
-          name: "Girish Verma",
-          role: "Director of Content",
-          avatar: defaultPhoto,
-          description: "Girish is the Director of Content and leads our content efforts at CT High School",
-        }],
+        contributors: [
+          {
+            name: "Girish Verma",
+            role: "Director of Content",
+            avatar: defaultPhoto,
+            description:
+              "Girish is the Director of Content and leads our content efforts at CT High School",
+          },
+        ],
         siteContributeLink: "https://forms.gle/1553NJdhy8CGeXNcA",
         personsContact: [
           {
@@ -267,13 +270,32 @@ export const siteConfigMigration = migrations.define({
   },
 });
 
-
 export const setUnitLengthDefaultValue = migrations.define({
   table: "courses",
   migrateOne: async (ctx, doc) => {
-    const units = await ctx.db.query("units").withIndex("by_course_id", (q) => q.eq("courseId", doc._id)).collect();
+    const units = await ctx.db
+      .query("units")
+      .withIndex("by_course_id", (q) => q.eq("courseId", doc._id))
+      .collect();
     await ctx.db.patch(doc._id, {
       unitLength: units.length,
     });
   },
 });
+
+export const setCorrectEmbedType = migrations.define({
+  table: "lessonEmbeds",
+  migrateOne: async (ctx, doc) => {
+    const url = new URL(doc.embedUrl);
+
+    if (url.hostname.includes("drive.google.com")) {
+      await ctx.db.patch(doc.lessonId, {
+        contentType: "google_drive",
+      });
+    }
+  },
+});
+
+export const runSetCorrectEmbedType = migrations.runner(
+  internal.migrations.setCorrectEmbedType,
+);

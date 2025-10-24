@@ -8,28 +8,32 @@ export default defineSchema({
     siteHero: v.optional(v.string()),
     schoolName: v.string(),
     siteLogo: v.optional(v.string()),
-    contributors: v.optional(v.array(
-      v.object({
-        name: v.string(),
-        role: v.string(),
-        avatar: v.string(),
-        description: v.string(),
-      })
-    )),
+    contributors: v.optional(
+      v.array(
+        v.object({
+          name: v.string(),
+          role: v.string(),
+          avatar: v.string(),
+          description: v.string(),
+        }),
+      ),
+    ),
     siteContributeLink: v.optional(v.string()),
     club: v.optional(
       v.object({
         name: v.string(),
         email: v.string(),
-      })
+      }),
     ),
-    personsContact: v.optional(v.array(
-      v.object({
-        name: v.string(),
-        email: v.string(),
-        description: v.string(),
-      })
-    )),
+    personsContact: v.optional(
+      v.array(
+        v.object({
+          name: v.string(),
+          email: v.string(),
+          description: v.string(),
+        }),
+      ),
+    ),
   }).index("by_school", ["school"]),
   siteUser: defineTable({
     userId: v.string(),
@@ -78,9 +82,9 @@ export default defineSchema({
           v.literal("delete_lesson"),
           v.literal("reorder_lesson"),
           v.literal("manage_users"),
-          v.literal("manage_course")
-        )
-      )
+          v.literal("manage_course"),
+        ),
+      ),
     ),
   })
     .index("by_course_id", ["courseId"])
@@ -119,10 +123,9 @@ export default defineSchema({
     pureLink: v.boolean(),
     contentType: v.union(
       v.literal("google_docs"),
+      v.literal("google_drive"),
       v.literal("notion"),
       v.literal("quizlet"),
-      v.literal("tiptap"),
-      v.literal("flashcard")
     ),
     courseId: v.id("courses"),
     unitId: v.id("units"),
@@ -172,7 +175,7 @@ export default defineSchema({
       v.literal("REORDER_UNIT"),
       v.literal("REORDER_LESSON"),
       v.literal("DELETE_USER"),
-      v.literal("UPDATE_USER")
+      v.literal("UPDATE_USER"),
     ),
     timestamp: v.optional(v.number()), // Will use _creationTime if not provided
   })
