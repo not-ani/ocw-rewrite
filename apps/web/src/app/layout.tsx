@@ -8,6 +8,7 @@ import { extractSubdomain } from "@/lib/multi-tenant/server";
 import { SiteContextProvider } from "@/lib/multi-tenant/context";
 import { api } from "@ocw-rewrite/backend/convex/_generated/api";
 import { fetchQuery } from "convex/nextjs";
+import type { Metadata } from "next";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -19,9 +20,11 @@ const geistMono = Geist_Mono({
   subsets: ["latin"],
 });
 
-export async function generateMetadata() {
+export async function generateMetadata(): Promise<Metadata> {
   const subdomain = await extractSubdomain();
-  if (!subdomain || subdomain === "www") {
+
+  console.log("subdomain", subdomain);
+  if (!subdomain || subdomain === "www" || subdomain === "localhost:3001" || subdomain === "ocwproject.org") {
     return {
       title: "The OpenCourseWare Project",
       description:
@@ -33,7 +36,7 @@ export async function generateMetadata() {
   });
   return {
     title: `${siteConfig?.schoolName} OpenCourseWare`,
-    descption: `${siteConfig?.schoolName} OpenCourseWare is a platform for free, high-quality resources to students at ${siteConfig?.schoolName}`,
+    description: `${siteConfig?.schoolName} OpenCourseWare is a platform for free, high-quality resources to students at ${siteConfig?.schoolName}`,
   };
 }
 

@@ -2,6 +2,12 @@ import { TrafficChart, type MonthlyTraffic } from "@/components/linear-chart";
 import { tryCatch } from "@/lib/try-catch";
 import { Statis } from "./stats";
 import Link from "next/link";
+import type { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Analytics | The OpenCourseWare Platform",
+  description: "See how many people view and use courses on The OpenCourseWare Platform"
+}
 
 type TrafficData = {
   pageviews: number;
@@ -17,7 +23,7 @@ export async function getTrafficData(): Promise<TrafficData> {
     query: {
       kind: "HogQLQuery",
       query: `
-        SELECT 
+        SELECT
           count() AS total_pageviews,
           count(DISTINCT person_id) AS unique_visitors
         FROM events
