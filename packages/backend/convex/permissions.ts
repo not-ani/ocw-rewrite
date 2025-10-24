@@ -1,61 +1,71 @@
-import type { Id } from "./_generated/dataModel";
 import { v } from "convex/values";
-import { query } from "./_generated/server";
+import type { Id } from "./_generated/dataModel";
 import type { QueryCtx } from "./_generated/server";
+import { query } from "./_generated/server";
 
 type GetRequesterRole = {
-  courseRole: "admin" | "editor" | "user" | null;
-  siteRole: "admin" | null;
-  school: string;
+	courseRole: "admin" | "editor" | "user" | null;
+	siteRole: "admin" | null;
+	school: string;
 };
 
 export async function getRequesterRole(
-  ctx: QueryCtx,
-  courseId: Id<"courses">,
-  school: string
+	ctx: QueryCtx,
+	courseId: Id<"courses">,
+	school: string,
 ): Promise<GetRequesterRole | null> {
-  const identity = await ctx.auth.getUserIdentity();
+	const identity = await ctx.auth.getUserIdentity();
 
-  if (!identity) {
-    return null;
-  }
+	if (!identity) {
+		return null;
+	}
 
-  const membership = await ctx.db
-    .query("courseUsers")
-    .withIndex("by_course_and_user_and_school", (q) =>
-      q.eq("courseId", courseId).eq("userId", identity.tokenIdentifier).eq("school", school)
-    )
-    .unique();
+	const membership = await ctx.db
+		.query("courseUsers")
+		.withIndex("by_course_and_user_and_school", (q) =>
+			q
+				.eq("courseId", courseId)
+				.eq("userId", identity.tokenIdentifier)
+				.eq("school", school),
+		)
+		.unique();
 
-  const siteUser = await ctx.db
-    .query("siteUser")
-    .withIndex("by_user_id_and_school", (q) => q.eq("userId", identity.tokenIdentifier).eq("school", school))
-    .unique();
+	const siteUser = await ctx.db
+		.query("siteUser")
+		.withIndex("by_user_id_and_school", (q) =>
+			q.eq("userId", identity.tokenIdentifier).eq("school", school),
+		)
+		.unique();
 
-  return {
-    courseRole: membership?.role ?? null,
-    siteRole: siteUser?.role ?? null,
-    school: school,
-  };
+	return {
+		courseRole: membership?.role ?? null,
+		siteRole: siteUser?.role ?? null,
+		school: school,
+	};
 }
 export const getSiteUser = query({
-  args: { school: v.string() },
-  handler: async (ctx, args) => {
-    const identity = await ctx.auth.getUserIdentity();
-    if (!identity) {
-      return null;
-    }
-    return await ctx.db.query("siteUser").withIndex("by_user_id_and_school", (q) => q.eq("userId", identity.tokenIdentifier).eq("school", args.school)).unique();
-  },
+	args: { school: v.string() },
+	handler: async (ctx, args) => {
+		const identity = await ctx.auth.getUserIdentity();
+		if (!identity) {
+			return null;
+		}
+		return await ctx.db
+			.query("siteUser")
+			.withIndex("by_user_id_and_school", (q) =>
+				q.eq("userId", identity.tokenIdentifier).eq("school", args.school),
+			)
+			.unique();
+	},
 });
 
 export function assertEditorOrAdmin(requesterInfo: GetRequesterRole | null) {
-  const hasCourseRole =
-    requesterInfo?.courseRole === "admin" ||
-    requesterInfo?.courseRole === "editor";
+	const hasCourseRole =
+		requesterInfo?.courseRole === "admin" ||
+		requesterInfo?.courseRole === "editor";
 
-  const hasSiteRole = requesterInfo?.siteRole === "admin";
-  if (!(hasCourseRole || hasSiteRole)) {
-    throw new Error("Not authorized");
-  }
+	const hasSiteRole = requesterInfo?.siteRole === "admin";
+	if (!(hasCourseRole || hasSiteRole)) {
+		throw new Error("Not authorized");
+	}
 }

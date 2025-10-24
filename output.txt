@@ -1,0 +1,12 @@
+
+> ocw-rewrite@ check /Users/anikethchenjeri/ocw-rewrite
+> biome check --write . --max-diagnostics 200
+
+Skipped 25 suggested fixes.
+If you wish to apply the suggested (unsafe) fixes, use the command biome check --write --unsafe
+
+Checked 185 files in 47ms. No fixes applied.
+Found 50 errors.
+Found 33 warnings.
+Found 7 infos.
+ ELIFECYCLE  Command failed with exit code 1.

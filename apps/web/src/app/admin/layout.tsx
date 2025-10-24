@@ -1,19 +1,19 @@
 import { LinkTabs, LinkTabsList, LinkTabsTab } from "@/components/ui/link-tabs";
 
 export default function AdminLayout({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) {
-  return (
-    <div className="bg-background mx-auto min-h-screen w-full max-w-[1800px] space-y-8 p-4 sm:p-6">
-      <LinkTabs orientation="horizontal">
-        <LinkTabsList className="">
-          <LinkTabsTab href="/admin">Courses</LinkTabsTab>
-          <LinkTabsTab href="/admin/site-content">Site Content</LinkTabsTab>
-        </LinkTabsList>
-        <div className="flex-1">{children}</div>
-      </LinkTabs>
-    </div>
-  );
+	return (
+		<div className="mx-auto min-h-screen w-full max-w-[1800px] space-y-8 bg-background p-4 sm:p-6">
+			<LinkTabs orientation="horizontal">
+				<LinkTabsList className="">
+					<LinkTabsTab href="/admin">Courses</LinkTabsTab>
+					<LinkTabsTab href="/admin/site-content">Site Content</LinkTabsTab>
+				</LinkTabsList>
+				<div className="flex-1">{children}</div>
+			</LinkTabs>
+		</div>
+	);
 }

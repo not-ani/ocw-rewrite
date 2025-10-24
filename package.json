@@ -1,29 +1,31 @@
 {
-  "name": "ocw-rewrite",
-  "private": true,
-  "type": "module",
-  "workspaces": [
-    "apps/*",
-    "packages/*"
-  ],
-  "scripts": {
-    "dev": "turbo dev",
-    "build": "turbo build",
-    "check-types": "turbo check-types",
-    "dev:native": "turbo -F native dev",
-    "dev:web": "turbo -F web dev",
-    "dev:server": "turbo -F @ocw-rewrite/backend dev",
-    "dev:setup": "turbo -F @ocw-rewrite/backend dev:setup"
-  },
-  "dependencies": {},
-  "devDependencies": {
-    "turbo": "^2.5.4"
-  },
-  "packageManager": "pnpm@10.11.0",
-  "pnpm": {
-    "overrides": {
-      "@types/react": "19.2.2",
-      "@types/react-dom": "19.2.2"
-    }
-  }
+	"name": "ocw-rewrite",
+	"private": true,
+	"type": "module",
+	"workspaces": [
+		"apps/*",
+		"packages/*"
+	],
+	"scripts": {
+		"check": "biome check --write .",
+		"dev": "turbo dev",
+		"build": "turbo build",
+		"check-types": "turbo check-types",
+		"dev:native": "turbo -F native dev",
+		"dev:web": "turbo -F web dev",
+		"dev:server": "turbo -F @my-better-t-app/backend dev",
+		"dev:setup": "turbo -F @my-better-t-app/backend dev:setup"
+	},
+	"dependencies": {},
+	"devDependencies": {
+		"turbo": "^2.5.4",
+		"@biomejs/biome": "^2.2.0"
+	},
+	"packageManager": "pnpm@10.11.0",
+	"pnpm": {
+		"overrides": {
+			"@types/react": "19.2.2",
+			"@types/react-dom": "19.2.2"
+		}
+	}
 }

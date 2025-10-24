@@ -1,3 +1,7 @@
 packages:
-  - "apps/*"
-  - "packages/*"
+  - apps/*
+  - packages/*
+catalog:
+  convex: ^1.27.0
+  "@types/node": ^20
+  typescript: ^5
