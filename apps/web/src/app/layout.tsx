@@ -28,6 +28,15 @@ export async function generateMetadata(): Promise<Metadata> {
       title: "The OpenCourseWare Project",
       description:
         "The OpenCourseWare Project is a platform for free, high-quality resources to students at all levels of education",
+      icons: {
+        icon: [
+          {
+            rel: 'icon',
+            media: '(prefers-color-scheme: dark)',
+            url: '/rael-logo.svg',
+          },
+        ],
+      },
     };
   }
   const siteConfig = await fetchQuery(api.site.getSiteConfig, {
@@ -36,6 +45,14 @@ export async function generateMetadata(): Promise<Metadata> {
   return {
     title: `${siteConfig?.schoolName} OpenCourseWare`,
     description: `${siteConfig?.schoolName} OpenCourseWare is a platform for free, high-quality resources to students at ${siteConfig?.schoolName}`,
+    icons: {
+      icon: [
+        {
+          rel: 'icon',
+          url: siteConfig?.siteLogo ?? '',
+        },
+      ],
+    },
   };
 }
 
@@ -55,10 +72,10 @@ export default async function RootLayout({
           <Providers>
             <div className="bg-background grid h-screen grid-rows-[auto_1fr]">
               <NuqsAdapter>
-                  <SiteContextProvider subdomain={subdomain}>
-                    {children}
-                    <PostHogIdentify />
-                  </SiteContextProvider>
+                <SiteContextProvider subdomain={subdomain}>
+                  {children}
+                  <PostHogIdentify />
+                </SiteContextProvider>
               </NuqsAdapter>
             </div>
           </Providers>

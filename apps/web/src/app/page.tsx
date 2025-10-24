@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image"
 import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { useQuery } from "convex/react";
@@ -11,6 +12,7 @@ export default function Page() {
   const sites = useQuery(api.site.getSites);
   return (
     <div className="container mx-auto flex h-screen w-full flex-col items-center gap-4 pt-10">
+      <Image alt="logo" src="/rael-logo.svg" height={300} width={300} ></Image>
       <h1 className="text-4xl font-bold"> The OpenCourseWare Project </h1>
       <p className="text-muted-foreground max-w-lg text-center text-lg leading-relaxed">
         OCW is a multi-tenant, school-agnostic platform that empowers educators
@@ -54,20 +56,20 @@ export default function Page() {
       <div className="grid grid-cols-2 gap-4">
         {sites
           ? sites.map((site) => (
-              <Card
-                key={site.school}
-                className="flex flex-col items-center justify-center"
-              >
-                <CardContent>
-                  <Link href={`https://${site.school}.ocwproject.org`}>
-                    {site.schoolName}
-                  </Link>
-                </CardContent>
-              </Card>
-            ))
+            <Card
+              key={site.school}
+              className="flex flex-col items-center justify-center"
+            >
+              <CardContent>
+                <Link href={`https://${site.school}.ocwproject.org`}>
+                  {site.schoolName}
+                </Link>
+              </CardContent>
+            </Card>
+          ))
           : Array.from({ length: 4 }).map((_, index) => (
-              <Skeleton key={index} className="h-10 w-full" />
-            ))}
+            <Skeleton key={index} className="h-10 w-full" />
+          ))}
       </div>
     </div>
   );

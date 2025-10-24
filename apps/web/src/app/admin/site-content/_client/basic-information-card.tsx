@@ -24,7 +24,10 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { toast } from "sonner";
-import { Loader2 } from "lucide-react";
+import { Loader2, X } from "lucide-react";
+import { UploadButton } from "@/lib/uploadthing";
+import { useState } from "react";
+import Image from "next/image";
 
 const basicInfoSchema = z.object({
   schoolName: z.string().min(1, "School name is required"),
@@ -55,6 +58,7 @@ export function BasicInformationCard({
   siteContributeLink,
 }: BasicInformationCardProps) {
   const updateBasicFields = useMutation(api.site.updateSiteConfigBasicFields);
+  const [uploadedLogoUrl, setUploadedLogoUrl] = useState<string>(siteLogo || "");
 
   const form = useForm<BasicInfoFormValues>({
     resolver: zodResolver(basicInfoSchema),
@@ -130,12 +134,49 @@ export function BasicInformationCard({
               name="siteLogo"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Site Logo URL</FormLabel>
+                  <FormLabel>Site Logo</FormLabel>
                   <FormControl>
-                    <Input
-                      placeholder="https://example.com/logo.png"
-                      {...field}
-                    />
+                    <div className="space-y-4">
+                      {/* Preview of current logo */}
+                      {(uploadedLogoUrl || field.value) && (
+                        <div className="relative inline-block">
+                          <Image
+                            src={(uploadedLogoUrl || field.value) as string}
+                            alt="Site logo preview"
+                            width={96}
+                            height={96}
+                            className="h-24 w-24 object-contain rounded-md border border-gray-300"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setUploadedLogoUrl("");
+                              field.onChange("");
+                            }}
+                            className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full p-1 hover:bg-red-600 transition-colors"
+                          >
+                            <X className="h-4 w-4" />
+                          </button>
+                        </div>
+                      )}
+                      
+                      {/* Upload Button */}
+                      <UploadButton
+                        endpoint="imageUploader"
+                        onClientUploadComplete={(res) => {
+                          // Do something with the response
+                          if (res && res[0]) {
+                            const url = res[0].url;
+                            setUploadedLogoUrl(url);
+                            field.onChange(url);
+                            toast.success("Logo uploaded successfully!");
+                          }
+                        }}
+                        onUploadError={(error: Error) => {
+                          toast.error(`Upload failed: ${error.message}`);
+                        }}
+                      />
+                    </div>
                   </FormControl>
                   <FormMessage />
                 </FormItem>

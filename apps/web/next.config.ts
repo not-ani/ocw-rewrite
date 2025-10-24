@@ -5,9 +5,6 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  eslint: {
-    ignoreDuringBuilds: true,
-  },
   async rewrites() {
     return [
       {
@@ -23,7 +20,7 @@ const nextConfig: NextConfig = {
   // This is required to support PostHog trailing slash API requests
   skipTrailingSlashRedirect: true,
   images: {
-    domains: ["ugakd4mkxv.ufs.sh"],
+    domains: ["ugakd4mkxv.ufs.sh", "utfs.io"],
   },
 };
 
