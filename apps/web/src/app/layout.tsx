@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "../index.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import Providers from "@/components/providers";
-import { PostHogProvider } from "@/components/providers/posthog";
+import { PostHogIdentify } from "@/components/providers/posthog";
 import { extractSubdomain } from "@/lib/multi-tenant/server";
 import { SiteContextProvider } from "@/lib/multi-tenant/context";
 import { api } from "@ocw-rewrite/backend/convex/_generated/api";
@@ -55,11 +55,10 @@ export default async function RootLayout({
           <Providers>
             <div className="bg-background grid h-screen grid-rows-[auto_1fr]">
               <NuqsAdapter>
-                <PostHogProvider>
                   <SiteContextProvider subdomain={subdomain}>
                     {children}
+                    <PostHogIdentify />
                   </SiteContextProvider>
-                </PostHogProvider>
               </NuqsAdapter>
             </div>
           </Providers>
