@@ -1,14 +1,21 @@
-"use client";
 import { api } from "@ocw-rewrite/backend/convex/_generated/api";
-import { useQuery } from "convex/react";
+import { fetchQuery } from "convex/nextjs";
+import type { Metadata } from "next";
 import Link from "next/link";
 import { Hero } from "@/components/home-page/hero";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function Page() {
-	const sites = useQuery(api.site.getSites);
+export const metadata: Metadata = {
+	title: "The OpenCourseWare Project",
+	description:
+		"The OpenCourseWare Project is a platform for free, high-quality resources for free",
+};
+
+export default async function Page() {
+	const sites = await fetchQuery(api.site.getSites);
+
 	return (
 		<main className="container mx-auto max-w-5xl divide-y px-0 sm:border-x">
 			<Hero />

@@ -32,7 +32,7 @@ export async function generateMetadata(): Promise<Metadata> {
 		return {
 			title: "The OpenCourseWare Project",
 			description:
-				"The OpenCourseWare Project is a platform for free, high-quality resources to students at all levels of education",
+				"The OpenCourseWare Project is a platform for free, high-quality resources for free",
 			icons: {
 				icon: [
 					{
