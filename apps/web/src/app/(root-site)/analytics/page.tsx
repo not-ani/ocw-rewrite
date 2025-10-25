@@ -43,7 +43,10 @@ export async function getTrafficData(): Promise<TrafficData> {
 				Authorization: `Bearer ${apiKey}`,
 			},
 			body: JSON.stringify(queryBody),
-			cache: "no-store",
+			cache: "force-cache",
+			next: {
+				revalidate: 60 * 60 * 24, 
+			},
 		}).then(async (res) => {
 			if (!res.ok) {
 				const errText = await res.text();
@@ -90,7 +93,10 @@ LIMIT 6
 				Authorization: `Bearer ${apiKey}`,
 			},
 			body: JSON.stringify(body),
-			cache: "no-store", // Always fresh data
+			cache: "force-cache", 
+			next: {
+				revalidate: 60 * 60 * 24, 
+			},
 		}).then(async (res) => {
 			if (!res.ok) {
 				const text = await res.text();
