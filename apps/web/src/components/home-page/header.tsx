@@ -16,7 +16,6 @@ export const Header = () => (
 				<LinkTabsList variant="underline">
 					<LinkTabsTab href="/">Home</LinkTabsTab>
 					<LinkTabsTab href="/analytics">Analytics</LinkTabsTab>
-					<LinkTabsTab href="/contact">Contact</LinkTabsTab>
 				</LinkTabsList>
 			</LinkTabs>
 		</div>
