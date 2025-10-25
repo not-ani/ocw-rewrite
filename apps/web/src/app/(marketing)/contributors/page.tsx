@@ -1,6 +1,6 @@
 "use client";
-import Image from "next/image";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import Image from "next/image";
 import { useState } from "react";
 import { useSite } from "@/lib/multi-tenant/context";
 

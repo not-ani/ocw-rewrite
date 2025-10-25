@@ -68,7 +68,7 @@ export const Embed: React.FC<EmbedLoaderProps> = memo(function Embed({
 	return (
 		<div className={className}>
 			{isLoading && !hasError ? (
-				<div aria-live="polite" className="loader" role="status">
+				<output aria-live="polite" className="loader">
 					{loaderComponent ?? (
 						<div className="flex h-full w-full flex-col items-center justify-center rounded-xl bg-muted/20">
 							<LoaderCircleIcon className="mb-4 h-8 w-8 animate-spin text-primary" />
@@ -81,7 +81,7 @@ export const Embed: React.FC<EmbedLoaderProps> = memo(function Embed({
 							</div>
 						</div>
 					)}
-				</div>
+				</output>
 			) : null}
 
 			<iframe

@@ -1,9 +1,10 @@
+/** biome-ignore-all lint/suspicious/noArrayIndexKey: ts mpo icl */
 "use client";
 import { api } from "@ocw-rewrite/backend/convex/_generated/api";
 import { useQuery } from "convex/react";
 import Link from "next/link";
 import { useQueryStates } from "nuqs";
-import { useCallback } from "react";
+import { useCallback, useMemo } from "react";
 import { Pagination } from "@/components/courses/pagination";
 import { SearchBar } from "@/components/courses/search-bar";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -33,6 +34,10 @@ export function CourseCardSkeleton() {
 }
 
 function CoursesPageSkeleton() {
+	const skeletonKeys = useMemo(
+		() => Array.from({ length: COURSES_PER_PAGE }, () => crypto.randomUUID()),
+		[],
+	);
 	return (
 		<div className="min-h-screen bg-background">
 			<div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
@@ -43,8 +48,8 @@ function CoursesPageSkeleton() {
 				</div>
 
 				<div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-					{Array.from({ length: COURSES_PER_PAGE }).map((_, index) => (
-						<CourseCardSkeleton key={index} />
+					{skeletonKeys.map((i) => (
+						<CourseCardSkeleton key={i} />
 					))}
 				</div>
 
@@ -143,7 +148,6 @@ export function CoursesPage({ subdomain }: { subdomain: string }) {
 								</Link>
 							))}
 
-							{/* Fillers so layout is always consistent */}
 							{Array.from({ length: COURSES_PER_PAGE - courses.length }).map(
 								(_, index) => (
 									<div

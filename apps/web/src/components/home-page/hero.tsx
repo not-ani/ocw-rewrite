@@ -1,11 +1,7 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: "required" */
 
-import { cn } from "@/lib/utils";
-import { Button } from "../ui/button";
 import Link from "next/link";
-
-const COLUMNS = 12;
-const LAST_COLUMN = COLUMNS - 1;
+import { Button } from "../ui/button";
 
 export const Hero = () => (
 	<section>
@@ -23,7 +19,7 @@ export const Hero = () => (
 				</p>
 				<div className="mx-auto flex w-fit flex-col items-center gap-8 pt-4">
 					<p className="text-muted-foreground text-sm">
-						<Button className="rounded-md bg-foreground/5 text-muted-foreground px-2 py-1 tracking-tight">
+						<Button className="rounded-md bg-foreground/5 px-2 py-1 text-muted-foreground tracking-tight">
 							<Link href={"/analytics"}>View our analytics</Link>
 						</Button>
 					</p>

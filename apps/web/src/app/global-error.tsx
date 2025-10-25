@@ -16,8 +16,7 @@ export default function GlobalError({
 	}, [error]);
 
 	return (
-		// global-error must include html and body tags
-		<html>
+		<html lang="en">
 			<body>
 				{/* `NextError` is the default Next.js error page component */}
 				<NextError statusCode={0} />

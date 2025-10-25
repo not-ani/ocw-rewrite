@@ -14,13 +14,12 @@ export function SearchBar({
 	placeholder = "Search courses...",
 }: Props) {
 	return (
-		<form
+		<search
 			className="max-w-md"
 			onSubmit={(e) => {
 				e.preventDefault();
 				onSubmit?.();
 			}}
-			role="search"
 		>
 			<label className="sr-only" htmlFor="courses-search">
 				Search courses
@@ -36,6 +35,6 @@ export function SearchBar({
 					value={value}
 				/>
 			</div>
-		</form>
+		</search>
 	);
 }

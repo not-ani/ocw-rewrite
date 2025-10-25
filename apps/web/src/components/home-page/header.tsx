@@ -1,6 +1,5 @@
 import Image from "next/image";
-import { LinkTabs, LinkTabsList } from "@/components/ui/link-tabs";
-import { LinkTabsTab } from "@/components/ui/link-tabs";
+import { LinkTabs, LinkTabsList, LinkTabsTab } from "@/components/ui/link-tabs";
 
 export const Header = () => (
 	<div className="sticky top-0 z-10 flex items-center justify-between bg-secondary p-4 backdrop-blur-sm dark:bg-background">
