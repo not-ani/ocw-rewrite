@@ -45,7 +45,7 @@ export async function getTrafficData(): Promise<TrafficData> {
 			body: JSON.stringify(queryBody),
 			cache: "force-cache",
 			next: {
-				revalidate: 60 * 60 * 24, 
+				revalidate: 60 * 60 * 24,
 			},
 		}).then(async (res) => {
 			if (!res.ok) {
@@ -93,9 +93,9 @@ LIMIT 6
 				Authorization: `Bearer ${apiKey}`,
 			},
 			body: JSON.stringify(body),
-			cache: "force-cache", 
+			cache: "force-cache",
 			next: {
-				revalidate: 60 * 60 * 24, 
+				revalidate: 60 * 60 * 24,
 			},
 		}).then(async (res) => {
 			if (!res.ok) {

@@ -164,8 +164,8 @@ export function CoursesTable({ courses }: CoursesTableProps) {
 			cell: ({ row }) => {
 				const course = row.original;
 				return (
-					// biome-ignore lint/a11y/noStaticElementInteractions: <explanation>
-					// biome-ignore lint/a11y/useKeyWithClickEvents: <explanation>
+					// biome-ignore lint/a11y/noStaticElementInteractions: this is how recommended in docs
+					// biome-ignore lint/a11y/useKeyWithClickEvents: this is how recommended in docs
 					<div
 						className="cursor-pointer space-y-1"
 						onClick={() => router.push(`/course/${course._id}/dashboard`)}

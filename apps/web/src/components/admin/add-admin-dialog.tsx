@@ -101,7 +101,7 @@ export function AddAdminDialog({
 
 				<div className="space-y-4 py-4">
 					<div className="space-y-2">
-						{/** biome-ignore lint/a11y/noLabelWithoutControl: <explanation> */}
+						{/** biome-ignore lint/a11y/noLabelWithoutControl: this is how recommended in docs*/}
 						<label className="font-medium text-sm">Select User</label>
 						<Popover open={comboboxOpen} onOpenChange={setComboboxOpen}>
 							<PopoverTrigger asChild>

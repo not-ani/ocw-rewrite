@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/a11y/useButtonType: <explanation> */
+/** biome-ignore-all lint/a11y/useButtonType: this is how recommended in docs */
 "use client";
 
 import { api } from "@ocw-rewrite/backend/convex/_generated/api";
