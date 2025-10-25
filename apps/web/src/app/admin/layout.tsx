@@ -8,7 +8,7 @@ export default function AdminLayout({
 	return (
 		<div className="mx-auto min-h-screen w-full max-w-[1800px] space-y-8 bg-background p-4 sm:p-6">
 			<LinkTabs orientation="horizontal">
-				<LinkTabsList className="">
+				<LinkTabsList>
 					<LinkTabsTab href="/admin">Courses</LinkTabsTab>
 					<LinkTabsTab href="/admin/site-content">Site Content</LinkTabsTab>
 				</LinkTabsList>

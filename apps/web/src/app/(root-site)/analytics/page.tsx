@@ -119,7 +119,7 @@ export default async function Page() {
 	]);
 
 	return (
-		<div className="min-h-screen bg-background">
+		<main className="container mx-auto max-w-5xl divide-y px-0 sm:border-x">
 			<div className="container mx-auto space-y-8 p-6">
 				{/* Header */}
 				<div className="space-y-2">
@@ -143,6 +143,6 @@ export default async function Page() {
 				{/* Traffic Chart */}
 				<TrafficChart data={trafficTrends} />
 			</div>
-		</div>
+		</main>
 	);
 }
