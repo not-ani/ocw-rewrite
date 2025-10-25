@@ -1,50 +1,50 @@
 import { api } from "@ocw-rewrite/backend/convex/_generated/api";
 import { fetchQuery, preloadQuery } from "convex/nextjs";
-import { getAuthToken } from "@/lib/auth";
-import { AdminPageClient } from "./client";
 import { redirect } from "next/navigation";
+import { getAuthToken } from "@/lib/auth";
 import { extractSubdomain } from "@/lib/multi-tenant/server";
+import { AdminPageClient } from "./client";
 
 export default async function AdminPage() {
-  const token = await getAuthToken();
-  const subdomain = await extractSubdomain();
+	const token = await getAuthToken();
+	const subdomain = await extractSubdomain();
 
-  if (!subdomain) {
-    redirect("/");
-  }
+	if (!subdomain) {
+		redirect("/");
+	}
 
-  if (!token) {
-    redirect("/");
-  }
+	if (!token) {
+		redirect("/");
+	}
 
-  const isSiteAdmin = await fetchQuery(
-    api.admin.isSiteAdmin,
-    { school: subdomain },
-    { token },
-  );
+	const isSiteAdmin = await fetchQuery(
+		api.admin.isSiteAdmin,
+		{ school: subdomain },
+		{ token },
+	);
 
-  if (!isSiteAdmin) {
-    redirect("/");
-  }
+	if (!isSiteAdmin) {
+		redirect("/");
+	}
 
-  const preloadedCourses = await preloadQuery(
-    api.admin.getAllCourses,
-    { school: subdomain },
-    { token },
-  );
+	const preloadedCourses = await preloadQuery(
+		api.admin.getAllCourses,
+		{ school: subdomain },
+		{ token },
+	);
 
-  const preloadedAdmins = await preloadQuery(
-    api.admin.getAllSiteAdmins,
-    { school: subdomain },
-    { token },
-  );
+	const preloadedAdmins = await preloadQuery(
+		api.admin.getAllSiteAdmins,
+		{ school: subdomain },
+		{ token },
+	);
 
-  return (
-    <div className="bg-background min-h-screen">
-      <AdminPageClient
-        preloadedCourses={preloadedCourses}
-        preloadedAdmins={preloadedAdmins}
-      />
-    </div>
-  );
+	return (
+		<div className="min-h-screen bg-background">
+			<AdminPageClient
+				preloadedCourses={preloadedCourses}
+				preloadedAdmins={preloadedAdmins}
+			/>
+		</div>
+	);
 }

@@ -4,6 +4,18 @@ settings:
   autoInstallPeers: true
   excludeLinksFromLockfile: false
 
+catalogs:
+  default:
+    '@types/node':
+      specifier: ^20
+      version: 20.19.19
+    convex:
+      specifier: ^1.27.0
+      version: 1.27.3
+    typescript:
+      specifier: ^5
+      version: 5.9.3
+
 overrides:
   '@types/react': 19.2.2
   '@types/react-dom': 19.2.2
@@ -12,6 +24,9 @@ importers:
 
   .:
     devDependencies:
+      '@biomejs/biome':
+        specifier: ^2.2.0
+        version: 2.3.0
       turbo:
         specifier: ^2.5.4
         version: 2.5.8
@@ -129,6 +144,9 @@ importers:
       '@radix-ui/react-use-controllable-state':
         specifier: ^1.2.2
         version: 1.2.2(@types/react@19.2.2)(react@19.2.0)
+      '@t3-oss/env-nextjs':
+        specifier: ^0.13.8
+        version: 0.13.8(typescript@5.9.3)(zod@4.1.11)
       '@tanstack/react-form':
         specifier: ^1.12.3
         version: 1.23.5(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
@@ -154,7 +172,7 @@ importers:
         specifier: ^1.1.1
         version: 1.1.1(@types/react-dom@19.2.2(@types/react@19.2.2))(@types/react@19.2.2)(react-dom@19.2.0(react@19.2.0))(react@19.2.0)
       convex:
-        specifier: ^1.27.0
+        specifier: 'catalog:'
         version: 1.27.3(@clerk/clerk-react@5.49.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react@19.2.0)
       culori:
         specifier: ^4.0.2
@@ -257,7 +275,7 @@ importers:
         specifier: ^4.0.1
         version: 4.0.1
       '@types/node':
-        specifier: ^20
+        specifier: 'catalog:'
         version: 20.19.19
       '@types/qrcode':
         specifier: ^1.5.5
@@ -287,7 +305,7 @@ importers:
         specifier: ^4.1.10
         version: 4.1.13
       typescript:
-        specifier: ^5
+        specifier: 'catalog:'
         version: 5.9.3
 
   packages/backend:
@@ -296,14 +314,14 @@ importers:
         specifier: ^0.2.9
         version: 0.2.9(convex@1.27.3(@clerk/clerk-react@5.49.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react@19.2.0))
       convex:
-        specifier: ^1.25.4
+        specifier: 'catalog:'
         version: 1.27.3(@clerk/clerk-react@5.49.1(react-dom@19.2.0(react@19.2.0))(react@19.2.0))(react@19.2.0)
     devDependencies:
       '@types/node':
-        specifier: ^24.3.0
-        version: 24.6.1
+        specifier: 'catalog:'
+        version: 20.19.19
       typescript:
-        specifier: ^5.9.2
+        specifier: 'catalog:'
         version: 5.9.3
 
 packages:
@@ -409,6 +427,59 @@ packages:
     peerDependenciesMeta:
       '@types/react':
         optional: true
+
+  '@biomejs/biome@2.3.0':
+    resolution: {integrity: sha512-shdUY5H3S3tJVUWoVWo5ua+GdPW5lRHf+b0IwZ4OC1o2zOKQECZ6l2KbU6t89FNhtd3Qx5eg5N7/UsQWGQbAFw==}
+    engines: {node: '>=14.21.3'}
+    hasBin: true
+
+  '@biomejs/cli-darwin-arm64@2.3.0':
+    resolution: {integrity: sha512-3cJVT0Z5pbTkoBmbjmDZTDFYxIkRcrs9sYVJbIBHU8E6qQxgXAaBfSVjjCreG56rfDuQBr43GzwzmaHPcu4vlw==}
+    engines: {node: '>=14.21.3'}
+    cpu: [arm64]
+    os: [darwin]
+
+  '@biomejs/cli-darwin-x64@2.3.0':
+    resolution: {integrity: sha512-6LIkhglh3UGjuDqJXsK42qCA0XkD1Ke4K/raFOii7QQPbM8Pia7Qj2Hji4XuF2/R78hRmEx7uKJH3t/Y9UahtQ==}
+    engines: {node: '>=14.21.3'}
+    cpu: [x64]
+    os: [darwin]
+
+  '@biomejs/cli-linux-arm64-musl@2.3.0':
+    resolution: {integrity: sha512-nDksoFdwZ2YrE7NiYDhtMhL2UgFn8Kb7Y0bYvnTAakHnqEdb4lKindtBc1f+xg2Snz0JQhJUYO7r9CDBosRU5w==}
+    engines: {node: '>=14.21.3'}
+    cpu: [arm64]
+    os: [linux]
+
+  '@biomejs/cli-linux-arm64@2.3.0':
+    resolution: {integrity: sha512-uhAsbXySX7xsXahegDg5h3CDgfMcRsJvWLFPG0pjkylgBb9lErbK2C0UINW52zhwg0cPISB09lxHPxCau4e2xA==}
+    engines: {node: '>=14.21.3'}
+    cpu: [arm64]
+    os: [linux]
+
+  '@biomejs/cli-linux-x64-musl@2.3.0':
+    resolution: {integrity: sha512-+i9UcJwl99uAhtRQDz9jUAh+Xkb097eekxs/D9j4deWDg5/yB/jPWzISe1nBHvlzTXsdUSj0VvB4Go2DSpKIMw==}
+    engines: {node: '>=14.21.3'}
+    cpu: [x64]
+    os: [linux]
+
+  '@biomejs/cli-linux-x64@2.3.0':
+    resolution: {integrity: sha512-uxa8reA2s1VgoH8MhbGlCmMOt3JuSE1vJBifkh1ulaPiuk0SPx8cCdpnm9NWnTe2x/LfWInWx4sZ7muaXTPGGw==}
+    engines: {node: '>=14.21.3'}
+    cpu: [x64]
+    os: [linux]
+
+  '@biomejs/cli-win32-arm64@2.3.0':
+    resolution: {integrity: sha512-ynjmsJLIKrAjC3CCnKMMhzcnNy8dbQWjKfSU5YA0mIruTxBNMbkAJp+Pr2iV7/hFou+66ZSD/WV8hmLEmhUaXA==}
+    engines: {node: '>=14.21.3'}
+    cpu: [arm64]
+    os: [win32]
+
+  '@biomejs/cli-win32-x64@2.3.0':
+    resolution: {integrity: sha512-zOCYmCRVkWXc9v8P7OLbLlGGMxQTKMvi+5IC4v7O8DkjLCOHRzRVK/Lno2pGZNo0lzKM60pcQOhH8HVkXMQdFg==}
+    engines: {node: '>=14.21.3'}
+    cpu: [x64]
+    os: [win32]
 
   '@braintree/sanitize-url@7.1.1':
     resolution: {integrity: sha512-i1L7noDNxtFyL5DmZafWy1wRVhGehQmzZaz1HiN5e7iylJMSZR7ekOV7NsIqa5qBldlLrsKv4HbgFUVlQrz8Mw==}
@@ -1733,6 +1804,40 @@ packages:
 
   '@swc/helpers@0.5.15':
     resolution: {integrity: sha512-JQ5TuMi45Owi4/BIMAJBoSQoOJu12oOk/gADqlcUL9JEdHB8vyjUSsxqeNXnmXHjYKMi2WcYtezGEEhqUI/E2g==}
+
+  '@t3-oss/env-core@0.13.8':
+    resolution: {integrity: sha512-L1inmpzLQyYu4+Q1DyrXsGJYCXbtXjC4cICw1uAKv0ppYPQv656lhZPU91Qd1VS6SO/bou1/q5ufVzBGbNsUpw==}
+    peerDependencies:
+      arktype: ^2.1.0
+      typescript: '>=5.0.0'
+      valibot: ^1.0.0-beta.7 || ^1.0.0
+      zod: ^3.24.0 || ^4.0.0-beta.0
+    peerDependenciesMeta:
+      arktype:
+        optional: true
+      typescript:
+        optional: true
+      valibot:
+        optional: true
+      zod:
+        optional: true
+
+  '@t3-oss/env-nextjs@0.13.8':
+    resolution: {integrity: sha512-QmTLnsdQJ8BiQad2W2nvV6oUpH4oMZMqnFEjhVpzU0h3sI9hn8zb8crjWJ1Amq453mGZs6A4v4ihIeBFDOrLeQ==}
+    peerDependencies:
+      arktype: ^2.1.0
+      typescript: '>=5.0.0'
+      valibot: ^1.0.0-beta.7 || ^1.0.0
+      zod: ^3.24.0 || ^4.0.0-beta.0
+    peerDependenciesMeta:
+      arktype:
+        optional: true
+      typescript:
+        optional: true
+      valibot:
+        optional: true
+      zod:
+        optional: true
 
   '@tailwindcss/node@4.1.13':
     resolution: {integrity: sha512-eq3ouolC1oEFOAvOMOBAmfCIqZBJuvWvvYWh5h5iOYfe1HFC6+GZ6EIL0JdM3/niGRJmnrOc+8gl9/HGUaaptw==}
@@ -4980,6 +5085,41 @@ snapshots:
     optionalDependencies:
       '@types/react': 19.2.2
 
+  '@biomejs/biome@2.3.0':
+    optionalDependencies:
+      '@biomejs/cli-darwin-arm64': 2.3.0
+      '@biomejs/cli-darwin-x64': 2.3.0
+      '@biomejs/cli-linux-arm64': 2.3.0
+      '@biomejs/cli-linux-arm64-musl': 2.3.0
+      '@biomejs/cli-linux-x64': 2.3.0
+      '@biomejs/cli-linux-x64-musl': 2.3.0
+      '@biomejs/cli-win32-arm64': 2.3.0
+      '@biomejs/cli-win32-x64': 2.3.0
+
+  '@biomejs/cli-darwin-arm64@2.3.0':
+    optional: true
+
+  '@biomejs/cli-darwin-x64@2.3.0':
+    optional: true
+
+  '@biomejs/cli-linux-arm64-musl@2.3.0':
+    optional: true
+
+  '@biomejs/cli-linux-arm64@2.3.0':
+    optional: true
+
+  '@biomejs/cli-linux-x64-musl@2.3.0':
+    optional: true
+
+  '@biomejs/cli-linux-x64@2.3.0':
+    optional: true
+
+  '@biomejs/cli-win32-arm64@2.3.0':
+    optional: true
+
+  '@biomejs/cli-win32-x64@2.3.0':
+    optional: true
+
   '@braintree/sanitize-url@7.1.1': {}
 
   '@chevrotain/cst-dts-gen@11.0.3':
@@ -6262,6 +6402,18 @@ snapshots:
     dependencies:
       tslib: 2.8.1
 
+  '@t3-oss/env-core@0.13.8(typescript@5.9.3)(zod@4.1.11)':
+    optionalDependencies:
+      typescript: 5.9.3
+      zod: 4.1.11
+
+  '@t3-oss/env-nextjs@0.13.8(typescript@5.9.3)(zod@4.1.11)':
+    dependencies:
+      '@t3-oss/env-core': 0.13.8(typescript@5.9.3)(zod@4.1.11)
+    optionalDependencies:
+      typescript: 5.9.3
+      zod: 4.1.11
+
   '@tailwindcss/node@4.1.13':
     dependencies:
       '@jridgewell/remapping': 2.3.5
@@ -6530,7 +6682,7 @@ snapshots:
 
   '@types/qrcode@1.5.5':
     dependencies:
-      '@types/node': 20.19.19
+      '@types/node': 24.6.1
 
   '@types/react-dom@19.2.2(@types/react@19.2.2)':
     dependencies:

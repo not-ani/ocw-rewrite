@@ -3,19 +3,19 @@ import { CourseDashboardHeader } from "@/components/dashboard/sidebar/course-das
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
 
 export default function DashboardLayout({
-  children,
+	children,
 }: {
-  children: React.ReactNode;
+	children: React.ReactNode;
 }) {
-  return (
-    <div className="w-full [--header-height:calc(--spacing(14))]">
-      <SidebarProvider className="flex flex-col">
-        <CourseDashboardHeader />
-        <div className="flex flex-1">
-          <AppSidebar />
-          <SidebarInset>{children}</SidebarInset>
-        </div>
-      </SidebarProvider>
-    </div>
-  );
+	return (
+		<div className="w-full [--header-height:calc(--spacing(14))]">
+			<SidebarProvider className="flex flex-col">
+				<CourseDashboardHeader />
+				<div className="flex flex-1">
+					<AppSidebar />
+					<SidebarInset>{children}</SidebarInset>
+				</div>
+			</SidebarProvider>
+		</div>
+	);
 }
