@@ -37,11 +37,11 @@ export const env = createEnv({
 	 * For them to be exposed to the client, prefix them with `NEXT_PUBLIC_`.
 	 */
 	client: {
-		NEXT_PUBLIC_CLERK_FRONTEND_API_URL: z.string(),
+		NEXT_PUBLIC_CLERK_FRONTEND_API_URL: z.optional(z.string()),
 		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string(),
 		NEXT_PUBLIC_POSTHOG_KEY: z.string(),
 		NEXT_PUBLIC_POSTHOG_HOST: z.string(),
-		NEXT_PUBLIC_CONVEX_URL: z.string(),
+		NEXT_PUBLIC_CONVEX_URL: z.optional(z.string()),
 	},
 	/**
 	 * Destructure all variables from `process.env` to make sure they aren't tree-shaken away.
