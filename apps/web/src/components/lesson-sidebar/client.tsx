@@ -202,6 +202,7 @@ function UnitLessonNav({
 								>
 									<Link
 										rel={lesson.pureLink ? "noopener noreferrer" : undefined}
+										prefetch
 										target={lesson.pureLink ? "_blank" : undefined}
 										href={
 											(lesson.pureLink

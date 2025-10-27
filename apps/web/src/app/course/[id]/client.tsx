@@ -87,6 +87,7 @@ export function CoursePageClient({
 							<div className="text-sm" key={index}>
 								<div className="mb-1 text-foreground">UNIT {index + 1}</div>
 								<Link
+									prefetch
 									className="break-words text-foreground/80 hover:underline"
 									href={`/course/${course._id}/${unit.id}`}
 								>
@@ -123,6 +124,7 @@ export function CoursePageClient({
 												{unit.lessons.map((lesson) => (
 													<Link
 														className="block text-foreground hover:underline"
+														prefetch
 														key={lesson.id}
 														href={`/course/${course._id}/${unit.id}/${lesson.id}`}
 													>

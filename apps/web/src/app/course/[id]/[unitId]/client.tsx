@@ -74,6 +74,7 @@ export function UnitPageClient({
 				<div className="hidden border-r bg-background p-6 lg:block lg:w-96">
 					<div className="mb-6 rounded-lg bg-primary/10 p-4">
 						<Link
+							prefetch
 							href={`/course/${unit.course._id}`}
 							className="font-bold text-primary/80 text-xl"
 						>
@@ -86,6 +87,7 @@ export function UnitPageClient({
 							<div className="text-sm" key={lesson.id}>
 								<div className="mb-1 text-foreground">LESSON {index + 1}</div>
 								<Link
+									prefetch
 									className="break-words text-foreground/80 hover:underline"
 									href={`/course/${unit.course._id}/${unit._id}/${lesson.id}`}
 								>
