@@ -22,6 +22,7 @@ const nextConfig: NextConfig = {
 	images: {
 		domains: ["ugakd4mkxv.ufs.sh", "utfs.io"],
 	},
+	reactCompiler: true,
 };
 
 export default nextConfig;
