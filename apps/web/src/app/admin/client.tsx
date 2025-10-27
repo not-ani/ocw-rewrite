@@ -5,6 +5,7 @@ import type { Preloaded } from "convex/react";
 import { usePreloadedQuery } from "convex/react";
 import { useEffect, useMemo, useState } from "react";
 import { AddAdminDialog } from "@/components/admin/add-admin-dialog";
+import { AddCourseDialog } from "@/components/admin/add-course-dialog";
 import { AdminsTable } from "@/components/admin/admins-table";
 import { CoursesTable } from "@/components/admin/courses-table";
 
@@ -76,16 +77,19 @@ export function AdminPageClient({
 				</div>
 			</div>
 
-			{/* Courses Section */}
-			<div className="space-y-4">
-				<div className="flex items-center justify-between">
+		{/* Courses Section */}
+		<div className="space-y-4">
+			<div className="flex items-center justify-between">
+				<div className="flex items-center gap-4">
 					<h2 className="font-semibold text-2xl">All Courses</h2>
 					<p className="text-muted-foreground text-sm">
 						{courses.length} {courses.length === 1 ? "course" : "courses"} total
 					</p>
 				</div>
-				<CoursesTable courses={courses} />
+				<AddCourseDialog />
 			</div>
+			<CoursesTable courses={courses} />
+		</div>
 
 			{/* Site Admins Section */}
 			<div className="space-y-4">

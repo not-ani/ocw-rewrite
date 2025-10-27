@@ -169,3 +169,33 @@ export const isSiteAdmin = query({
 		return siteUser?.role === "admin";
 	},
 });
+
+/**
+ * Create a new course
+ */
+export const createCourse = mutation({
+	args: {
+		name: v.string(),
+		description: v.string(),
+		subjectId: v.string(),
+		isPublic: v.boolean(),
+		imageUrl: v.optional(v.string()),
+		school: v.string(),
+	},
+	handler: async (ctx, args) => {
+		await assertSiteAdmin(ctx, args);
+
+		const courseId = await ctx.db.insert("courses", {
+			name: args.name,
+			description: args.description,
+			subjectId: args.subjectId,
+			isPublic: args.isPublic,
+			imageUrl: args.imageUrl,
+			aliases: [],
+			unitLength: 0,
+			school: args.school,
+		});
+
+		return courseId;
+	},
+});

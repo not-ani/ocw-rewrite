@@ -43,13 +43,11 @@ export async function GET(request: Request) {
 		// Get content from main, .doc-content, or body
 		const content =
 			$("main").html() || $(".doc-content").html() || $("body").html() || "";
-		console.log("content", content);
 
 		const turndownService = new TurndownService();
 		turndownService.use(gfm);
 
 		const markdown = turndownService.turndown(content);
-		console.log("markdown", markdown);
 
 		return NextResponse.json({ markdown });
 	} catch (_error) {

@@ -45,7 +45,6 @@ export async function GET() {
 			imageUrl: user.imageUrl,
 			createdAt: user.createdAt,
 		}));
-		console.log("formattedUsers", formattedUsers);
 
 		return NextResponse.json(formattedUsers);
 	} catch (error) {

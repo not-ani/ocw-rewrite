@@ -12,8 +12,6 @@ export const getPaginatedCourses = query({
 		school: v.string(),
 	},
 	handler: async (ctx, args) => {
-		const user = await ctx.auth.getUserIdentity();
-		console.log("user?.tokenIdentifier", user?.tokenIdentifier);
 		const { page, limit, search, school } = args;
 		const offset = (page - 1) * limit;
 
