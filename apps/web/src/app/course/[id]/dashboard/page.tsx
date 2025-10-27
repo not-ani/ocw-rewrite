@@ -1,5 +1,5 @@
-import { api } from "@ocw-rewrite/backend/convex/_generated/api";
-import type { Id } from "@ocw-rewrite/backend/convex/_generated/dataModel";
+import { api } from "@ocw/backend/convex/_generated/api";
+import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { preloadQuery } from "convex/nextjs";
 import { getAuthToken } from "@/lib/auth";
 import { isValidConvexId } from "@/lib/convex-utils";

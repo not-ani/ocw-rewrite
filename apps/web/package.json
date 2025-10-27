@@ -17,7 +17,7 @@
 		"@dnd-kit/utilities": "^3.2.2",
 		"@eslint/eslintrc": "^3.3.1",
 		"@hookform/resolvers": "^5.2.2",
-		"@ocw-rewrite/backend": "workspace:*",
+		"@ocw/backend": "workspace:*",
 		"@radix-ui/react-accordion": "^1.2.12",
 		"@radix-ui/react-alert-dialog": "^1.1.15",
 		"@radix-ui/react-aspect-ratio": "^1.1.7",

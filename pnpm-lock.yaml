@@ -60,7 +60,7 @@ importers:
       '@hookform/resolvers':
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.63.0(react@19.2.0))
-      '@ocw-rewrite/backend':
+      '@ocw/backend':
         specifier: workspace:*
         version: link:../../packages/backend
       '@radix-ui/react-accordion':

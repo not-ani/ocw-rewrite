@@ -1,4 +1,4 @@
-import { api } from "@ocw-rewrite/backend/convex/_generated/api";
+import { api } from "@ocw/backend/convex/_generated/api";
 import { preloadQuery } from "convex/nextjs";
 import { extractSubdomain } from "@/lib/multi-tenant/server";
 import { SiteContentClient } from "./_client/client";

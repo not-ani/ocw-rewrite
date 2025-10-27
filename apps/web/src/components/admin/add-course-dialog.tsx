@@ -1,7 +1,7 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { api } from "@ocw-rewrite/backend/convex/_generated/api";
+import { api } from "@ocw/backend/convex/_generated/api";
 import { useMutation } from "convex/react";
 import { Loader2Icon, Plus } from "lucide-react";
 import { useState } from "react";

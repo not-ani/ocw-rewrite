@@ -1,7 +1,7 @@
 "use client";
 
-import { api } from "@ocw-rewrite/backend/convex/_generated/api";
-import type { Doc } from "@ocw-rewrite/backend/convex/_generated/dataModel";
+import { api } from "@ocw/backend/convex/_generated/api";
+import type { Doc } from "@ocw/backend/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
 import { MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";

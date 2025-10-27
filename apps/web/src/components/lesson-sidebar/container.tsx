@@ -1,6 +1,6 @@
 "use client";
 import { UserButton } from "@clerk/nextjs";
-import type { api } from "@ocw-rewrite/backend/convex/_generated/api";
+import type { api } from "@ocw/backend/convex/_generated/api";
 import type { Preloaded } from "convex/react";
 import { Suspense } from "react";
 import {

@@ -1,7 +1,7 @@
 "use client";
 
-import { api } from "@ocw-rewrite/backend/convex/_generated/api";
-import type { Id } from "@ocw-rewrite/backend/convex/_generated/dataModel";
+import { api } from "@ocw/backend/convex/_generated/api";
+import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { ArrowRightIcon, Loader2Icon, SearchIcon } from "lucide-react";
 import type { Route } from "next";

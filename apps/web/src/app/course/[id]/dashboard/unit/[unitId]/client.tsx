@@ -1,8 +1,8 @@
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
-import { api } from "@ocw-rewrite/backend/convex/_generated/api";
-import type { Id } from "@ocw-rewrite/backend/convex/_generated/dataModel";
+import { api } from "@ocw/backend/convex/_generated/api";
+import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import type { Preloaded } from "convex/react";
 import { useMutation, usePreloadedQuery } from "convex/react";
 import { ArrowLeft, Loader2, Save } from "lucide-react";

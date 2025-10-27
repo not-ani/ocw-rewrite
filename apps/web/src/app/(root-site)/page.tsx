@@ -1,4 +1,4 @@
-import { api } from "@ocw-rewrite/backend/convex/_generated/api";
+import { api } from "@ocw/backend/convex/_generated/api";
 import { fetchQuery } from "convex/nextjs";
 import type { Metadata } from "next";
 import Link from "next/link";

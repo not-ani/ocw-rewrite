@@ -15,7 +15,7 @@ import {
 	verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import type { Id } from "@ocw-rewrite/backend/convex/_generated/dataModel";
+import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { GripVerticalIcon, MoreHorizontalIcon, TrashIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";

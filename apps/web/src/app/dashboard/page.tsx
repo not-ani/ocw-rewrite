@@ -1,7 +1,7 @@
 "use client";
 
 import { SignInButton, UserButton, useUser } from "@clerk/nextjs";
-import { api } from "@ocw-rewrite/backend/convex/_generated/api";
+import { api } from "@ocw/backend/convex/_generated/api";
 import {
 	Authenticated,
 	AuthLoading,

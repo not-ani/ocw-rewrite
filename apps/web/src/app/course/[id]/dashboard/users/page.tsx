@@ -1,5 +1,5 @@
 import { SignInButton } from "@clerk/nextjs";
-import type { Id } from "@ocw-rewrite/backend/convex/_generated/dataModel";
+import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { notFound, redirect } from "next/navigation";
 import { getAuthToken } from "@/lib/auth";
 import { isValidConvexId } from "@/lib/convex-utils";

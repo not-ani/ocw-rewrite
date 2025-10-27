@@ -1,8 +1,8 @@
 import "server-only";
 
 import { clerkClient } from "@clerk/nextjs/server";
-import { api } from "@ocw-rewrite/backend/convex/_generated/api";
-import type { Id } from "@ocw-rewrite/backend/convex/_generated/dataModel";
+import { api } from "@ocw/backend/convex/_generated/api";
+import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { fetchQuery } from "convex/nextjs";
 import { getAuthToken } from "./auth";
 import { extractSubdomain } from "./multi-tenant/server";

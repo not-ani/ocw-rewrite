@@ -1,6 +1,6 @@
 "use client";
 
-import type { api } from "@ocw-rewrite/backend/convex/_generated/api";
+import type { api } from "@ocw/backend/convex/_generated/api";
 import type { Preloaded } from "convex/react";
 import { usePreloadedQuery } from "convex/react";
 import { useEffect, useMemo, useState } from "react";

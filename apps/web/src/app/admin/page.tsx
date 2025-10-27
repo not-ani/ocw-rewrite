@@ -1,4 +1,4 @@
-import { api } from "@ocw-rewrite/backend/convex/_generated/api";
+import { api } from "@ocw/backend/convex/_generated/api";
 import { fetchQuery, preloadQuery } from "convex/nextjs";
 import { redirect } from "next/navigation";
 import { getAuthToken } from "@/lib/auth";

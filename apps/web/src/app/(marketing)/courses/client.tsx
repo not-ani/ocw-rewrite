@@ -1,6 +1,6 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: ts mpo icl */
 "use client";
-import { api } from "@ocw-rewrite/backend/convex/_generated/api";
+import { api } from "@ocw/backend/convex/_generated/api";
 import { useQuery } from "convex/react";
 import Link from "next/link";
 import { useQueryStates } from "nuqs";

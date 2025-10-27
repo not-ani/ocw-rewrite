@@ -2,7 +2,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
 import "../index.css";
 import { ClerkProvider } from "@clerk/nextjs";
-import { api } from "@ocw-rewrite/backend/convex/_generated/api";
+import { api } from "@ocw/backend/convex/_generated/api";
 import { fetchQuery } from "convex/nextjs";
 import type { Metadata } from "next";
 import Providers from "@/components/providers";

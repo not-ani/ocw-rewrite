@@ -1,4 +1,4 @@
-import type { Id } from "@ocw-rewrite/backend/convex/_generated/dataModel";
+import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { Edit } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";

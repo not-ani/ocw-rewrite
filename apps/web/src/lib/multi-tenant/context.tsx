@@ -1,5 +1,5 @@
 "use client";
-import { api } from "@ocw-rewrite/backend/convex/_generated/api";
+import { api } from "@ocw/backend/convex/_generated/api";
 import { useQuery } from "convex/react";
 import type { FunctionReturnType } from "convex/server";
 import type React from "react";

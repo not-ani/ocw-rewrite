@@ -1,8 +1,8 @@
 /** biome-ignore-all lint/a11y/useButtonType: this is how recommended in docs */
 "use client";
 
-import { api } from "@ocw-rewrite/backend/convex/_generated/api";
-import type { Id } from "@ocw-rewrite/backend/convex/_generated/dataModel";
+import { api } from "@ocw/backend/convex/_generated/api";
+import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import {
 	ArrowRightIcon,

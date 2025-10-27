@@ -4,8 +4,8 @@ import {
 	SortableContext,
 	verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { api } from "@ocw-rewrite/backend/convex/_generated/api";
-import type { Id } from "@ocw-rewrite/backend/convex/_generated/dataModel";
+import { api } from "@ocw/backend/convex/_generated/api";
+import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { Loader2 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";

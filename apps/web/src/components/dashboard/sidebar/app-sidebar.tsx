@@ -1,5 +1,5 @@
 "use client";
-import type { Id } from "@ocw-rewrite/backend/convex/_generated/dataModel";
+import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { Frame, SettingsIcon, Users2Icon } from "lucide-react";
 import { useParams } from "next/navigation";
 import {
