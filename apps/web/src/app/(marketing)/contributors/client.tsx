@@ -13,11 +13,7 @@ type SiteConfig = {
 	}[];
 } | null;
 
-export function WritersTableClient({
-	siteConfig,
-}: {
-	siteConfig: SiteConfig;
-}) {
+export function WritersTableClient({ siteConfig }: { siteConfig: SiteConfig }) {
 	const [expandedId, setExpandedId] = useState<string | null>(null);
 
 	const handleRowClick = (id: string) => {
@@ -182,4 +178,3 @@ export function WritersTableClient({
 		</main>
 	);
 }
-

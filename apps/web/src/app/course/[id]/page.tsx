@@ -39,7 +39,9 @@ export async function generateMetadata({
 
 	return {
 		title: `${course.name} | ${siteConfig?.schoolName ?? "OpenCourseWare"}`,
-		description: course.description || `Learn about ${course.name} with free, high-quality resources.`,
+		description:
+			course.description ||
+			`Learn about ${course.name} with free, high-quality resources.`,
 	};
 }
 

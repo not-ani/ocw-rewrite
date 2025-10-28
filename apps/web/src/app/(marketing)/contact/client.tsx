@@ -15,11 +15,7 @@ type SiteConfig = {
 	}[];
 } | null;
 
-export function ContactPageClient({
-	siteConfig,
-}: {
-	siteConfig: SiteConfig;
-}) {
+export function ContactPageClient({ siteConfig }: { siteConfig: SiteConfig }) {
 	const people = siteConfig?.personsContact;
 	const club = siteConfig?.club;
 
@@ -99,4 +95,3 @@ export function ContactPageClient({
 		</div>
 	);
 }
-
