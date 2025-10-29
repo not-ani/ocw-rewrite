@@ -155,13 +155,13 @@ export function AddCourseDialog() {
 										/>
 									</FormControl>
 									<FormDescription>
-										A unique identifier for this course (e.g. Computer Science, Science, Social Studies, etc.)
+										A unique identifier for this course (e.g. Computer Science,
+										Science, Social Studies, etc.)
 									</FormDescription>
 									<FormMessage />
 								</FormItem>
 							)}
 						/>
-
 
 						<FormField
 							control={form.control}
@@ -213,4 +213,3 @@ export function AddCourseDialog() {
 		</Dialog>
 	);
 }
-

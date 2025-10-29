@@ -77,19 +77,20 @@ export function AdminPageClient({
 				</div>
 			</div>
 
-		{/* Courses Section */}
-		<div className="space-y-4">
-			<div className="flex items-center justify-between">
-				<div className="flex items-center gap-4">
-					<h2 className="font-semibold text-2xl">All Courses</h2>
-					<p className="text-muted-foreground text-sm">
-						{courses.length} {courses.length === 1 ? "course" : "courses"} total
-					</p>
+			{/* Courses Section */}
+			<div className="space-y-4">
+				<div className="flex items-center justify-between">
+					<div className="flex items-center gap-4">
+						<h2 className="font-semibold text-2xl">All Courses</h2>
+						<p className="text-muted-foreground text-sm">
+							{courses.length} {courses.length === 1 ? "course" : "courses"}{" "}
+							total
+						</p>
+					</div>
+					<AddCourseDialog />
 				</div>
-				<AddCourseDialog />
+				<CoursesTable courses={courses} />
 			</div>
-			<CoursesTable courses={courses} />
-		</div>
 
 			{/* Site Admins Section */}
 			<div className="space-y-4">

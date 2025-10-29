@@ -1,9 +1,40 @@
-"use client";
+import { api } from "@ocw/backend/convex/_generated/api";
+import { fetchQuery } from "convex/nextjs";
+import type { Metadata } from "next";
 import Link from "next/link";
-import { useSite } from "@/lib/multi-tenant/context";
+import { extractSubdomain } from "@/lib/multi-tenant/server";
 
-export default function Page() {
-	const { siteConfig } = useSite();
+export async function generateMetadata(): Promise<Metadata> {
+	const subdomain = await extractSubdomain();
+
+	if (!subdomain) {
+		return {
+			title: "About Us",
+			description: "Learn about our mission and values",
+		};
+	}
+
+	const siteConfig = await fetchQuery(api.site.getSiteConfig, {
+		school: subdomain,
+	});
+
+	return {
+		title: `About Us | ${siteConfig?.schoolName ?? "OpenCourseWare"}`,
+		description: `Learn about ${siteConfig?.schoolName ?? "OpenCourseWare"} and our mission to provide free, high-quality educational resources.`,
+	};
+}
+
+export default async function Page() {
+	const subdomain = await extractSubdomain();
+
+	if (!subdomain) {
+		return null;
+	}
+
+	const siteConfig = await fetchQuery(api.site.getSiteConfig, {
+		school: subdomain,
+	});
+
 	return (
 		<div className="min-h-screen bg-background px-4 py-12 sm:px-6 lg:px-8">
 			<div className="mx-auto max-w-4xl">
