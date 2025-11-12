@@ -1,11 +1,14 @@
-import type { Id } from "@ocw/backend/convex/_generated/dataModel";
+"use client";
+
+import { useParams } from "next/navigation";
 import { Edit } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
-import { extractSubdomain } from "@/lib/multi-tenant/server";
 import { cn } from "@/lib/utils";
 import { PermissionWrapper } from "./permissions";
+import type { Id } from "@ocw/backend/convex/_generated/dataModel";
+import { useSite } from "@/lib/multi-tenant/context";
 
 function getLink(id: string, unitId?: string, lessonId?: string) {
 	if (lessonId) {
@@ -17,21 +20,14 @@ function getLink(id: string, unitId?: string, lessonId?: string) {
 	return `/course/${id}/dashboard`;
 }
 
-export default async function EditButton({
-	params,
-}: {
-	params: Promise<{
+export function EditButton() {
+	const params = useParams();
+	const { id, unitId, lessonId } = params as {
 		id: string;
-		lessonId?: string;
 		unitId?: string;
-	}>;
-}) {
-	const { lessonId, unitId, id } = await params;
-
-	const subdomain = await extractSubdomain();
-	if (!subdomain) {
-		return null;
-	}
+		lessonId?: string;
+	};
+	const { subdomain } = useSite();
 	const link = getLink(id, unitId, lessonId);
 
 	return (

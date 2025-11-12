@@ -1,19 +1,13 @@
 import type React from "react";
 import { Suspense } from "react";
-import EditButton from "@/components/edit-button";
+import { EditButton } from "@/components/edit-button";
 
-export default function Layout({
-	children,
-	params,
-}: {
-	children: React.ReactNode;
-	params: Promise<{ id: string }>;
-}) {
+export default function Layout({ children }: { children: React.ReactNode }) {
 	return (
 		<div>
 			{children}
 			<Suspense>
-				<EditButton params={params} />
+				<EditButton />
 			</Suspense>
 		</div>
 	);
