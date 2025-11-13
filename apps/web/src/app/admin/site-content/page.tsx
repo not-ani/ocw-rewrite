@@ -1,5 +1,3 @@
-import { api } from "@ocw/backend/convex/_generated/api";
-import { preloadQuery } from "convex/nextjs";
 import { extractSubdomain } from "@/lib/multi-tenant/server";
 import { SiteContentClient } from "./_client/client";
 
@@ -19,14 +17,5 @@ export default async function SiteContentPage() {
 		);
 	}
 
-	const preloadedSiteConfig = await preloadQuery(api.site.getSiteConfig, {
-		school,
-	});
-
-	return (
-		<SiteContentClient
-			school={school}
-			preloadedSiteConfig={preloadedSiteConfig}
-		/>
-	);
+	return <SiteContentClient school={school} />;
 }

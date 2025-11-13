@@ -1,9 +1,6 @@
-import { api } from "@ocw/backend/convex/_generated/api";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
-import { preloadQuery } from "convex/nextjs";
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getAuthToken } from "@/lib/auth";
 import { isValidConvexId } from "@/lib/convex-utils";
 import { extractSubdomain } from "@/lib/multi-tenant/server";
 import { UnitPageClient } from "./client";
@@ -26,7 +23,6 @@ export default async function UnitPage({
 }) {
 	const { id, unitId } = await params;
 
-	const token = await getAuthToken();
 	const subdomain = await extractSubdomain();
 
 	if (!subdomain) {
@@ -39,31 +35,11 @@ export default async function UnitPage({
 
 	const courseId = id as Id<"courses">;
 
-	const [preloadedUnit, preloadedLessons] = await Promise.all([
-		preloadQuery(
-			api.units.getById,
-			{
-				id: unitId as Id<"units">,
-				school: subdomain,
-			},
-			{ token: token },
-		),
-		preloadQuery(
-			api.lesson.getByUnit,
-			{
-				unitId: unitId as Id<"units">,
-				school: subdomain,
-			},
-			{ token: token },
-		),
-	]);
-
 	return (
 		<UnitPageClient
 			courseId={courseId}
 			unitId={unitId as Id<"units">}
-			preloadedUnit={preloadedUnit}
-			preloadedLessons={preloadedLessons}
+			subdomain={subdomain}
 		/>
 	);
 }

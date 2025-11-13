@@ -1,7 +1,8 @@
 "use client";
 
-import type { api } from "@ocw/backend/convex/_generated/api";
-import { type Preloaded, usePreloadedQuery } from "convex/react";
+import { api } from "@ocw/backend/convex/_generated/api";
+import type { Id } from "@ocw/backend/convex/_generated/dataModel";
+import { useQuery } from "convex/react";
 import { HomeIcon } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -21,9 +22,6 @@ import {
 import { Skeleton } from "@/components/ui/skeleton";
 import type { EmbedContent } from "@/lib/convex-utils";
 import { cn } from "@/lib/utils";
-
-type PreloadedLesson = Preloaded<typeof api.lesson.getLessonById>;
-type PreloadedSidebar = Preloaded<typeof api.courses.getSidebarData>;
 
 function LessonEmbedSkeleton() {
 	return (
@@ -120,10 +118,12 @@ function LessonEmbed({
 
 function Layout({
 	children,
-	preloadedSidebar,
+	courseId,
+	subdomain,
 }: {
 	children: React.ReactNode;
-	preloadedSidebar: PreloadedSidebar;
+	courseId: Id<"courses">;
+	subdomain: string;
 }) {
 	return (
 		<div className="flex h-screen flex-col">
@@ -134,7 +134,7 @@ function Layout({
 				}}
 			>
 				<Suspense fallback={<Skeleton className="h-screen w-[21rem]" />}>
-					<LessonSidebarContainer preloadedSidebar={preloadedSidebar} />
+					<LessonSidebarContainer courseId={courseId} subdomain={subdomain} />
 				</Suspense>
 				<SidebarInset>
 					<div className="flex flex-1 flex-col gap-4 p-4 pt-0">
@@ -143,7 +143,7 @@ function Layout({
 								<SidebarTrigger className="-ml-1" />
 								<Separator className="mr-2 h-4" orientation="vertical" />
 								<Suspense fallback={<BreadcrumbSkeleton />}>
-									<BreadcrumbCourse preloadedSidebar={preloadedSidebar} />
+									<BreadcrumbCourse courseId={courseId} subdomain={subdomain} />
 								</Suspense>
 							</div>
 							<div className="flex items-center gap-2 leading-none">
@@ -170,20 +170,29 @@ function Layout({
 }
 
 export function LessonPageClient({
-	preloadedLesson,
-	preloadedSidebar,
+	courseId,
+	lessonId,
+	subdomain,
 }: {
-	preloadedLesson: PreloadedLesson;
-	preloadedSidebar: PreloadedSidebar;
+	courseId: Id<"courses">;
+	lessonId: Id<"lessons">;
+	subdomain: string;
 }) {
-	const lesson = usePreloadedQuery(preloadedLesson);
+	const lesson = useQuery(api.lesson.getLessonById, {
+		id: lessonId,
+		school: subdomain,
+	});
+
+	if (lesson === undefined) {
+		return <LessonPageSkeleton />;
+	}
 
 	if (!lesson) {
 		return <LessonPageSkeleton />;
 	}
 
 	return (
-		<Layout preloadedSidebar={preloadedSidebar}>
+		<Layout courseId={courseId} subdomain={subdomain}>
 			<main className="h-min-screen w-full">
 				<Suspense fallback={<LessonEmbedSkeleton />}>
 					<LessonEmbed

@@ -3,8 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "@ocw/backend/convex/_generated/api";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
-import type { Preloaded } from "convex/react";
-import { useMutation, usePreloadedQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import type { FunctionReturnType } from "convex/server";
 import { ArrowLeft, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
@@ -32,7 +31,6 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
-import { useSite } from "@/lib/multi-tenant/context";
 
 const lessonFormSchema = z.object({
 	name: z.string().min(1, "Lesson name is required").max(200),
@@ -276,23 +274,30 @@ function LessonEditForm({
 }
 
 import { memo } from "react";
+import LessonPageLoading from "./loading";
 
 type LessonPageClientProps = {
 	courseId: Id<"courses">;
 	lessonId: Id<"lessons">;
-	preloadedLesson: Preloaded<typeof api.lesson.getLessonById>;
+	subdomain: string;
 };
 
 export const LessonPageClient = memo(function LessonPageClient({
 	courseId,
 	lessonId,
-	preloadedLesson,
+	subdomain,
 }: LessonPageClientProps) {
 	const router = useRouter();
-	const data = usePreloadedQuery(preloadedLesson);
+	const data = useQuery(api.lesson.getLessonById, {
+		id: lessonId,
+		school: subdomain,
+	});
 	const lesson = data?.lesson;
 	const embed = data?.embed;
-	const school = useSite().subdomain;
+	const school = subdomain;
+	if (!lesson || !embed) {
+		return <LessonPageLoading />;
+	}
 
 	return (
 		<div className="mx-auto w-full max-w-7xl p-4 sm:p-6">

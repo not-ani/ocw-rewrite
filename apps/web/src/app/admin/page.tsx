@@ -1,5 +1,5 @@
 import { api } from "@ocw/backend/convex/_generated/api";
-import { fetchQuery, preloadQuery } from "convex/nextjs";
+import { fetchQuery } from "convex/nextjs";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getAuthToken } from "@/lib/auth";
@@ -48,24 +48,9 @@ export default async function AdminPage() {
 		redirect("/");
 	}
 
-	const preloadedCourses = await preloadQuery(
-		api.admin.getAllCourses,
-		{ school: subdomain },
-		{ token },
-	);
-
-	const preloadedAdmins = await preloadQuery(
-		api.admin.getAllSiteAdmins,
-		{ school: subdomain },
-		{ token },
-	);
-
 	return (
 		<div className="min-h-screen bg-background">
-			<AdminPageClient
-				preloadedCourses={preloadedCourses}
-				preloadedAdmins={preloadedAdmins}
-			/>
+			<AdminPageClient subdomain={subdomain} />
 		</div>
 	);
 }

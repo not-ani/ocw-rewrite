@@ -1,8 +1,7 @@
 "use client";
 
-import type { api } from "@ocw/backend/convex/_generated/api";
-import type { Preloaded } from "convex/react";
-import { usePreloadedQuery } from "convex/react";
+import { api } from "@ocw/backend/convex/_generated/api";
+import { useQuery } from "convex/react";
 import { useEffect, useMemo, useState } from "react";
 import { AddAdminDialog } from "@/components/admin/add-admin-dialog";
 import { AddCourseDialog } from "@/components/admin/add-course-dialog";
@@ -18,16 +17,16 @@ type ClerkUser = {
 };
 
 type AdminPageClientProps = {
-	preloadedCourses: Preloaded<typeof api.admin.getAllCourses>;
-	preloadedAdmins: Preloaded<typeof api.admin.getAllSiteAdmins>;
+	subdomain: string;
 };
 
-export function AdminPageClient({
-	preloadedCourses,
-	preloadedAdmins,
-}: AdminPageClientProps) {
-	const courses = usePreloadedQuery(preloadedCourses);
-	const admins = usePreloadedQuery(preloadedAdmins);
+export function AdminPageClient({ subdomain }: AdminPageClientProps) {
+	const courses = useQuery(api.admin.getAllCourses, {
+		school: subdomain,
+	});
+	const admins = useQuery(api.admin.getAllSiteAdmins, {
+		school: subdomain,
+	});
 
 	const [clerkUsers, setClerkUsers] = useState<ClerkUser[]>([]);
 
@@ -45,7 +44,7 @@ export function AdminPageClient({
 	const existingAdminIds = useMemo(
 		() =>
 			new Set(
-				admins.map((admin) => {
+				(admins ?? []).map((admin) => {
 					// Extract the Clerk user ID from the tokenIdentifier (format: "issuer|userId")
 					return admin.userId.split("|").pop() ?? admin.userId;
 				}),
@@ -54,6 +53,7 @@ export function AdminPageClient({
 	);
 
 	const adminsWithUsers = useMemo(() => {
+		if (!admins) return [];
 		return admins.map((admin) => {
 			// Extract the Clerk user ID from the tokenIdentifier (format: "issuer|userId")
 			const clerkUserId = admin.userId.split("|").pop() ?? admin.userId;
@@ -64,6 +64,19 @@ export function AdminPageClient({
 			};
 		});
 	}, [admins, clerkUsers]);
+
+	if (courses === undefined || admins === undefined) {
+		return (
+			<div className="mx-auto w-full max-w-7xl space-y-8 p-4 sm:p-6">
+				<div className="flex flex-wrap items-center justify-between gap-4 border-b pb-6">
+					<div className="space-y-1">
+						<h1 className="font-bold text-3xl">Site Administration</h1>
+						<p className="text-muted-foreground">Loading...</p>
+					</div>
+				</div>
+			</div>
+		);
+	}
 
 	return (
 		<div className="mx-auto w-full max-w-7xl space-y-8 p-4 sm:p-6">

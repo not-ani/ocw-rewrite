@@ -1,6 +1,7 @@
 "use client";
-import type { api } from "@ocw/backend/convex/_generated/api";
-import { type Preloaded, usePreloadedQuery } from "convex/react";
+import { api } from "@ocw/backend/convex/_generated/api";
+import type { Id } from "@ocw/backend/convex/_generated/dataModel";
+import { useQuery } from "convex/react";
 import Link from "next/link";
 import { Header } from "@/components/header";
 import {
@@ -10,10 +11,6 @@ import {
 	AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Skeleton } from "@/components/ui/skeleton";
-
-type CourseWithUnitsAndLessons = Preloaded<
-	typeof api.courses.getCourseWithUnitsAndLessons
->;
 
 export function CoursePageSkeleton() {
 	return (
@@ -61,11 +58,20 @@ export function CoursePageSkeleton() {
 }
 
 export function CoursePageClient({
-	preloadedCourse,
+	courseId,
+	subdomain,
 }: {
-	preloadedCourse: CourseWithUnitsAndLessons;
+	courseId: Id<"courses">;
+	subdomain: string;
 }) {
-	const course = usePreloadedQuery(preloadedCourse);
+	const course = useQuery(api.courses.getCourseWithUnitsAndLessons, {
+		id: courseId,
+		school: subdomain,
+	});
+
+	if (course === undefined) {
+		return <CoursePageSkeleton />;
+	}
 
 	if (!course) {
 		return <CoursePageSkeleton />;

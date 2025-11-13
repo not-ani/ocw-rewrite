@@ -1,7 +1,7 @@
 "use client";
 
-import type { api } from "@ocw/backend/convex/_generated/api";
-import { type Preloaded, usePreloadedQuery } from "convex/react";
+import { api } from "@ocw/backend/convex/_generated/api";
+import { useQuery } from "convex/react";
 import { Loader2 } from "lucide-react";
 import {
 	Card,
@@ -16,14 +16,12 @@ import { ContributorsCard } from "./contributors-card";
 
 type SiteContentClientProps = {
 	school: string;
-	preloadedSiteConfig: Preloaded<typeof api.site.getSiteConfig>;
 };
 
-export function SiteContentClient({
-	school,
-	preloadedSiteConfig,
-}: SiteContentClientProps) {
-	const siteConfig = usePreloadedQuery(preloadedSiteConfig);
+export function SiteContentClient({ school }: SiteContentClientProps) {
+	const siteConfig = useQuery(api.site.getSiteConfig, {
+		school,
+	});
 
 	if (siteConfig === undefined) {
 		return (

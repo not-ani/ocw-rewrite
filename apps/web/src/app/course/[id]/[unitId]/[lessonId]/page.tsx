@@ -1,6 +1,6 @@
 import { api } from "@ocw/backend/convex/_generated/api";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
-import { fetchQuery, preloadQuery } from "convex/nextjs";
+import { fetchQuery } from "convex/nextjs";
 import type { Metadata } from "next";
 import { isValidConvexId } from "@/lib/convex-utils";
 import { extractSubdomain } from "@/lib/multi-tenant/server";
@@ -78,21 +78,11 @@ export default async function Page({
 		return null;
 	}
 
-	const [preloadedLesson, preloadedSidebar] = await Promise.all([
-		preloadQuery(api.lesson.getLessonById, {
-			id: lessonId as Id<"lessons">,
-			school: subdomain,
-		}),
-		preloadQuery(api.courses.getSidebarData, {
-			courseId: id as Id<"courses">,
-			school: subdomain,
-		}),
-	]);
-
 	return (
 		<LessonPageClient
-			preloadedLesson={preloadedLesson}
-			preloadedSidebar={preloadedSidebar}
+			courseId={id as Id<"courses">}
+			lessonId={lessonId as Id<"lessons">}
+			subdomain={subdomain}
 		/>
 	);
 }
