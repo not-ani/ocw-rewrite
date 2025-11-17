@@ -1,6 +1,7 @@
 "use client";
-import type { api } from "@ocw/backend/convex/_generated/api";
-import { type Preloaded, usePreloadedQuery } from "convex/react";
+import { api } from "@ocw/backend/convex/_generated/api";
+import type { Id } from "@ocw/backend/convex/_generated/dataModel";
+import { useQuery } from "convex/react";
 import { useParams } from "next/navigation";
 import {
 	SidebarContent,
@@ -10,21 +11,24 @@ import {
 import { UnitLessonNavigation } from "./client";
 import { CourseHeader } from "./header";
 
-type PreloadedSidebar = Preloaded<typeof api.courses.getSidebarData>;
-
 export const LessonSidebarContent = ({
-	preloadedSidebar,
+	courseId,
+	subdomain,
 }: {
-	preloadedSidebar: PreloadedSidebar;
+	courseId: Id<"courses">;
+	subdomain: string;
 }) => {
 	const resolvedParams = useParams<{
 		id: string;
 		unitId: string;
 		lessonId: string;
 	}>();
-	const { id: courseId, unitId, lessonId } = resolvedParams;
+	const { unitId, lessonId } = resolvedParams;
 
-	const data = usePreloadedQuery(preloadedSidebar);
+	const data = useQuery(api.courses.getSidebarData, {
+		courseId,
+		school: subdomain,
+	});
 
 	if (!data || data.length === 0) {
 		return (

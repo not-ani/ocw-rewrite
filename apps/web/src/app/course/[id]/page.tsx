@@ -1,6 +1,6 @@
 import { api } from "@ocw/backend/convex/_generated/api";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
-import { fetchQuery, preloadQuery } from "convex/nextjs";
+import { fetchQuery } from "convex/nextjs";
 import type { Metadata } from "next";
 import { isValidConvexId } from "@/lib/convex-utils";
 import { extractSubdomain } from "@/lib/multi-tenant/server";
@@ -61,13 +61,7 @@ export default async function Page({
 		return null;
 	}
 
-	const preloadedCourse = await preloadQuery(
-		api.courses.getCourseWithUnitsAndLessons,
-		{
-			id: id as Id<"courses">,
-			school: subdomain,
-		},
+	return (
+		<CoursePageClient courseId={id as Id<"courses">} subdomain={subdomain} />
 	);
-
-	return <CoursePageClient preloadedCourse={preloadedCourse} />;
 }

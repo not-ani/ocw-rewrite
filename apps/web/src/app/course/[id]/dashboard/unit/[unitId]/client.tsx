@@ -3,8 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "@ocw/backend/convex/_generated/api";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
-import type { Preloaded } from "convex/react";
-import { useMutation, usePreloadedQuery } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { ArrowLeft, Loader2, Save } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
@@ -25,8 +24,8 @@ import {
 import { Input } from "@/components/ui/input";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
-import { useSite } from "@/lib/multi-tenant/context";
 import { LessonsTable } from "./lessons-table";
+import UnitPageLoading from "./loading";
 
 const unitFormSchema = z.object({
 	name: z.string().min(1, "Unit name is required").max(200),
@@ -241,18 +240,22 @@ function UnitEditForm({
 export function UnitPageClient({
 	courseId,
 	unitId,
-	preloadedUnit,
-	preloadedLessons,
+	subdomain,
 }: {
 	courseId: Id<"courses">;
 	unitId: Id<"units">;
-	preloadedUnit: Preloaded<typeof api.units.getById>;
-	preloadedLessons: Preloaded<typeof api.lesson.getByUnit>;
+	subdomain: string;
 }) {
 	const router = useRouter();
-	const unit = usePreloadedQuery(preloadedUnit);
-	const lessons = usePreloadedQuery(preloadedLessons);
-	const school = useSite().subdomain;
+	const unit = useQuery(api.units.getById, {
+		id: unitId,
+		school: subdomain,
+	});
+	const lessons = useQuery(api.lesson.getByUnit, {
+		unitId,
+		school: subdomain,
+	});
+	const school = subdomain;
 
 	const updateLesson = useMutation(api.lesson.update);
 	const reorderLessons = useMutation(api.lesson.reorder);
@@ -288,6 +291,10 @@ export function UnitPageClient({
 	);
 
 	const lessonList = useMemo(() => lessons ?? [], [lessons]);
+
+	if (!unit) {
+		return <UnitPageLoading />;
+	}
 
 	return (
 		<div className="mx-auto w-full max-w-7xl p-4 sm:p-6">

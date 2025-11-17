@@ -1,5 +1,7 @@
 import { api } from "@ocw/backend/convex/_generated/api";
-import { preloadQuery } from "convex/nextjs";
+import { fetchQuery } from "convex/nextjs";
+import { redirect } from "next/navigation";
+import { getAuthToken } from "@/lib/auth";
 import { extractSubdomain } from "@/lib/multi-tenant/server";
 import { SiteContentClient } from "./_client/client";
 
@@ -19,14 +21,21 @@ export default async function SiteContentPage() {
 		);
 	}
 
-	const preloadedSiteConfig = await preloadQuery(api.site.getSiteConfig, {
-		school,
-	});
+	const token = await getAuthToken();
 
-	return (
-		<SiteContentClient
-			school={school}
-			preloadedSiteConfig={preloadedSiteConfig}
-		/>
+	if (!token) {
+		redirect("/");
+	}
+
+	const isSiteAdmin = await fetchQuery(
+		api.admin.isSiteAdmin,
+		{ school },
+		{ token },
 	);
+
+	if (!isSiteAdmin) {
+		redirect("/");
+	}
+
+	return <SiteContentClient school={school} />;
 }

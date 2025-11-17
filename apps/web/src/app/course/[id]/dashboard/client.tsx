@@ -3,13 +3,11 @@
 import { SignInButton, useUser } from "@clerk/nextjs";
 import { api } from "@ocw/backend/convex/_generated/api";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
-import type { Preloaded } from "convex/react";
 import {
 	Authenticated,
 	AuthLoading,
 	Unauthenticated,
 	useMutation,
-	usePreloadedQuery,
 	useQuery,
 } from "convex/react";
 import Link from "next/link";
@@ -18,7 +16,6 @@ import { CreateUnitDialog } from "@/components/dashboard/units/create-unit";
 import { UnitsTable } from "@/components/dashboard/units/units-table";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useSite } from "@/lib/multi-tenant/context";
 
 function DashboardHeaderSkeleton() {
 	return (
@@ -66,15 +63,12 @@ function UnitsTableSkeleton() {
 
 function DashboardContent({
 	courseId,
-	preloadedDashboard,
-	preloadedUnits,
+	subdomain,
 }: {
 	courseId: Id<"courses">;
-	preloadedDashboard: Preloaded<typeof api.courses.getDashboardSummary>;
-	preloadedUnits: Preloaded<typeof api.units.getTableData>;
+	subdomain: string;
 }) {
 	const user = useUser();
-	const subdomain = useSite().subdomain;
 	const roleFromClerk = user.user?.publicMetadata?.role;
 	const userRole =
 		typeof roleFromClerk === "string" ? roleFromClerk : undefined;
@@ -84,8 +78,15 @@ function DashboardContent({
 		school: subdomain,
 	});
 
-	const dashboard = usePreloadedQuery(preloadedDashboard);
-	const units = usePreloadedQuery(preloadedUnits);
+	const dashboard = useQuery(api.courses.getDashboardSummary, {
+		courseId,
+		school: subdomain,
+		userRole: undefined,
+	});
+	const units = useQuery(api.units.getTableData, {
+		courseId,
+		school: subdomain,
+	});
 
 	const updateUnit = useMutation(api.units.update);
 	const reorderUnits = useMutation(api.units.reorder);
@@ -168,7 +169,7 @@ function DashboardContent({
 		);
 	}
 
-	if (!dashboard) {
+	if (!dashboard || dashboard === undefined) {
 		return (
 			<div className="mx-auto max-w-xl text-center">
 				<h1 className="mb-2 font-semibold text-2xl">No data</h1>
@@ -211,21 +212,15 @@ function DashboardContent({
 
 export function DashboardPageClient({
 	courseId,
-	preloadedDashboard,
-	preloadedUnits,
+	subdomain,
 }: {
 	courseId: Id<"courses">;
-	preloadedDashboard: Preloaded<typeof api.courses.getDashboardSummary>;
-	preloadedUnits: Preloaded<typeof api.units.getTableData>;
+	subdomain: string;
 }) {
 	return (
 		<div className="mx-auto w-full max-w-7xl p-4 sm:p-6">
 			<Authenticated>
-				<DashboardContent
-					courseId={courseId}
-					preloadedDashboard={preloadedDashboard}
-					preloadedUnits={preloadedUnits}
-				/>
+				<DashboardContent courseId={courseId} subdomain={subdomain} />
 			</Authenticated>
 
 			<Unauthenticated>

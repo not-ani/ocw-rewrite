@@ -1,7 +1,6 @@
 "use client";
 import { UserButton } from "@clerk/nextjs";
-import type { api } from "@ocw/backend/convex/_generated/api";
-import type { Preloaded } from "convex/react";
+import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { Suspense } from "react";
 import {
 	Sidebar,
@@ -10,8 +9,6 @@ import {
 } from "@/components/ui/sidebar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { LessonSidebarContent } from "./content";
-
-type PreloadedSidebar = Preloaded<typeof api.courses.getSidebarData>;
 
 // Sidebar skeleton for smooth loading
 function SidebarContentSkeleton() {
@@ -36,9 +33,11 @@ function SidebarContentSkeleton() {
 
 // Assuming SidebarProvider is wrapping the layout higher up
 export const LessonSidebarContainer = ({
-	preloadedSidebar,
+	courseId,
+	subdomain,
 }: {
-	preloadedSidebar: PreloadedSidebar;
+	courseId: Id<"courses">;
+	subdomain: string;
 }) => {
 	return (
 		// Removed the outer div
@@ -52,7 +51,7 @@ export const LessonSidebarContainer = ({
 			{/* Content is now rendered within Sidebar */}
 			<Suspense fallback={<SidebarContentSkeleton />}>
 				{/* Pass params down */}
-				<LessonSidebarContent preloadedSidebar={preloadedSidebar} />
+				<LessonSidebarContent courseId={courseId} subdomain={subdomain} />
 			</Suspense>
 			<SidebarFooter>
 				<Suspense fallback={<Skeleton className="h-8 w-8 rounded-full" />}>

@@ -1,6 +1,8 @@
 "use client";
-import type { api } from "@ocw/backend/convex/_generated/api";
-import { type Preloaded, usePreloadedQuery } from "convex/react";
+
+import { api } from "@ocw/backend/convex/_generated/api";
+import type { Id } from "@ocw/backend/convex/_generated/dataModel";
+import { useQuery } from "convex/react";
 import Link from "next/link";
 import { Header } from "@/components/header";
 import {
@@ -10,9 +12,7 @@ import {
 	AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Skeleton } from "@/components/ui/skeleton";
-
-type UnitWithLessons = Preloaded<typeof api.units.getUnitWithLessons>;
-
+import { useSite } from "@/lib/multi-tenant/context";
 export function UnitPageSkeleton() {
 	return (
 		<div className="flex min-h-screen flex-col md:flex-row">
@@ -56,12 +56,13 @@ export function UnitPageSkeleton() {
 	);
 }
 
-export function UnitPageClient({
-	preloadedUnit,
-}: {
-	preloadedUnit: UnitWithLessons;
-}) {
-	const unit = usePreloadedQuery(preloadedUnit);
+export function UnitPageClient({ unitId }: { unitId: Id<"units"> }) {
+	const unit = useQuery(api.units.getUnitWithLessons, {
+		id: unitId,
+	});
+	if (unit === undefined) {
+		return <UnitPageSkeleton />;
+	}
 	if (!unit) {
 		return <UnitPageSkeleton />;
 	}
