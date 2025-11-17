@@ -169,7 +169,7 @@ function DashboardContent({
 		);
 	}
 
-	if (!dashboard) {
+	if (!dashboard || dashboard === undefined) {
 		return (
 			<div className="mx-auto max-w-xl text-center">
 				<h1 className="mb-2 font-semibold text-2xl">No data</h1>
