@@ -8,6 +8,7 @@ export default defineSchema({
 		siteHero: v.optional(v.string()),
 		schoolName: v.string(),
 		siteLogo: v.optional(v.string()),
+		instagramUrl: v.optional(v.string()),
 		contributors: v.optional(
 			v.array(
 				v.object({

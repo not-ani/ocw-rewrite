@@ -38,6 +38,7 @@ const basicInfoSchema = z.object({
 		.url("Must be a valid URL")
 		.optional()
 		.or(z.literal("")),
+	instagramUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
 });
 
 type BasicInfoFormValues = z.infer<typeof basicInfoSchema>;
@@ -48,6 +49,7 @@ type BasicInformationCardProps = {
 	siteHero: string;
 	siteLogo: string;
 	siteContributeLink: string;
+	instagramUrl: string;
 };
 
 export function BasicInformationCard({
@@ -56,6 +58,7 @@ export function BasicInformationCard({
 	siteHero,
 	siteLogo,
 	siteContributeLink,
+	instagramUrl,
 }: BasicInformationCardProps) {
 	const updateBasicFields = useMutation(api.site.updateSiteConfigBasicFields);
 	const [uploadedLogoUrl, setUploadedLogoUrl] = useState<string>(
@@ -69,6 +72,7 @@ export function BasicInformationCard({
 			siteHero: siteHero || "",
 			siteLogo: siteLogo || "",
 			siteContributeLink: siteContributeLink || "",
+			instagramUrl: instagramUrl || "",
 		},
 	});
 
@@ -80,6 +84,7 @@ export function BasicInformationCard({
 				siteHero: values.siteHero || undefined,
 				siteLogo: values.siteLogo || undefined,
 				siteContributeLink: values.siteContributeLink || undefined,
+				instagramUrl: values.instagramUrl || undefined,
 			});
 			toast.success("Basic information updated successfully");
 		} catch (error) {
@@ -202,6 +207,19 @@ export function BasicInformationCard({
 							)}
 						/>
 
+						<FormField
+							control={form.control}
+							name="instagramUrl"
+							render={({ field }) => (
+								<FormItem>
+									<FormLabel>Instagram URL</FormLabel>
+									<FormControl>
+										<Input placeholder="https://www.instagram.com/example/" {...field} />
+									</FormControl>
+									<FormMessage />
+								</FormItem>
+							)}
+						/>
 						<Button
 							type="submit"
 							disabled={form.formState.isSubmitting}

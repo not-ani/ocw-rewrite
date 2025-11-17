@@ -1,8 +1,11 @@
+"use client";
+import { useSite } from "@/lib/multi-tenant/context";
 import { SignInButton } from "@clerk/nextjs";
 import type { Route } from "next";
 import Link from "next/link";
 
 export default function FooterSections() {
+	const { siteConfig } = useSite();
 	const footerData = [
 		{
 			title: "About Us",
@@ -18,12 +21,14 @@ export default function FooterSections() {
 				{ text: "Contact", href: "/contact" },
 			],
 		},
-		{
-			title: "Connect With Us",
-			links: [
-				{ text: "Instagram", href: "https://www.instagram.com/creekcshs/" },
-			],
-		},
+		...(siteConfig?.instagramUrl ? [
+			{
+				title: "Connect With Us",
+				links: [
+					{ text: "Instagram", href: siteConfig.instagramUrl as string },
+				],
+			}
+		] : []),
 	];
 
 	return (

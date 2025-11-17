@@ -70,6 +70,7 @@ export function SiteContentClient({ school }: SiteContentClientProps) {
 				siteHero={siteConfig.siteHero || ""}
 				siteLogo={siteConfig.siteLogo || ""}
 				siteContributeLink={siteConfig.siteContributeLink || ""}
+				instagramUrl={siteConfig.instagramUrl || ""}
 			/>
 
 			<ClubInformationCard

@@ -11,6 +11,7 @@ export const getSiteConfig = query({
 				school: "www",
 				schoolName: "The OpenCourseWare Project",
 				siteLogo: "https://www.opencourseware.org/logo.png",
+				instagramUrl: "https://www.instagram.com/creekcshs/",
 				siteHero:
 					"The OpenCourseWare Project is a platform for free, high-quality resources to students at all levels of education",
 				contributors: [],
@@ -49,6 +50,7 @@ export const updateSiteConfigBasicFields = mutation({
 		schoolName: v.string(),
 		siteHero: v.optional(v.string()),
 		siteLogo: v.optional(v.string()),
+		instagramUrl: v.optional(v.string()),
 		siteContributeLink: v.optional(v.string()),
 	},
 	handler: async (ctx, args) => {
@@ -65,6 +67,7 @@ export const updateSiteConfigBasicFields = mutation({
 			schoolName: args.schoolName,
 			siteHero: args.siteHero,
 			siteLogo: args.siteLogo,
+			instagramUrl: args.instagramUrl,
 			siteContributeLink: args.siteContributeLink,
 		});
 
