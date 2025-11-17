@@ -55,11 +55,7 @@ export function UnitPageSkeleton() {
 	);
 }
 
-export function UnitPageClient({
-	unitId,
-}: {
-	unitId: Id<"units">;
-}) {
+export function UnitPageClient({ unitId }: { unitId: Id<"units"> }) {
 	const unit = useQuery(api.units.getUnitWithLessons, {
 		id: unitId,
 	});

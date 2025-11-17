@@ -3,12 +3,14 @@
 import { api } from "@ocw/backend/convex/_generated/api";
 import { useQuery } from "convex/react";
 import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
 import {
 	Card,
 	CardDescription,
 	CardHeader,
 	CardTitle,
 } from "@/components/ui/card";
+import { useSite } from "@/lib/multi-tenant/context";
 import { BasicInformationCard } from "./basic-information-card";
 import { ClubInformationCard } from "./club-information-card";
 import { ContactPersonsCard } from "./contact-persons-card";
@@ -19,9 +21,15 @@ type SiteContentClientProps = {
 };
 
 export function SiteContentClient({ school }: SiteContentClientProps) {
+	const { user } = useSite();
+	const router = useRouter();
 	const siteConfig = useQuery(api.site.getSiteConfig, {
 		school,
 	});
+
+	if (!user?.isSiteAdmin) {
+		router.push("/");
+	}
 
 	if (siteConfig === undefined) {
 		return (
