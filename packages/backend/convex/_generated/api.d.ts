@@ -12,6 +12,7 @@ import type * as admin from "../admin.js";
 import type * as convertIds from "../convertIds.js";
 import type * as courseUsers from "../courseUsers.js";
 import type * as courses from "../courses.js";
+import type * as forking from "../forking.js";
 import type * as healthCheck from "../healthCheck.js";
 import type * as lesson from "../lesson.js";
 import type * as migrations from "../migrations.js";
@@ -39,6 +40,7 @@ declare const fullApi: ApiFromModules<{
   convertIds: typeof convertIds;
   courseUsers: typeof courseUsers;
   courses: typeof courses;
+  forking: typeof forking;
   healthCheck: typeof healthCheck;
   lesson: typeof lesson;
   migrations: typeof migrations;

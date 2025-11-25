@@ -286,7 +286,6 @@ export const forkLesson = mutation({
 		targetSchool: v.string(),
 	},
 	handler: async (ctx, args) => {
-		// Check permissions
 		const role = await getRequesterRole({
 			ctx,
 			courseId: args.targetCourseId,

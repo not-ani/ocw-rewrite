@@ -2,7 +2,7 @@
 
 import { api } from "@ocw/backend/convex/_generated/api";
 import { useMutation, useQuery } from "convex/react";
-import { Check, ChevronsUpDown, CopyIcon, Loader2Icon, SearchIcon } from "lucide-react";
+import { Check, ChevronsUpDown, CopyIcon, Loader2Icon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -84,7 +84,8 @@ export function ForkCourseDialog() {
 				<DialogHeader>
 					<DialogTitle>Fork a Course</DialogTitle>
 					<DialogDescription>
-						Search for a public course from another school to copy into your platform.
+						Search for a public course from another school to copy into your
+						platform.
 					</DialogDescription>
 				</DialogHeader>
 
@@ -105,13 +106,15 @@ export function ForkCourseDialog() {
 						</PopoverTrigger>
 						<PopoverContent className="w-[550px] p-0">
 							<Command shouldFilter={false}>
-								<CommandInput 
-									placeholder="Search courses..." 
+								<CommandInput
+									placeholder="Search courses..."
 									value={searchTerm}
 									onValueChange={setSearchTerm}
 								/>
 								<CommandList>
-									<CommandEmpty>No courses found.</CommandEmpty>
+									<CommandEmpty>
+										No courses found. Try Searching For A Course
+									</CommandEmpty>
 									<CommandGroup>
 										{searchResults?.map((course) => (
 											<CommandItem
@@ -175,9 +178,9 @@ export function ForkCourseDialog() {
 					>
 						Cancel
 					</Button>
-					<Button 
-						type="button" 
-						onClick={handleFork} 
+					<Button
+						type="button"
+						onClick={handleFork}
 						disabled={!selectedCourse || isForking}
 					>
 						{isForking ? (

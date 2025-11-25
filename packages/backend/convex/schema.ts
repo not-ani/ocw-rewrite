@@ -56,6 +56,7 @@ export default defineSchema({
 		description: v.string(),
 	})
 		.index("by_is_public_and_school", ["isPublic", "school"])
+		.index("by_school", ["school"])
 		.index("by_subject_id_and_school", ["subjectId", "school"])
 		.searchIndex("search_name", {
 			searchField: "name",
