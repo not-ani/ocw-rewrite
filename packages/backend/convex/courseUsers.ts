@@ -59,7 +59,11 @@ export const getMyMembership = query({
 export const countMembersByRole = query({
 	args: { courseId: v.id("courses"), school: v.string() },
 	handler: async (ctx, args) => {
-		const role = await getRequesterRole(ctx, args.courseId, args.school);
+		const role = await getRequesterRole({
+			ctx,
+			courseId: args.courseId,
+			school: args.school,
+		});
 		assertEditorOrAdmin(role);
 
 		const members = await ctx.db
@@ -97,7 +101,11 @@ export const getTokenId = query({
 export const listMembers = query({
 	args: { courseId: v.id("courses"), school: v.string() },
 	handler: async (ctx, args) => {
-		const role = await getRequesterRole(ctx, args.courseId, args.school);
+		const role = await getRequesterRole({
+			ctx,
+			courseId: args.courseId,
+			school: args.school,
+		});
 		assertEditorOrAdmin(role);
 
 		const members = await ctx.db
@@ -138,7 +146,11 @@ export const addOrUpdateMember = mutation({
 		school: v.string(),
 	},
 	handler: async (ctx, args) => {
-		const role = await getRequesterRole(ctx, args.courseId, args.school);
+		const role = await getRequesterRole({
+			ctx,
+			courseId: args.courseId,
+			school: args.school,
+		});
 		assertEditorOrAdmin(role);
 
 		const existing = await ctx.db
@@ -174,7 +186,11 @@ export const addOrUpdateMember = mutation({
 export const removeMember = mutation({
 	args: { courseId: v.id("courses"), userId: v.string(), school: v.string() },
 	handler: async (ctx, args) => {
-		const role = await getRequesterRole(ctx, args.courseId, args.school);
+		const role = await getRequesterRole({
+			ctx,
+			courseId: args.courseId,
+			school: args.school,
+		});
 		assertEditorOrAdmin(role);
 
 		const existing = await ctx.db
