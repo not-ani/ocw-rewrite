@@ -1,11 +1,11 @@
 "use client";
 
 import { api } from "@ocw/backend/convex/_generated/api";
+import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { Check, ChevronsUpDown, CopyIcon, Loader2Icon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-
 import { Button } from "@/components/ui/button";
 import {
 	Command,
@@ -31,7 +31,6 @@ import {
 } from "@/components/ui/popover";
 import { useSite } from "@/lib/multi-tenant/context";
 import { cn } from "@/lib/utils";
-import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 
 export function ForkUnitDialog({ courseId }: { courseId: Id<"courses"> }) {
 	const [open, setOpen] = useState(false);
@@ -85,11 +84,12 @@ export function ForkUnitDialog({ courseId }: { courseId: Id<"courses"> }) {
 				<DialogHeader>
 					<DialogTitle>Fork a Unit</DialogTitle>
 					<DialogDescription>
-						Search for a public unit from another school to copy into your course.
+						Search for a public unit from another school to copy into your
+						course.
 					</DialogDescription>
 				</DialogHeader>
 
-				<div className="py-4 space-y-4">
+				<div className="space-y-4 py-4">
 					<Popover open={searchOpen} onOpenChange={setSearchOpen}>
 						<PopoverTrigger asChild>
 							<Button
@@ -98,16 +98,14 @@ export function ForkUnitDialog({ courseId }: { courseId: Id<"courses"> }) {
 								aria-expanded={searchOpen}
 								className="w-full justify-between"
 							>
-								{selectedUnit
-									? selectedUnit.name
-									: "Search for a unit..."}
+								{selectedUnit ? selectedUnit.name : "Search for a unit..."}
 								<ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
 							</Button>
 						</PopoverTrigger>
 						<PopoverContent className="w-[550px] p-0">
 							<Command shouldFilter={false}>
-								<CommandInput 
-									placeholder="Search units..." 
+								<CommandInput
+									placeholder="Search units..."
 									value={searchTerm}
 									onValueChange={setSearchTerm}
 								/>
@@ -133,7 +131,7 @@ export function ForkUnitDialog({ courseId }: { courseId: Id<"courses"> }) {
 												/>
 												<div className="flex flex-col">
 													<span>{unit.name}</span>
-													<span className="text-xs text-muted-foreground">
+													<span className="text-muted-foreground text-xs">
 														{unit.courseSchool} • {unit.courseName}
 													</span>
 												</div>
@@ -146,7 +144,7 @@ export function ForkUnitDialog({ courseId }: { courseId: Id<"courses"> }) {
 					</Popover>
 
 					{selectedUnit && (
-						<div className="rounded-md border p-4 space-y-2">
+						<div className="space-y-2 rounded-md border p-4">
 							<h3 className="font-semibold">Unit Details</h3>
 							<div className="grid grid-cols-2 gap-2 text-sm">
 								<div className="text-muted-foreground">Name:</div>
@@ -156,7 +154,7 @@ export function ForkUnitDialog({ courseId }: { courseId: Id<"courses"> }) {
 								<div className="text-muted-foreground">School:</div>
 								<div>{selectedUnit.courseSchool}</div>
 								<div className="text-muted-foreground">Description:</div>
-								<div className="col-span-2 text-muted-foreground line-clamp-3">
+								<div className="col-span-2 line-clamp-3 text-muted-foreground">
 									{selectedUnit.description}
 								</div>
 							</div>
@@ -176,9 +174,9 @@ export function ForkUnitDialog({ courseId }: { courseId: Id<"courses"> }) {
 					>
 						Cancel
 					</Button>
-					<Button 
-						type="button" 
-						onClick={handleFork} 
+					<Button
+						type="button"
+						onClick={handleFork}
 						disabled={!selectedUnit || isForking}
 					>
 						{isForking ? (

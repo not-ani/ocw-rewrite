@@ -1,8 +1,8 @@
 "use client";
-import { useSite } from "@/lib/multi-tenant/context";
 import { SignInButton } from "@clerk/nextjs";
 import type { Route } from "next";
 import Link from "next/link";
+import { useSite } from "@/lib/multi-tenant/context";
 
 export default function FooterSections() {
 	const { siteConfig } = useSite();
@@ -21,14 +21,16 @@ export default function FooterSections() {
 				{ text: "Contact", href: "/contact" },
 			],
 		},
-		...(siteConfig?.instagramUrl ? [
-			{
-				title: "Connect With Us",
-				links: [
-					{ text: "Instagram", href: siteConfig.instagramUrl as string },
-				],
-			}
-		] : []),
+		...(siteConfig?.instagramUrl
+			? [
+					{
+						title: "Connect With Us",
+						links: [
+							{ text: "Instagram", href: siteConfig.instagramUrl as string },
+						],
+					},
+				]
+			: []),
 	];
 
 	return (

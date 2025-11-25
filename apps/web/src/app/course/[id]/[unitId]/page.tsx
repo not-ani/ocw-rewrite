@@ -65,7 +65,5 @@ export default async function Page({
 		return null;
 	}
 
-	return (
-		<UnitPageClient unitId={unitId as Id<"units">} subdomain={subdomain} />
-	);
+	return <UnitPageClient unitId={unitId as Id<"units">} />;
 }

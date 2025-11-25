@@ -45,7 +45,7 @@ export const searchPublicUnits = query({
 		for (const unit of units) {
 			if (!unit.isPublished) continue;
 			const course = await ctx.db.get(unit.courseId);
-			if (course && course.isPublic) {
+			if (course?.isPublic) {
 				results.push({
 					...unit,
 					courseName: course.name,
@@ -213,10 +213,7 @@ export const forkUnit = mutation({
 			.query("units")
 			.withIndex("by_course_id", (q) => q.eq("courseId", args.targetCourseId))
 			.collect();
-		const maxOrder = existingUnits.reduce(
-			(acc, u) => Math.max(acc, u.order),
-			0,
-		);
+		const order = existingUnits.length;
 
 		const { _id, _creationTime, ...unitData } = sourceUnit;
 
@@ -225,7 +222,7 @@ export const forkUnit = mutation({
 			id: undefined,
 			school: args.targetSchool,
 			courseId: args.targetCourseId,
-			order: maxOrder + 1,
+			order,
 			name: `${sourceUnit.name} (Forked)`,
 		});
 

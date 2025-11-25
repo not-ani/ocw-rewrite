@@ -12,7 +12,6 @@ import {
 	AccordionTrigger,
 } from "@/components/ui/accordion";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useSite } from "@/lib/multi-tenant/context";
 export function UnitPageSkeleton() {
 	return (
 		<div className="flex min-h-screen flex-col md:flex-row">

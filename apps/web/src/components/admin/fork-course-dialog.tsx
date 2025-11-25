@@ -1,11 +1,11 @@
 "use client";
 
 import { api } from "@ocw/backend/convex/_generated/api";
+import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import { Check, ChevronsUpDown, CopyIcon, Loader2Icon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-
 import { Button } from "@/components/ui/button";
 import {
 	Command,
@@ -31,7 +31,6 @@ import {
 } from "@/components/ui/popover";
 import { useSite } from "@/lib/multi-tenant/context";
 import { cn } from "@/lib/utils";
-import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 
 export function ForkCourseDialog() {
 	const [open, setOpen] = useState(false);
@@ -89,7 +88,7 @@ export function ForkCourseDialog() {
 					</DialogDescription>
 				</DialogHeader>
 
-				<div className="py-4 space-y-4">
+				<div className=" py-4 space-y-4">
 					<Popover open={searchOpen} onOpenChange={setSearchOpen}>
 						<PopoverTrigger asChild>
 							<Button
@@ -135,7 +134,7 @@ export function ForkCourseDialog() {
 												/>
 												<div className="flex flex-col">
 													<span>{course.name}</span>
-													<span className="text-xs text-muted-foreground">
+													<span className="text-xs text-muted-foreground ">
 														{course.school} • {course.unitLength} units
 													</span>
 												</div>
@@ -148,7 +147,7 @@ export function ForkCourseDialog() {
 					</Popover>
 
 					{selectedCourse && (
-						<div className="rounded-md border p-4 space-y-2">
+						<div className="space-y-2 rounded-md border p-4">
 							<h3 className="font-semibold">Course Details</h3>
 							<div className="grid grid-cols-2 gap-2 text-sm">
 								<div className="text-muted-foreground">Name:</div>
@@ -158,7 +157,7 @@ export function ForkCourseDialog() {
 								<div className="text-muted-foreground">Units:</div>
 								<div>{selectedCourse.unitLength}</div>
 								<div className="text-muted-foreground">Description:</div>
-								<div className="col-span-2 text-muted-foreground line-clamp-3">
+								<div className="col-span-2 line-clamp-3 text-muted-foreground">
 									{selectedCourse.description}
 								</div>
 							</div>
