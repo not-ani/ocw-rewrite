@@ -337,7 +337,11 @@ export const getDashboardSummary = query({
 			throw new Error("Course not found");
 		}
 
-		const role = await getRequesterRole(ctx, args.courseId, args.school);
+		const role = await getRequesterRole({
+			ctx,
+			courseId: args.courseId,
+			school: args.school,
+		});
 		assertEditorOrAdmin(role);
 
 		const units = await ctx.db

@@ -206,7 +206,7 @@ function UnitLessonNav({
 										target={lesson.pureLink ? "_blank" : undefined}
 										href={
 											(lesson.pureLink
-												? (lesson?.embeds?.embedUrl ?? "#")
+												? lesson?.embeds?.embedUrl || "#"
 												: (`/course/${courseId}/${lesson.unitId}/${lesson.id}` as Route)) as Route
 										}
 									>

@@ -11,6 +11,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { CreateLessonDialog } from "@/components/dashboard/lessons/create-lesson";
+import { ForkLessonDialog } from "@/components/dashboard/lessons/fork-lesson-dialog";
 import { Button } from "@/components/ui/button";
 import {
 	Form,
@@ -325,7 +326,10 @@ export function UnitPageClient({
 							<div className="space-y-4">
 								<div className="flex items-center justify-between">
 									<h2 className="font-semibold text-lg">Lessons</h2>
-									<CreateLessonDialog courseId={courseId} unitId={unitId} />
+									<div className="flex items-center gap-2">
+										<ForkLessonDialog courseId={courseId} unitId={unitId} />
+										<CreateLessonDialog courseId={courseId} unitId={unitId} />
+									</div>
 								</div>
 								<LessonsTable
 									courseId={courseId}

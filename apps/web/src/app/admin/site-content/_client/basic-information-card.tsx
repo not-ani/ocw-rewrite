@@ -38,7 +38,11 @@ const basicInfoSchema = z.object({
 		.url("Must be a valid URL")
 		.optional()
 		.or(z.literal("")),
-	instagramUrl: z.string().url("Must be a valid URL").optional().or(z.literal("")),
+	instagramUrl: z
+		.string()
+		.url("Must be a valid URL")
+		.optional()
+		.or(z.literal("")),
 });
 
 type BasicInfoFormValues = z.infer<typeof basicInfoSchema>;
@@ -214,7 +218,10 @@ export function BasicInformationCard({
 								<FormItem>
 									<FormLabel>Instagram URL</FormLabel>
 									<FormControl>
-										<Input placeholder="https://www.instagram.com/example/" {...field} />
+										<Input
+											placeholder="https://www.instagram.com/example/"
+											{...field}
+										/>
 									</FormControl>
 									<FormMessage />
 								</FormItem>

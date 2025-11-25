@@ -188,7 +188,11 @@ export const create = mutation({
 		school: v.string(),
 	},
 	handler: async (ctx, args) => {
-		const role = await getRequesterRole(ctx, args.courseId, args.school);
+		const role = await getRequesterRole({
+			ctx,
+			courseId: args.courseId,
+			school: args.school,
+		});
 		assertEditorOrAdmin(role);
 
 		const existing = await ctx.db
@@ -256,7 +260,11 @@ export const update = mutation({
 		school: v.string(),
 	},
 	handler: async (ctx, args) => {
-		const role = await getRequesterRole(ctx, args.courseId, args.school);
+		const role = await getRequesterRole({
+			ctx,
+			courseId: args.courseId,
+			school: args.school,
+		});
 		assertEditorOrAdmin(role);
 		const lesson = await ctx.db.get(args.data.id);
 
@@ -295,7 +303,11 @@ export const reorder = mutation({
 		school: v.string(),
 	},
 	handler: async (ctx, args) => {
-		const role = await getRequesterRole(ctx, args.courseId, args.school);
+		const role = await getRequesterRole({
+			ctx,
+			courseId: args.courseId,
+			school: args.school,
+		});
 		assertEditorOrAdmin(role);
 		for (const item of args.data) {
 			const lesson = await ctx.db.get(item.id);
@@ -322,7 +334,11 @@ export const reorder = mutation({
 export const remove = mutation({
 	args: { courseId: v.id("courses"), id: v.id("lessons"), school: v.string() },
 	handler: async (ctx, args) => {
-		const role = await getRequesterRole(ctx, args.courseId, args.school);
+		const role = await getRequesterRole({
+			ctx,
+			courseId: args.courseId,
+			school: args.school,
+		});
 		assertEditorOrAdmin(role);
 		const lesson = await ctx.db.get(args.id);
 		if (!lesson) {

@@ -35,9 +35,7 @@ export const getAllCourses = query({
 
 		const courses = await ctx.db
 			.query("courses")
-			.withIndex("by_is_public_and_school", (q) =>
-				q.eq("isPublic", true).eq("school", args.school),
-			)
+			.withIndex("by_school", (q) => q.eq("school", args.school))
 			.collect();
 
 		return courses;

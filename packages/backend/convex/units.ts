@@ -102,7 +102,11 @@ export const create = mutation({
 		school: v.string(),
 	},
 	handler: async (ctx, args) => {
-		const role = await getRequesterRole(ctx, args.courseId, args.school);
+		const role = await getRequesterRole({
+			ctx,
+			courseId: args.courseId,
+			school: args.school,
+		});
 		assertEditorOrAdmin(role);
 
 		const count = await ctx.db
@@ -154,7 +158,11 @@ export const update = mutation({
 		school: v.string(),
 	},
 	handler: async (ctx, args) => {
-		const role = await getRequesterRole(ctx, args.courseId, args.school);
+		const role = await getRequesterRole({
+			ctx,
+			courseId: args.courseId,
+			school: args.school,
+		});
 		assertEditorOrAdmin(role);
 
 		const unit = await ctx.db.get(args.data.id);
@@ -194,7 +202,11 @@ export const reorder = mutation({
 		school: v.string(),
 	},
 	handler: async (ctx, args) => {
-		const role = await getRequesterRole(ctx, args.courseId, args.school);
+		const role = await getRequesterRole({
+			ctx,
+			courseId: args.courseId,
+			school: args.school,
+		});
 		assertEditorOrAdmin(role);
 
 		// Update each unit order to the provided position
@@ -226,7 +238,11 @@ export const remove = mutation({
 		school: v.string(),
 	},
 	handler: async (ctx, args) => {
-		const role = await getRequesterRole(ctx, args.courseId, args.school);
+		const role = await getRequesterRole({
+			ctx,
+			courseId: args.courseId,
+			school: args.school,
+		});
 		assertEditorOrAdmin(role);
 
 		const unit = await ctx.db.get(args.id);
