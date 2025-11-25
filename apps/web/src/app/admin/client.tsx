@@ -5,6 +5,7 @@ import { useQuery } from "convex/react";
 import { useEffect, useMemo, useState } from "react";
 import { AddAdminDialog } from "@/components/admin/add-admin-dialog";
 import { AddCourseDialog } from "@/components/admin/add-course-dialog";
+import { ForkCourseDialog } from "@/components/admin/fork-course-dialog";
 import { AdminsTable } from "@/components/admin/admins-table";
 import { CoursesTable } from "@/components/admin/courses-table";
 
@@ -100,7 +101,10 @@ export function AdminPageClient({ subdomain }: AdminPageClientProps) {
 							total
 						</p>
 					</div>
-					<AddCourseDialog />
+					<div className="flex items-center gap-2">
+						<ForkCourseDialog />
+						<AddCourseDialog />
+					</div>
 				</div>
 				<CoursesTable courses={courses} />
 			</div>
