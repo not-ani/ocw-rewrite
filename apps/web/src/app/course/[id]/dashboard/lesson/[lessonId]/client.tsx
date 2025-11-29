@@ -40,6 +40,7 @@ const lessonFormSchema = z.object({
 		"notion",
 		"quizlet",
 		"google_drive",
+		"youtube",
 		"other",
 	]),
 	embedUrl: z.string(),
@@ -190,6 +191,7 @@ function LessonEditForm({
 											</SelectItem>
 											<SelectItem value="notion">Notion</SelectItem>
 											<SelectItem value="quizlet">Quizlet</SelectItem>
+											<SelectItem value="youtube">YouTube</SelectItem>
 											<SelectItem value="other">Other</SelectItem>
 										</SelectContent>
 									</Select>

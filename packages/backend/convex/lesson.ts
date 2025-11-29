@@ -29,7 +29,13 @@ export const getLessonById = query({
 });
 
 function detectEmbed(input: string): {
-	contentType: "google_docs" | "google_drive" | "quizlet" | "notion" | "other";
+	contentType:
+		| "google_docs"
+		| "google_drive"
+		| "quizlet"
+		| "notion"
+		| "youtube"
+		| "other";
 	embedUrl?: string;
 } {
 	const iframeSrcMatch = input.match(/src="([^"]+)"/);
@@ -65,6 +71,38 @@ function detectEmbed(input: string): {
 		) {
 			return { contentType: "notion", embedUrl: u.toString() };
 		}
+
+		// YouTube detection - handles youtube.com/embed, youtube.com/watch, youtu.be
+		if (
+			u.hostname.includes("youtube.com") ||
+			u.hostname.includes("youtu.be")
+		) {
+			let videoId: string | null = null;
+
+			// Handle youtube.com/embed/VIDEO_ID format
+			if (u.pathname.startsWith("/embed/")) {
+				videoId = u.pathname.split("/embed/")[1]?.split("?")[0] ?? null;
+			}
+			// Handle youtube.com/watch?v=VIDEO_ID format
+			else if (u.pathname === "/watch") {
+				videoId = u.searchParams.get("v");
+			}
+			// Handle youtu.be/VIDEO_ID format
+			else if (u.hostname === "youtu.be") {
+				videoId = u.pathname.slice(1).split("?")[0] ?? null;
+			}
+
+			if (videoId) {
+				// Construct a clean embed URL
+				return {
+					contentType: "youtube",
+					embedUrl: `https://www.youtube.com/embed/${videoId}`,
+				};
+			}
+			// Fallback: use the original URL if we can't parse video ID
+			return { contentType: "youtube", embedUrl: u.toString() };
+		}
+
 		return {
 			contentType: "other",
 			embedUrl: u.toString(),
@@ -252,6 +290,7 @@ export const update = mutation({
 					v.literal("notion"),
 					v.literal("other"),
 					v.literal("quizlet"),
+					v.literal("youtube"),
 				),
 			),
 			unitId: v.optional(v.id("units")),
