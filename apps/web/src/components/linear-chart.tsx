@@ -72,11 +72,11 @@ export function TrafficChart({ data }: TrafficChartProps) {
 					config={{
 						pageviews: {
 							label: "Pageviews",
-							color: "hsl(var(--chart-1))",
+							color: "var(--chart-1)",
 						},
 						users: {
 							label: "Visitors",
-							color: "hsl(var(--chart-3))",
+							color: "var(--chart-2)",
 						},
 					}}
 					className="h-[300px] w-full"
@@ -89,24 +89,24 @@ export function TrafficChart({ data }: TrafficChartProps) {
 							<linearGradient id="fillPageviews" x1="0" y1="0" x2="0" y2="1">
 								<stop
 									offset="5%"
-									stopColor="hsl(var(--chart-1))"
+									stopColor="var(--chart-1)"
 									stopOpacity={0.3}
 								/>
 								<stop
 									offset="95%"
-									stopColor="hsl(var(--chart-1))"
+									stopColor="var(--chart-1)"
 									stopOpacity={0}
 								/>
 							</linearGradient>
 							<linearGradient id="fillUsers" x1="0" y1="0" x2="0" y2="1">
 								<stop
 									offset="5%"
-									stopColor="hsl(var(--chart-2))"
+									stopColor="var(--chart-2)"
 									stopOpacity={0.3}
 								/>
 								<stop
 									offset="95%"
-									stopColor="hsl(var(--chart-2))"
+									stopColor="var(--chart-2)"
 									stopOpacity={0}
 								/>
 							</linearGradient>
@@ -129,14 +129,14 @@ export function TrafficChart({ data }: TrafficChartProps) {
 						<Area
 							type="monotone"
 							dataKey="pageviews"
-							stroke="hsl(var(--chart-1))"
+							stroke="var(--chart-1)"
 							fill="url(#fillPageviews)"
 							strokeWidth={2}
 						/>
 						<Area
 							type="monotone"
 							dataKey="users"
-							stroke="hsl(var(--chart-2))"
+							stroke="var(--chart-2)"
 							fill="url(#fillUsers)"
 							strokeWidth={2}
 						/>
