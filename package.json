@@ -13,8 +13,11 @@
 		"check-types": "turbo check-types",
 		"dev:native": "turbo -F native dev",
 		"dev:web": "turbo -F web dev",
-		"dev:server": "turbo -F @my-better-t-app/backend dev",
-		"dev:setup": "turbo -F @my-better-t-app/backend dev:setup"
+		"dev:server": "turbo -F @ocw/backend dev",
+		"dev:setup": "turbo -F @ocw/backend dev:setup",
+		"test:backend": "turbo -F @ocw/backend test",
+		"test:backend:watch": "turbo -F @ocw/backend test:watch",
+		"test:backend:coverage": "turbo -F @ocw/backend test:coverage"
 	},
 	"dependencies": {},
 	"devDependencies": {
