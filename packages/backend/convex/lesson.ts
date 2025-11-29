@@ -73,10 +73,7 @@ function detectEmbed(input: string): {
 		}
 
 		// YouTube detection - handles youtube.com/embed, youtube.com/watch, youtu.be
-		if (
-			u.hostname.includes("youtube.com") ||
-			u.hostname.includes("youtu.be")
-		) {
+		if (u.hostname.includes("youtube.com") || u.hostname.includes("youtu.be")) {
 			let videoId: string | null = null;
 
 			// Handle youtube.com/embed/VIDEO_ID format

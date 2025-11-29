@@ -2,7 +2,13 @@
 import type React from "react";
 
 export function GetIcon(props: {
-	type: "quizlet" | "flashcard" | "tiptap" | "google_docs" | "notion" | "youtube";
+	type:
+		| "quizlet"
+		| "flashcard"
+		| "tiptap"
+		| "google_docs"
+		| "notion"
+		| "youtube";
 	className?: string;
 }) {
 	const iconProps = {

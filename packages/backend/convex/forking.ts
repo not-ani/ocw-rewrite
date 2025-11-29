@@ -6,7 +6,6 @@ import {
 	getRequesterRole,
 } from "./permissions";
 
-// Search for public courses across ALL schools
 export const searchPublicCourses = query({
 	args: {
 		term: v.string(),
@@ -25,8 +24,6 @@ export const searchPublicCourses = query({
 	},
 });
 
-// Search for public units across ALL schools
-// Note: We need to ensure the parent course is public
 export const searchPublicUnits = query({
 	args: {
 		term: v.string(),
@@ -34,13 +31,11 @@ export const searchPublicUnits = query({
 	},
 	handler: async (ctx, args) => {
 		const limit = args.limit ?? 10;
-		// First search for units
 		const units = await ctx.db
 			.query("units")
 			.withSearchIndex("search_name", (q) => q.search("name", args.term))
-			.take(limit * 2); // Fetch more to filter out non-public courses
+			.take(limit * 2);
 
-		// Filter for units in public courses
 		const results = [];
 		for (const unit of units) {
 			if (!unit.isPublished) continue;
@@ -59,7 +54,6 @@ export const searchPublicUnits = query({
 	},
 });
 
-// Search for public lessons across ALL schools
 export const searchPublicLessons = query({
 	args: {
 		term: v.string(),
@@ -111,16 +105,14 @@ export const forkCourse = mutation({
 
 		const { _id, _creationTime, ...courseData } = sourceCourse;
 
-		// Create course copy
 		const newCourseId = await ctx.db.insert("courses", {
 			...courseData,
-			id: undefined, // Deprecated field
+			id: undefined,
 			school: args.targetSchool,
-			isPublic: false, // Default to private when forked
+			isPublic: false,
 			name: `${sourceCourse.name} (Forked)`,
 		});
 
-		// Log activity
 		const user = await ctx.auth.getUserIdentity();
 		if (user) {
 			await ctx.db.insert("logs", {
@@ -132,14 +124,13 @@ export const forkCourse = mutation({
 			});
 		}
 
-		// Copy units
 		const units = await ctx.db
 			.query("units")
 			.withIndex("by_course_id", (q) => q.eq("courseId", args.sourceCourseId))
 			.collect();
 
 		for (const unit of units) {
-			const { _id: uId, _creationTime: uTime, ...unitData } = unit;
+			const { _id: _uId, _creationTime: _uTime, ...unitData } = unit;
 			const newUnitId = await ctx.db.insert("units", {
 				...unitData,
 				id: undefined,
@@ -147,14 +138,13 @@ export const forkCourse = mutation({
 				courseId: newCourseId,
 			});
 
-			// Copy lessons
 			const lessons = await ctx.db
 				.query("lessons")
 				.withIndex("by_unit_id", (q) => q.eq("unitId", unit._id))
 				.collect();
 
 			for (const lesson of lessons) {
-				const { _id: lId, _creationTime: lTime, ...lessonData } = lesson;
+				const { _id: _lId, _creationTime: _lTime, ...lessonData } = lesson;
 				const newLessonId = await ctx.db.insert("lessons", {
 					...lessonData,
 					id: undefined,
@@ -163,14 +153,13 @@ export const forkCourse = mutation({
 					unitId: newUnitId,
 				});
 
-				// Copy embeds
 				const embeds = await ctx.db
 					.query("lessonEmbeds")
 					.withIndex("by_lesson_id", (q) => q.eq("lessonId", lesson._id))
 					.collect();
 
 				for (const embed of embeds) {
-					const { _id: eId, _creationTime: eTime, ...embedData } = embed;
+					const { _id: _eId, _creationTime: _eTime, ...embedData } = embed;
 					await ctx.db.insert("lessonEmbeds", {
 						...embedData,
 						id: undefined,
@@ -192,7 +181,6 @@ export const forkUnit = mutation({
 		targetSchool: v.string(),
 	},
 	handler: async (ctx, args) => {
-		// Check permissions
 		const role = await getRequesterRole({
 			ctx,
 			courseId: args.targetCourseId,
@@ -203,12 +191,10 @@ export const forkUnit = mutation({
 		const sourceUnit = await ctx.db.get(args.sourceUnitId);
 		if (!sourceUnit) throw new Error("Source unit not found");
 
-		// Verify source is accessible (public course)
 		const sourceCourse = await ctx.db.get(sourceUnit.courseId);
 		if (!sourceCourse?.isPublic)
 			throw new Error("Cannot fork from private course");
 
-		// Get max order to append at end
 		const existingUnits = await ctx.db
 			.query("units")
 			.withIndex("by_course_id", (q) => q.eq("courseId", args.targetCourseId))
@@ -226,7 +212,6 @@ export const forkUnit = mutation({
 			name: `${sourceUnit.name} (Forked)`,
 		});
 
-		// Log activity
 		const user = await ctx.auth.getUserIdentity();
 		if (user) {
 			await ctx.db.insert("logs", {
@@ -239,14 +224,13 @@ export const forkUnit = mutation({
 			});
 		}
 
-		// Copy lessons
 		const lessons = await ctx.db
 			.query("lessons")
 			.withIndex("by_unit_id", (q) => q.eq("unitId", sourceUnit._id))
 			.collect();
 
 		for (const lesson of lessons) {
-			const { _id: lId, _creationTime: lTime, ...lessonData } = lesson;
+			const { _id: _lId, _creationTime: _lTime, ...lessonData } = lesson;
 			const newLessonId = await ctx.db.insert("lessons", {
 				...lessonData,
 				id: undefined,
@@ -261,7 +245,7 @@ export const forkUnit = mutation({
 				.collect();
 
 			for (const embed of embeds) {
-				const { _id: eId, _creationTime: eTime, ...embedData } = embed;
+				const { _id: _eId, _creationTime: _eTime, ...embedData } = embed;
 				await ctx.db.insert("lessonEmbeds", {
 					...embedData,
 					id: undefined,
@@ -293,12 +277,10 @@ export const forkLesson = mutation({
 		const sourceLesson = await ctx.db.get(args.sourceLessonId);
 		if (!sourceLesson) throw new Error("Source lesson not found");
 
-		// Verify source is accessible
 		const sourceCourse = await ctx.db.get(sourceLesson.courseId);
 		if (!sourceCourse?.isPublic)
 			throw new Error("Cannot fork from private course");
 
-		// Get max order
 		const existingLessons = await ctx.db
 			.query("lessons")
 			.withIndex("by_unit_id", (q) => q.eq("unitId", args.targetUnitId))
@@ -320,7 +302,6 @@ export const forkLesson = mutation({
 			name: `${sourceLesson.name} (Forked)`,
 		});
 
-		// Log activity
 		const user = await ctx.auth.getUserIdentity();
 		if (user) {
 			await ctx.db.insert("logs", {
@@ -340,7 +321,7 @@ export const forkLesson = mutation({
 			.collect();
 
 		for (const embed of embeds) {
-			const { _id: eId, _creationTime: eTime, ...embedData } = embed;
+			const { _id: _eId, _creationTime: _eTime, ...embedData } = embed;
 			await ctx.db.insert("lessonEmbeds", {
 				...embedData,
 				id: undefined,
