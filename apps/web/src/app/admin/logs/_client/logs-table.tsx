@@ -232,16 +232,12 @@ const TimeCell = memo(function TimeCell({ timestamp }: TimeCellProps) {
 	);
 });
 
-export const LogsTable = memo(function LogsTable({ logs, userMap }: LogsTableProps) {
-	// Pre-compute user lookups into a Map for O(1) access per row
-	const userByLogId = useMemo(() => {
-		const map = new Map<string, ClerkUser | undefined>();
-		for (const log of logs) {
-			map.set(log._id, userMap.get(extractClerkId(log.userId)));
-		}
-		return map;
-	}, [logs, userMap]);
+export function LogsTable({ logs, userMap }: LogsTableProps) {
+	// Derive a stable key that changes when users become available
+	// This helps React know when we need to re-render cells with user data
+	const usersLoaded = userMap.size > 0;
 
+	// Column definitions - recreated when usersLoaded changes to force cell re-renders
 	const columns: ColumnDef<EnrichedLog>[] = useMemo(
 		() => [
 			{
@@ -256,12 +252,16 @@ export const LogsTable = memo(function LogsTable({ logs, userMap }: LogsTablePro
 				header: ({ column }) => (
 					<TableColumnHeader column={column} title="User" />
 				),
-				cell: ({ row }) => (
-					<UserCell
-						userId={row.original.userId}
-						user={userByLogId.get(row.original._id)}
-					/>
-				),
+				cell: ({ row }) => {
+					const clerkId = extractClerkId(row.original.userId);
+					const user = userMap.get(clerkId);
+					return (
+						<UserCell
+							userId={row.original.userId}
+							user={user}
+						/>
+					);
+				},
 			},
 			{
 				id: "target",
@@ -288,7 +288,8 @@ export const LogsTable = memo(function LogsTable({ logs, userMap }: LogsTablePro
 				),
 			},
 		],
-		[userByLogId],
+		// eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally depend on usersLoaded to force re-render when users load
+		[userMap, usersLoaded],
 	);
 
 	if (logs.length === 0) {
@@ -321,5 +322,5 @@ export const LogsTable = memo(function LogsTable({ logs, userMap }: LogsTablePro
 			</TableBody>
 		</TableProvider>
 	);
-});
+}
 
