@@ -7,20 +7,20 @@
 
 import { mergeTests, type Page } from "@playwright/test";
 import {
-	test as authTest,
-	expect,
-	TEST_USERS,
-	AUTH_STATE_PATH,
-	USER_AUTH_STATE,
 	ADMIN_AUTH_STATE,
+	AUTH_STATE_PATH,
+	test as authTest,
 	EDITOR_AUTH_STATE,
+	expect,
 	signInUser,
+	TEST_USERS,
 	type TestUser,
+	USER_AUTH_STATE,
 } from "./auth.fixture";
 import {
 	test as convexTest,
-	E2E_TEST_SCHOOLS,
 	createTestDataTracker,
+	E2E_TEST_SCHOOLS,
 } from "./convex.fixture";
 
 // Merge all fixtures into a single test export
@@ -60,4 +60,3 @@ export class BasePage {
 		return this.page.title();
 	}
 }
-

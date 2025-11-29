@@ -9,11 +9,11 @@
  */
 
 import {
-	test,
-	expect,
 	ADMIN_AUTH_STATE,
-	USER_AUTH_STATE,
 	EDITOR_AUTH_STATE,
+	expect,
+	test,
+	USER_AUTH_STATE,
 } from "../fixtures";
 
 test.describe("Authenticated User - Admin Access (as ADMIN)", () => {

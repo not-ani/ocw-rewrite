@@ -1,11 +1,11 @@
 import { api } from "@ocw/backend/convex/_generated/api";
 import { fetchQuery } from "convex/nextjs";
+import { Authenticated } from "convex/react";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getAuthToken } from "@/lib/auth";
 import { extractSubdomain } from "@/lib/multi-tenant/server";
 import { AdminPageClient } from "./client";
-import { Authenticated } from "convex/react";
 
 export async function generateMetadata(): Promise<Metadata> {
 	const subdomain = await extractSubdomain();
@@ -51,7 +51,7 @@ export default async function AdminPage() {
 
 	return (
 		<div className="min-h-screen bg-background">
-				<AdminPageClient subdomain={subdomain} />
+			<AdminPageClient subdomain={subdomain} />
 		</div>
 	);
 }

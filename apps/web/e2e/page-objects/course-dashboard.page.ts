@@ -4,7 +4,7 @@
  * Encapsulates interactions with the course dashboard.
  */
 
-import { Locator, Page } from "@playwright/test";
+import type { Locator, Page } from "@playwright/test";
 
 export class CourseDashboardPage {
 	readonly page: Page;
@@ -77,4 +77,3 @@ export class CourseDashboardPage {
 		return rows.count();
 	}
 }
-

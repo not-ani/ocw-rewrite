@@ -1,7 +1,6 @@
 "use client";
 
 import { SignInButton, useUser } from "@clerk/nextjs";
-import { useRouter } from "next/navigation";
 import { api } from "@ocw/backend/convex/_generated/api";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import {
@@ -12,6 +11,7 @@ import {
 	useQuery,
 } from "convex/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { CreateUnitDialog } from "@/components/dashboard/units/create-unit";
 import { ForkUnitDialog } from "@/components/dashboard/units/fork-unit-dialog";
@@ -71,7 +71,6 @@ function DashboardContent({
 	courseId: Id<"courses">;
 	subdomain: string;
 }) {
-
 	const dashboard = useQuery(api.courses.getDashboardSummary, {
 		courseId,
 		school: subdomain,
@@ -176,7 +175,6 @@ export function DashboardPageClient({
 	courseId: Id<"courses">;
 	subdomain: string;
 }) {
-
 	return (
 		<div className="mx-auto w-full max-w-7xl p-4 sm:p-6">
 			<Authenticated>

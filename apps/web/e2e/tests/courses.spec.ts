@@ -5,7 +5,7 @@
  * These tests verify the core course browsing functionality.
  */
 
-import { test, expect, E2E_TEST_SCHOOLS } from "../fixtures";
+import { E2E_TEST_SCHOOLS, expect, test } from "../fixtures";
 
 test.describe("Courses Page", () => {
 	// Skip if running on root domain (courses page requires a subdomain)
@@ -148,11 +148,12 @@ test.describe("Course Detail Page", () => {
 
 	test("should display loading state initially", async ({ page }) => {
 		// Navigate without waiting for full load
-		await page.goto("/course/jd72sw49f70yv5m7d1fwhnwx0n7wbskf", { waitUntil: "commit" });
+		await page.goto("/course/jd72sw49f70yv5m7d1fwhnwx0n7wbskf", {
+			waitUntil: "commit",
+		});
 
 		// Page should show content even during loading
 		const content = page.locator("body");
 		await expect(content).toBeVisible();
 	});
 });
-

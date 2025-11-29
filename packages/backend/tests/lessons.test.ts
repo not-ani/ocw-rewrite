@@ -13,10 +13,10 @@ import { api } from "../convex/_generated/api";
 import { createConvexTest } from "./convexTestHelper";
 import {
 	setupCourse,
-	setupSiteAdmin,
-	setupUnit,
 	setupLesson,
 	setupLessonEmbed,
+	setupSiteAdmin,
+	setupUnit,
 } from "./setup";
 import { TEST_EMBED_URLS, TEST_SCHOOLS, TEST_USERS } from "./testUtils";
 
@@ -54,7 +54,12 @@ describe("Lessons", () => {
 
 			const { courseId } = await setupCourse(t, TEST_SCHOOLS.PRIMARY);
 			const { unitId } = await setupUnit(t, courseId, TEST_SCHOOLS.PRIMARY);
-			const { lessonId } = await setupLesson(t, courseId, unitId, TEST_SCHOOLS.PRIMARY);
+			const { lessonId } = await setupLesson(
+				t,
+				courseId,
+				unitId,
+				TEST_SCHOOLS.PRIMARY,
+			);
 			await t.run(async (ctx) => {
 				await ctx.db.delete(lessonId);
 			});
@@ -72,7 +77,12 @@ describe("Lessons", () => {
 
 			const { courseId } = await setupCourse(t, TEST_SCHOOLS.PRIMARY);
 			const { unitId } = await setupUnit(t, courseId, TEST_SCHOOLS.PRIMARY);
-			const { lessonId } = await setupLesson(t, courseId, unitId, TEST_SCHOOLS.PRIMARY);
+			const { lessonId } = await setupLesson(
+				t,
+				courseId,
+				unitId,
+				TEST_SCHOOLS.PRIMARY,
+			);
 			// Don't create an embed
 
 			await expect(
@@ -366,9 +376,22 @@ describe("Lessons", () => {
 
 			await setupSiteAdmin(t, TEST_SCHOOLS.PRIMARY);
 			const { courseId } = await setupCourse(t, TEST_SCHOOLS.PRIMARY);
-			const { unitId: unit1 } = await setupUnit(t, courseId, TEST_SCHOOLS.PRIMARY);
-			const { unitId: unit2 } = await setupUnit(t, courseId, TEST_SCHOOLS.PRIMARY);
-			const { lessonId } = await setupLesson(t, courseId, unit1, TEST_SCHOOLS.PRIMARY);
+			const { unitId: unit1 } = await setupUnit(
+				t,
+				courseId,
+				TEST_SCHOOLS.PRIMARY,
+			);
+			const { unitId: unit2 } = await setupUnit(
+				t,
+				courseId,
+				TEST_SCHOOLS.PRIMARY,
+			);
+			const { lessonId } = await setupLesson(
+				t,
+				courseId,
+				unit1,
+				TEST_SCHOOLS.PRIMARY,
+			);
 			// getLessonById requires an embed
 			await setupLessonEmbed(t, lessonId, TEST_SCHOOLS.PRIMARY);
 
@@ -394,7 +417,12 @@ describe("Lessons", () => {
 			await setupSiteAdmin(t, TEST_SCHOOLS.PRIMARY);
 			const { courseId } = await setupCourse(t, TEST_SCHOOLS.PRIMARY);
 			const { unitId } = await setupUnit(t, courseId, TEST_SCHOOLS.PRIMARY);
-			const { lessonId } = await setupLesson(t, courseId, unitId, TEST_SCHOOLS.PRIMARY);
+			const { lessonId } = await setupLesson(
+				t,
+				courseId,
+				unitId,
+				TEST_SCHOOLS.PRIMARY,
+			);
 
 			await t.run(async (ctx) => ctx.db.delete(lessonId));
 
@@ -574,7 +602,12 @@ describe("Lessons", () => {
 			await setupSiteAdmin(t, TEST_SCHOOLS.PRIMARY);
 			const { courseId } = await setupCourse(t, TEST_SCHOOLS.PRIMARY);
 			const { unitId } = await setupUnit(t, courseId, TEST_SCHOOLS.PRIMARY);
-			const { lessonId } = await setupLesson(t, courseId, unitId, TEST_SCHOOLS.PRIMARY);
+			const { lessonId } = await setupLesson(
+				t,
+				courseId,
+				unitId,
+				TEST_SCHOOLS.PRIMARY,
+			);
 
 			await t.withIdentity(TEST_USERS.SITE_ADMIN).mutation(api.lesson.remove, {
 				courseId,
@@ -602,7 +635,12 @@ describe("Lessons", () => {
 			await setupSiteAdmin(t, TEST_SCHOOLS.PRIMARY);
 			const { courseId } = await setupCourse(t, TEST_SCHOOLS.PRIMARY);
 			const { unitId } = await setupUnit(t, courseId, TEST_SCHOOLS.PRIMARY);
-			const { lessonId } = await setupLesson(t, courseId, unitId, TEST_SCHOOLS.PRIMARY);
+			const { lessonId } = await setupLesson(
+				t,
+				courseId,
+				unitId,
+				TEST_SCHOOLS.PRIMARY,
+			);
 
 			await t
 				.withIdentity(TEST_USERS.SITE_ADMIN)
@@ -629,7 +667,12 @@ describe("Lessons", () => {
 			await setupSiteAdmin(t, TEST_SCHOOLS.PRIMARY);
 			const { courseId } = await setupCourse(t, TEST_SCHOOLS.PRIMARY);
 			const { unitId } = await setupUnit(t, courseId, TEST_SCHOOLS.PRIMARY);
-			const { lessonId } = await setupLesson(t, courseId, unitId, TEST_SCHOOLS.PRIMARY);
+			const { lessonId } = await setupLesson(
+				t,
+				courseId,
+				unitId,
+				TEST_SCHOOLS.PRIMARY,
+			);
 			await setupLessonEmbed(t, lessonId, TEST_SCHOOLS.PRIMARY, {
 				embedUrl: TEST_EMBED_URLS.GOOGLE_DOCS,
 			});
@@ -658,7 +701,12 @@ describe("Lessons", () => {
 			await setupSiteAdmin(t, TEST_SCHOOLS.PRIMARY);
 			const { courseId } = await setupCourse(t, TEST_SCHOOLS.PRIMARY);
 			const { unitId } = await setupUnit(t, courseId, TEST_SCHOOLS.PRIMARY);
-			const { lessonId } = await setupLesson(t, courseId, unitId, TEST_SCHOOLS.PRIMARY);
+			const { lessonId } = await setupLesson(
+				t,
+				courseId,
+				unitId,
+				TEST_SCHOOLS.PRIMARY,
+			);
 
 			await t
 				.withIdentity(TEST_USERS.SITE_ADMIN)
@@ -683,7 +731,12 @@ describe("Lessons", () => {
 
 			const { courseId } = await setupCourse(t, TEST_SCHOOLS.PRIMARY);
 			const { unitId } = await setupUnit(t, courseId, TEST_SCHOOLS.PRIMARY);
-			const { lessonId } = await setupLesson(t, courseId, unitId, TEST_SCHOOLS.PRIMARY);
+			const { lessonId } = await setupLesson(
+				t,
+				courseId,
+				unitId,
+				TEST_SCHOOLS.PRIMARY,
+			);
 
 			await expect(
 				t.mutation(api.lesson.createOrUpdateEmbed, {
@@ -760,4 +813,3 @@ describe("Lessons", () => {
 		});
 	});
 });
-

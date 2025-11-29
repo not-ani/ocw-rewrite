@@ -8,7 +8,7 @@
  * to start authenticated (instead of calling signIn() which causes rate limiting).
  */
 
-import { test, expect, ADMIN_AUTH_STATE, USER_AUTH_STATE } from "../fixtures";
+import { ADMIN_AUTH_STATE, expect, test, USER_AUTH_STATE } from "../fixtures";
 
 test.describe("Admin Panel - Access Control (as regular USER)", () => {
 	// Use USER auth state - these tests verify non-admins are blocked
@@ -42,8 +42,7 @@ test.describe("Admin Panel - Access Control (as ADMIN)", () => {
 		const url = page.url();
 		expect(url).not.toContain("/unauthorized");
 
-
-		// Should see admin page content "Site Administration" 
+		// Should see admin page content "Site Administration"
 		await expect(page.getByText(/Site Administration/i)).toBeVisible();
 	});
 });

@@ -7,7 +7,7 @@
  * For tests requiring authenticated state, see auth.authenticated.spec.ts
  */
 
-import { test, expect } from "../fixtures";
+import { expect, test } from "../fixtures";
 
 test.describe("Authentication - Public Access", () => {
 	test("unauthenticated user can view homepage", async ({ page }) => {
@@ -78,14 +78,13 @@ test.describe("Authentication - Unauthorized Page", () => {
 			page.getByText(/don't have permission to view this page/i),
 		).toBeVisible();
 
-	// Check for the error badge
+		// Check for the error badge
 		await expect(page.getByText("ERROR 403 — FORBIDDEN")).toBeVisible();
 
 		// Check for navigation buttons
 		await expect(page.getByRole("button", { name: /go back/i })).toBeVisible();
 		await expect(page.getByRole("link", { name: /home/i })).toBeVisible();
 	});
-
 });
 
 test.describe("Authentication - Sign In Flow", () => {

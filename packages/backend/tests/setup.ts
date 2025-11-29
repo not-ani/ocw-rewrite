@@ -8,8 +8,6 @@
 
 import type { Id } from "../convex/_generated/dataModel";
 import {
-	TEST_SCHOOLS,
-	TEST_USERS,
 	createTestCourseData,
 	createTestCourseUserData,
 	createTestLessonData,
@@ -17,6 +15,8 @@ import {
 	createTestSiteConfigData,
 	createTestSiteUserData,
 	createTestUnitData,
+	TEST_SCHOOLS,
+	TEST_USERS,
 } from "./testUtils";
 
 // convex-test instance type - using ReturnType to infer from convexTest function

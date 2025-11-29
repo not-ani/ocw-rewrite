@@ -9,17 +9,17 @@
  * - Breadcrumb data
  */
 
-import { describe, expect, it, beforeEach } from "vitest";
+import { beforeEach, describe, expect, it } from "vitest";
 import { api } from "../convex/_generated/api";
 import { createConvexTest } from "./convexTestHelper";
 import {
 	setupCompleteCourse,
 	setupCourse,
 	setupCourseUser,
-	setupSiteAdmin,
-	setupUnit,
 	setupLesson,
 	setupLessonEmbed,
+	setupSiteAdmin,
+	setupUnit,
 } from "./setup";
 import { TEST_SCHOOLS, TEST_USERS } from "./testUtils";
 
@@ -351,10 +351,12 @@ describe("Courses", () => {
 
 			// Regular user without course membership or site admin
 			await expect(
-				t.withIdentity(TEST_USERS.REGULAR_USER).query(api.courses.getDashboardSummary, {
-					courseId,
-					school: TEST_SCHOOLS.PRIMARY,
-				}),
+				t
+					.withIdentity(TEST_USERS.REGULAR_USER)
+					.query(api.courses.getDashboardSummary, {
+						courseId,
+						school: TEST_SCHOOLS.PRIMARY,
+					}),
 			).rejects.toThrow();
 		});
 
@@ -485,4 +487,3 @@ describe("Courses", () => {
 		});
 	});
 });
-

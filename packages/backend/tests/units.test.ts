@@ -15,9 +15,9 @@ import {
 	setupCompleteCourse,
 	setupCourse,
 	setupCourseUser,
+	setupLesson,
 	setupSiteAdmin,
 	setupUnit,
-	setupLesson,
 } from "./setup";
 import { TEST_SCHOOLS, TEST_USERS } from "./testUtils";
 
@@ -337,8 +337,14 @@ describe("Units", () => {
 			const t = createConvexTest();
 
 			await setupSiteAdmin(t, TEST_SCHOOLS.PRIMARY);
-			const { courseId: courseId1 } = await setupCourse(t, TEST_SCHOOLS.PRIMARY);
-			const { courseId: courseId2 } = await setupCourse(t, TEST_SCHOOLS.PRIMARY);
+			const { courseId: courseId1 } = await setupCourse(
+				t,
+				TEST_SCHOOLS.PRIMARY,
+			);
+			const { courseId: courseId2 } = await setupCourse(
+				t,
+				TEST_SCHOOLS.PRIMARY,
+			);
 			const { unitId } = await setupUnit(t, courseId1, TEST_SCHOOLS.PRIMARY);
 
 			await expect(
@@ -361,18 +367,33 @@ describe("Units", () => {
 			await setupSiteAdmin(t, TEST_SCHOOLS.PRIMARY);
 			const { courseId } = await setupCourse(t, TEST_SCHOOLS.PRIMARY);
 
-			const { unitId: unit1 } = await setupUnit(t, courseId, TEST_SCHOOLS.PRIMARY, {
-				name: "Unit 1",
-				order: 0,
-			});
-			const { unitId: unit2 } = await setupUnit(t, courseId, TEST_SCHOOLS.PRIMARY, {
-				name: "Unit 2",
-				order: 1,
-			});
-			const { unitId: unit3 } = await setupUnit(t, courseId, TEST_SCHOOLS.PRIMARY, {
-				name: "Unit 3",
-				order: 2,
-			});
+			const { unitId: unit1 } = await setupUnit(
+				t,
+				courseId,
+				TEST_SCHOOLS.PRIMARY,
+				{
+					name: "Unit 1",
+					order: 0,
+				},
+			);
+			const { unitId: unit2 } = await setupUnit(
+				t,
+				courseId,
+				TEST_SCHOOLS.PRIMARY,
+				{
+					name: "Unit 2",
+					order: 1,
+				},
+			);
+			const { unitId: unit3 } = await setupUnit(
+				t,
+				courseId,
+				TEST_SCHOOLS.PRIMARY,
+				{
+					name: "Unit 3",
+					order: 2,
+				},
+			);
 
 			// Reorder: move Unit 3 to position 0
 			await t.withIdentity(TEST_USERS.SITE_ADMIN).mutation(api.units.reorder, {
@@ -434,18 +455,33 @@ describe("Units", () => {
 			await setupSiteAdmin(t, TEST_SCHOOLS.PRIMARY);
 			const { courseId } = await setupCourse(t, TEST_SCHOOLS.PRIMARY);
 
-			const { unitId: unit1 } = await setupUnit(t, courseId, TEST_SCHOOLS.PRIMARY, {
-				name: "Unit 1",
-				order: 0,
-			});
-			const { unitId: unit2 } = await setupUnit(t, courseId, TEST_SCHOOLS.PRIMARY, {
-				name: "Unit 2",
-				order: 1,
-			});
-			const { unitId: unit3 } = await setupUnit(t, courseId, TEST_SCHOOLS.PRIMARY, {
-				name: "Unit 3",
-				order: 2,
-			});
+			const { unitId: unit1 } = await setupUnit(
+				t,
+				courseId,
+				TEST_SCHOOLS.PRIMARY,
+				{
+					name: "Unit 1",
+					order: 0,
+				},
+			);
+			const { unitId: unit2 } = await setupUnit(
+				t,
+				courseId,
+				TEST_SCHOOLS.PRIMARY,
+				{
+					name: "Unit 2",
+					order: 1,
+				},
+			);
+			const { unitId: unit3 } = await setupUnit(
+				t,
+				courseId,
+				TEST_SCHOOLS.PRIMARY,
+				{
+					name: "Unit 3",
+					order: 2,
+				},
+			);
 
 			// Delete the middle unit
 			await t.withIdentity(TEST_USERS.SITE_ADMIN).mutation(api.units.remove, {
@@ -547,4 +583,3 @@ describe("Units", () => {
 		});
 	});
 });
-

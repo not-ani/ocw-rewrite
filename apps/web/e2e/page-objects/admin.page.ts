@@ -4,7 +4,7 @@
  * Encapsulates interactions with the admin panel.
  */
 
-import { Locator, Page } from "@playwright/test";
+import type { Locator, Page } from "@playwright/test";
 
 export class AdminPage {
 	readonly page: Page;
@@ -82,9 +82,8 @@ export class AdminPage {
 
 	async isUnauthorized() {
 		const unauthorized = this.page.getByText(
-			/unauthorized|access denied|permission/i
+			/unauthorized|access denied|permission/i,
 		);
 		return unauthorized.isVisible();
 	}
 }
-

@@ -7,7 +7,7 @@
  * @tags smoke
  */
 
-import { test, expect } from "../fixtures";
+import { expect, test } from "../fixtures";
 
 test.describe("Smoke Tests @smoke", () => {
 	test("application loads successfully", async ({ page }) => {
@@ -36,8 +36,10 @@ test.describe("Smoke Tests @smoke", () => {
 		// Check that Clerk's scripts are loaded
 		// This verifies the ClerkProvider is properly set up
 		const clerkLoaded = await page.evaluate(() => {
-			return typeof window !== "undefined" && 
-				(window as any).__clerk_frontend_api !== undefined;
+			return (
+				typeof window !== "undefined" &&
+				(window as any).__clerk_frontend_api !== undefined
+			);
 		});
 
 		// Note: This might not work depending on Clerk's implementation
@@ -71,7 +73,7 @@ test.describe("Smoke Tests @smoke", () => {
 			(error) =>
 				!error.includes("Failed to load resource") && // Network errors are expected in dev
 				!error.includes("[clerk]") && // Clerk warnings
-				!error.includes("convex") // Convex warnings
+				!error.includes("convex"), // Convex warnings
 		);
 
 		expect(criticalErrors).toHaveLength(0);
@@ -86,9 +88,8 @@ test.describe("API Health @smoke", () => {
 			const response = await page.goto(path);
 			expect(
 				response?.status(),
-				`${path} should return successful status`
+				`${path} should return successful status`,
 			).toBeLessThan(500);
 		}
 	});
 });
-

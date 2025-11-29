@@ -15,10 +15,10 @@ import {
 	setupCompleteCourse,
 	setupCourse,
 	setupCourseUser,
-	setupSiteAdmin,
-	setupUnit,
 	setupLesson,
 	setupLessonEmbed,
+	setupSiteAdmin,
+	setupUnit,
 } from "./setup";
 import { TEST_SCHOOLS, TEST_USERS } from "./testUtils";
 
@@ -205,9 +205,9 @@ describe("Forking", () => {
 			});
 
 			expect(forkedUnits).toHaveLength(2);
-			expect(forkedUnits.every((u) => u.school === TEST_SCHOOLS.SECONDARY)).toBe(
-				true,
-			);
+			expect(
+				forkedUnits.every((u) => u.school === TEST_SCHOOLS.SECONDARY),
+			).toBe(true);
 
 			// Verify lessons were forked
 			const forkedLessons = await t.run(async (ctx) => {
@@ -245,10 +245,12 @@ describe("Forking", () => {
 			});
 
 			await expect(
-				t.withIdentity(TEST_USERS.REGULAR_USER).mutation(api.forking.forkCourse, {
-					sourceCourseId: courseId,
-					targetSchool: TEST_SCHOOLS.SECONDARY,
-				}),
+				t
+					.withIdentity(TEST_USERS.REGULAR_USER)
+					.mutation(api.forking.forkCourse, {
+						sourceCourseId: courseId,
+						targetSchool: TEST_SCHOOLS.SECONDARY,
+					}),
 			).rejects.toThrow();
 		});
 
@@ -261,16 +263,20 @@ describe("Forking", () => {
 
 			await setupSiteAdmin(t, TEST_SCHOOLS.SECONDARY);
 
-			await t.withIdentity(TEST_USERS.SITE_ADMIN).mutation(api.forking.forkCourse, {
-				sourceCourseId: courseId,
-				targetSchool: TEST_SCHOOLS.SECONDARY,
-			});
+			await t
+				.withIdentity(TEST_USERS.SITE_ADMIN)
+				.mutation(api.forking.forkCourse, {
+					sourceCourseId: courseId,
+					targetSchool: TEST_SCHOOLS.SECONDARY,
+				});
 
 			const logs = await t.run(async (ctx) => {
 				return await ctx.db
 					.query("logs")
 					.withIndex("by_action_and_school", (q) =>
-						q.eq("action", "CREATE_COURSE").eq("school", TEST_SCHOOLS.SECONDARY),
+						q
+							.eq("action", "CREATE_COURSE")
+							.eq("school", TEST_SCHOOLS.SECONDARY),
 					)
 					.collect();
 			});
@@ -644,4 +650,3 @@ describe("Forking", () => {
 		});
 	});
 });
-

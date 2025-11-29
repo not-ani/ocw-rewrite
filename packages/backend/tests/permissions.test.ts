@@ -17,7 +17,7 @@ import {
 	setupSiteAdmin,
 	setupUnit,
 } from "./setup";
-import { TEST_SCHOOLS, TEST_USERS, createMockClerkIdentity } from "./testUtils";
+import { createMockClerkIdentity, TEST_SCHOOLS, TEST_USERS } from "./testUtils";
 
 describe("Permissions", () => {
 	describe("getRequesterRole (via getDashboardSummary)", () => {
@@ -96,10 +96,12 @@ describe("Permissions", () => {
 			);
 
 			await expect(
-				t.withIdentity(TEST_USERS.REGULAR_USER).query(api.courses.getDashboardSummary, {
-					courseId,
-					school: TEST_SCHOOLS.PRIMARY,
-				}),
+				t
+					.withIdentity(TEST_USERS.REGULAR_USER)
+					.query(api.courses.getDashboardSummary, {
+						courseId,
+						school: TEST_SCHOOLS.PRIMARY,
+					}),
 			).rejects.toThrow("Not authorized");
 		});
 
@@ -125,10 +127,12 @@ describe("Permissions", () => {
 
 			// Try to access secondary school course as primary school admin
 			await expect(
-				t.withIdentity(TEST_USERS.SITE_ADMIN).query(api.courses.getDashboardSummary, {
-					courseId,
-					school: TEST_SCHOOLS.SECONDARY,
-				}),
+				t
+					.withIdentity(TEST_USERS.SITE_ADMIN)
+					.query(api.courses.getDashboardSummary, {
+						courseId,
+						school: TEST_SCHOOLS.SECONDARY,
+					}),
 			).rejects.toThrow();
 		});
 	});
@@ -295,10 +299,12 @@ describe("Course Users", () => {
 			const { courseId } = await setupCourse(t, TEST_SCHOOLS.PRIMARY);
 
 			await expect(
-				t.withIdentity(TEST_USERS.REGULAR_USER).query(api.courseUsers.countMembersByRole, {
-					courseId,
-					school: TEST_SCHOOLS.PRIMARY,
-				}),
+				t
+					.withIdentity(TEST_USERS.REGULAR_USER)
+					.query(api.courseUsers.countMembersByRole, {
+						courseId,
+						school: TEST_SCHOOLS.PRIMARY,
+					}),
 			).rejects.toThrow();
 		});
 	});
@@ -379,7 +385,8 @@ describe("Course Users", () => {
 
 			await setupSiteAdmin(t, TEST_SCHOOLS.PRIMARY);
 			const { courseId } = await setupCourse(t, TEST_SCHOOLS.PRIMARY);
-			const existingUserId = createMockClerkIdentity("existing").tokenIdentifier;
+			const existingUserId =
+				createMockClerkIdentity("existing").tokenIdentifier;
 
 			await setupCourseUser(
 				t,
@@ -420,12 +427,14 @@ describe("Course Users", () => {
 			const { courseId } = await setupCourse(t, TEST_SCHOOLS.PRIMARY);
 
 			await expect(
-				t.withIdentity(TEST_USERS.REGULAR_USER).mutation(api.courseUsers.addOrUpdateMember, {
-					courseId,
-					userId: "some-user",
-					role: "editor",
-					school: TEST_SCHOOLS.PRIMARY,
-				}),
+				t
+					.withIdentity(TEST_USERS.REGULAR_USER)
+					.mutation(api.courseUsers.addOrUpdateMember, {
+						courseId,
+						userId: "some-user",
+						role: "editor",
+						school: TEST_SCHOOLS.PRIMARY,
+					}),
 			).rejects.toThrow();
 		});
 	});
@@ -595,4 +604,3 @@ describe("Permission Enforcement", () => {
 		});
 	});
 });
-

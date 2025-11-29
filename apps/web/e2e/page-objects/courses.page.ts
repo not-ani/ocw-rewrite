@@ -5,7 +5,7 @@
  * Use page objects to keep tests clean and maintainable.
  */
 
-import { Locator, Page } from "@playwright/test";
+import type { Locator, Page } from "@playwright/test";
 
 export class CoursesPage {
 	readonly page: Page;
@@ -47,13 +47,13 @@ export class CoursesPage {
 		return this.courseCards.count();
 	}
 
-	async clickCourse(index: number = 0) {
+	async clickCourse(index = 0) {
 		const course = this.courseCards.nth(index);
 		await course.click();
 		await this.page.waitForLoadState("networkidle");
 	}
 
-	async getCourseName(index: number = 0) {
+	async getCourseName(index = 0) {
 		const course = this.courseCards.nth(index);
 		const heading = course.locator("h3");
 		return heading.textContent();
@@ -87,4 +87,3 @@ export class CoursesPage {
 		return this.pagination.isVisible();
 	}
 }
-

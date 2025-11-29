@@ -28,11 +28,11 @@ export const test = base.extend<{
 	convexClient: {
 		runMutation: <Args extends Record<string, unknown>>(
 			functionName: string,
-			args: Args
+			args: Args,
 		) => Promise<unknown>;
 		runQuery: <Args extends Record<string, unknown>>(
 			functionName: string,
-			args: Args
+			args: Args,
 		) => Promise<unknown>;
 	};
 }>({
@@ -44,7 +44,7 @@ export const test = base.extend<{
 			 */
 			runMutation: async <Args extends Record<string, unknown>>(
 				functionName: string,
-				args: Args
+				args: Args,
 			): Promise<unknown> => {
 				// Option 1: Call a test API endpoint in your Next.js app
 				const response = await page.request.post("/api/test/convex", {
@@ -53,7 +53,7 @@ export const test = base.extend<{
 
 				if (!response.ok()) {
 					throw new Error(
-						`Failed to run mutation ${functionName}: ${await response.text()}`
+						`Failed to run mutation ${functionName}: ${await response.text()}`,
 					);
 				}
 
@@ -65,7 +65,7 @@ export const test = base.extend<{
 			 */
 			runQuery: async <Args extends Record<string, unknown>>(
 				functionName: string,
-				args: Args
+				args: Args,
 			): Promise<unknown> => {
 				const response = await page.request.post("/api/test/convex", {
 					data: { type: "query", functionName, args },
@@ -73,7 +73,7 @@ export const test = base.extend<{
 
 				if (!response.ok()) {
 					throw new Error(
-						`Failed to run query ${functionName}: ${await response.text()}`
+						`Failed to run query ${functionName}: ${await response.text()}`,
 					);
 				}
 
@@ -110,4 +110,3 @@ export function createTestDataTracker(): TestDataTracker {
 export const E2E_TEST_SCHOOLS = {
 	PRIMARY: process.env.E2E_TEST_SCHOOL || "test-school",
 } as const;
-

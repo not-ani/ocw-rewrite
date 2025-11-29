@@ -12,9 +12,9 @@
  * @see https://clerk.com/docs/guides/development/testing/playwright/test-authenticated-flows
  */
 
+import path from "node:path";
 import { clerk, clerkSetup } from "@clerk/testing/playwright";
 import { test as setup } from "@playwright/test";
-import path from "node:path";
 
 // Setup must be run serially - required if Playwright is configured to run fully parallel
 // @see https://playwright.dev/docs/test-parallel

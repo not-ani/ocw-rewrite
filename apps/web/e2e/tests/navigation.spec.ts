@@ -5,7 +5,7 @@
  * These tests run without authentication.
  */
 
-import { test, expect } from "../fixtures";
+import { expect, test } from "../fixtures";
 
 test.describe("Homepage Navigation", () => {
 	test("should load the homepage", async ({ page }) => {
@@ -23,7 +23,6 @@ test.describe("Homepage Navigation", () => {
 		const main = page.locator("main");
 		await expect(main).toBeVisible();
 	});
-
 });
 
 test.describe("Marketing Pages Navigation", () => {
@@ -88,4 +87,3 @@ test.describe("Responsive Design", () => {
 		await expect(main).toBeVisible();
 	});
 });
-

@@ -8,7 +8,7 @@
  * to start authenticated (instead of calling signIn() which causes rate limiting).
  */
 
-import { test, expect, EDITOR_AUTH_STATE, ADMIN_AUTH_STATE } from "../fixtures";
+import { ADMIN_AUTH_STATE, EDITOR_AUTH_STATE, expect, test } from "../fixtures";
 
 test.describe("Course Dashboard - View Course (as EDITOR)", () => {
 	test.use({ storageState: EDITOR_AUTH_STATE });

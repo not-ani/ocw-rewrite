@@ -2,8 +2,8 @@ import "server-only";
 
 import { auth } from "@clerk/nextjs/server";
 import { api } from "@ocw/backend/convex/_generated/api";
-import { fetchQuery } from "convex/nextjs";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
+import { fetchQuery } from "convex/nextjs";
 import { redirect } from "next/navigation";
 
 export async function getAuthToken() {

@@ -1,10 +1,10 @@
 import { api } from "@ocw/backend/convex/_generated/api";
 import { fetchQuery } from "convex/nextjs";
+import { Authenticated } from "convex/react";
 import { redirect } from "next/navigation";
 import { getAuthToken } from "@/lib/auth";
 import { extractSubdomain } from "@/lib/multi-tenant/server";
 import { SiteContentClient } from "./_client/client";
-import { Authenticated } from "convex/react";
 
 export default async function SiteContentPage() {
 	const school = await extractSubdomain();

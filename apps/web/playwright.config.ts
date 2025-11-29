@@ -68,9 +68,7 @@ function getTestBaseUrl(): string {
 function getWebServerConfig() {
 	// Don't start a local server if testing against Vercel preview or other external URL
 	if (isExternalUrl()) {
-		console.log(
-			`🌐 Testing against external URL: ${process.env.E2E_BASE_URL}`,
-		);
+		console.log(`🌐 Testing against external URL: ${process.env.E2E_BASE_URL}`);
 		console.log("   Skipping local server startup.");
 		return undefined;
 	}

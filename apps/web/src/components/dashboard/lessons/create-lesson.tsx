@@ -115,7 +115,7 @@ export function CreateLessonForm({
 								/>
 							</FormControl>
 							<FormDescription>
-								This is the type of resource you are adding to the lesson. 
+								This is the type of resource you are adding to the lesson.
 							</FormDescription>
 							<FormMessage />
 						</FormItem>

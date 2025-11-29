@@ -21,4 +21,3 @@ const modules = import.meta.glob("../convex/**/*.*s", {
 export function createConvexTest() {
 	return convexTest(schema, modules);
 }
-

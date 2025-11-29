@@ -11,7 +11,7 @@ import { describe, expect, it } from "vitest";
 import { api } from "../convex/_generated/api";
 import { createConvexTest } from "./convexTestHelper";
 import { setupCourse, setupSiteAdmin, setupSiteConfig } from "./setup";
-import { TEST_SCHOOLS, TEST_USERS, createMockClerkIdentity } from "./testUtils";
+import { createMockClerkIdentity, TEST_SCHOOLS, TEST_USERS } from "./testUtils";
 
 describe("Admin", () => {
 	describe("getAllCourses", () => {

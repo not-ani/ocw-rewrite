@@ -1,9 +1,8 @@
 import { api } from "@ocw/backend/convex/_generated/api";
-import { checkAdminOrEditorPermission } from "@/lib/auth";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { fetchQuery } from "convex/nextjs";
 import type { Metadata } from "next";
-import { getAuthToken } from "@/lib/auth";
+import { checkAdminOrEditorPermission, getAuthToken } from "@/lib/auth";
 import { isValidConvexId } from "@/lib/convex-utils";
 import { extractSubdomain } from "@/lib/multi-tenant/server";
 import { DashboardPageClient } from "./client";
