@@ -7,7 +7,7 @@
  * - Helper functions for setting up test data
  */
 
-import type { Id } from "../_generated/dataModel";
+import type { Id } from "../convex/_generated/dataModel";
 
 // ==========================================
 // Authentication Identity Mocking for Clerk

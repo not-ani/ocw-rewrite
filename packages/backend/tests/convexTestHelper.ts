@@ -6,12 +6,11 @@
  */
 
 import { convexTest } from "convex-test";
-import schema from "../schema";
+import schema from "../convex/schema";
 
 // Import all Convex function modules from the convex directory
-// Excludes test files and _generated directory
-//@ts-expect-error - import.meta.glob is not available in Node.js
-const modules = import.meta.glob("../**/*.*s", {
+// @ts-expect-error - import.meta.glob is a Vite feature
+const modules = import.meta.glob("../convex/**/*.*s", {
 	eager: false,
 });
 

@@ -9,6 +9,7 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
 	Dialog,
 	DialogContent,
@@ -31,7 +32,8 @@ import { useSite } from "@/lib/multi-tenant/context";
 
 const formSchema = z.object({
 	name: z.string().min(1, "Lesson name is required").min(3).max(200),
-	embedRaw: z.string().optional(),
+	embedRaw: z.string(),
+	isPublished: z.boolean(),
 });
 
 type CreateLessonFormProps = {
@@ -50,6 +52,7 @@ export function CreateLessonForm({
 		defaultValues: {
 			name: "",
 			embedRaw: "",
+			isPublished: false,
 		},
 	});
 
@@ -65,6 +68,7 @@ export function CreateLessonForm({
 				school: subdomain,
 				name: values.name,
 				embedRaw: values.embedRaw,
+				isPublished: values.isPublished,
 			});
 			toast.success("Lesson created successfully");
 			form.reset();
@@ -111,9 +115,30 @@ export function CreateLessonForm({
 								/>
 							</FormControl>
 							<FormDescription>
-								You can add this later if you prefer
+								This is the type of resource you are adding to the lesson. 
 							</FormDescription>
 							<FormMessage />
+						</FormItem>
+					)}
+				/>
+
+				<FormField
+					control={form.control}
+					name="isPublished"
+					render={({ field }) => (
+						<FormItem className="flex flex-row items-start space-x-3 space-y-0">
+							<FormControl>
+								<Checkbox
+									checked={field.value}
+									onCheckedChange={field.onChange}
+								/>
+							</FormControl>
+							<div className="space-y-1 leading-none">
+								<FormLabel>Publish lesson</FormLabel>
+								<FormDescription>
+									Make this lesson visible to students
+								</FormDescription>
+							</div>
 						</FormItem>
 					)}
 				/>

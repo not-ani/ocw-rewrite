@@ -1,4 +1,5 @@
 import { api } from "@ocw/backend/convex/_generated/api";
+import { checkAdminOrEditorPermission } from "@/lib/auth";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { fetchQuery } from "convex/nextjs";
 import type { Metadata } from "next";
@@ -63,7 +64,6 @@ export default async function Dashboard({
 	params: Promise<{ id: string }>;
 }) {
 	const { id } = await params;
-	const _token = await getAuthToken();
 	const subdomain = await extractSubdomain();
 
 	if (!subdomain) {
@@ -74,7 +74,8 @@ export default async function Dashboard({
 		return null;
 	}
 
-	const courseId = id as Id<"courses">;
-
-	return <DashboardPageClient courseId={courseId} subdomain={subdomain} />;
+	await checkAdminOrEditorPermission(id as Id<"courses">, subdomain);
+	return (
+		<DashboardPageClient courseId={id as Id<"courses">} subdomain={subdomain} />
+	);
 }

@@ -9,7 +9,7 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { api } from "../_generated/api";
+import { api } from "../convex/_generated/api";
 import { createConvexTest } from "./convexTestHelper";
 import {
 	setupCourse,

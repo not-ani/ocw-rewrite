@@ -9,7 +9,7 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { api } from "../_generated/api";
+import { api } from "../convex/_generated/api";
 import { createConvexTest } from "./convexTestHelper";
 import {
 	setupCompleteCourse,
@@ -110,8 +110,8 @@ describe("Forking", () => {
 
 			// Should only return published units from public courses
 			expect(results.length).toBe(1);
-			expect(results[0].name).toBe("Published Unit");
-			expect(results[0].courseName).toBe("Public Course");
+			expect(results[0]?.name).toBe("Published Unit");
+			expect(results[0]?.courseName).toBe("Public Course");
 		});
 	});
 
@@ -155,7 +155,7 @@ describe("Forking", () => {
 			});
 
 			expect(results.length).toBe(1);
-			expect(results[0].name).toBe("Searchable Lesson");
+			expect(results[0]?.name).toBe("Searchable Lesson");
 		});
 	});
 

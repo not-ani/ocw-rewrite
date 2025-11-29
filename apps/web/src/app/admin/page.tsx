@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { getAuthToken } from "@/lib/auth";
 import { extractSubdomain } from "@/lib/multi-tenant/server";
 import { AdminPageClient } from "./client";
+import { Authenticated } from "convex/react";
 
 export async function generateMetadata(): Promise<Metadata> {
 	const subdomain = await extractSubdomain();
@@ -35,7 +36,7 @@ export default async function AdminPage() {
 	}
 
 	if (!token) {
-		redirect("/");
+		redirect("/unauthorized");
 	}
 
 	const isSiteAdmin = await fetchQuery(
@@ -45,12 +46,12 @@ export default async function AdminPage() {
 	);
 
 	if (!isSiteAdmin) {
-		redirect("/");
+		redirect("/unauthorized");
 	}
 
 	return (
 		<div className="min-h-screen bg-background">
-			<AdminPageClient subdomain={subdomain} />
+				<AdminPageClient subdomain={subdomain} />
 		</div>
 	);
 }

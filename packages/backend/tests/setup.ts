@@ -6,7 +6,7 @@
  * in individual test files.
  */
 
-import type { Id } from "../_generated/dataModel";
+import type { Id } from "../convex/_generated/dataModel";
 import {
 	TEST_SCHOOLS,
 	TEST_USERS,

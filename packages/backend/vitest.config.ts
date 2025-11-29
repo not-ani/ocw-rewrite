@@ -9,8 +9,8 @@ export default defineConfig({
 			},
 		},
 		testTimeout: 15000,
-		// Include test files in the convex/tests directory  
-		include: ["convex/tests/**/*.test.ts"],
+		// Include test files in the tests directory (outside convex/ to avoid bundling issues)
+		include: ["tests/**/*.test.ts"],
 	},
 });
 

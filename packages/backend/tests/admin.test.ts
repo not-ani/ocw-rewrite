@@ -8,7 +8,7 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { api } from "../_generated/api";
+import { api } from "../convex/_generated/api";
 import { createConvexTest } from "./convexTestHelper";
 import { setupCourse, setupSiteAdmin, setupSiteConfig } from "./setup";
 import { TEST_SCHOOLS, TEST_USERS, createMockClerkIdentity } from "./testUtils";
@@ -57,7 +57,7 @@ describe("Admin", () => {
 				});
 
 			expect(result).toHaveLength(1);
-			expect(result[0].school).toBe(TEST_SCHOOLS.PRIMARY);
+			expect(result[0]?.school).toBe(TEST_SCHOOLS.PRIMARY);
 		});
 
 		it("rejects non-admin users", async () => {
@@ -163,7 +163,7 @@ describe("Admin", () => {
 				});
 
 			expect(result).toHaveLength(1);
-			expect(result[0].school).toBe(TEST_SCHOOLS.PRIMARY);
+			expect(result[0]?.school).toBe(TEST_SCHOOLS.PRIMARY);
 		});
 	});
 
@@ -524,7 +524,7 @@ describe("Site Configuration", () => {
 			});
 
 			expect(config?.contributors).toHaveLength(2);
-			expect(config?.contributors?.[0].name).toBe("John Doe");
+			expect(config?.contributors?.[0]?.name).toBe("John Doe");
 		});
 	});
 
@@ -550,7 +550,7 @@ describe("Site Configuration", () => {
 			});
 
 			expect(config?.personsContact).toHaveLength(1);
-			expect(config?.personsContact?.[0].name).toBe("Support Team");
+			expect(config?.personsContact?.[0]?.name).toBe("Support Team");
 		});
 	});
 });

@@ -9,7 +9,7 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { api } from "../_generated/api";
+import { api } from "../convex/_generated/api";
 import { createConvexTest } from "./convexTestHelper";
 import {
 	setupCourse,
@@ -111,9 +111,9 @@ describe("Lessons", () => {
 			});
 
 			expect(result).toHaveLength(3);
-			expect(result[0].name).toBe("Lesson 1");
-			expect(result[1].name).toBe("Lesson 2");
-			expect(result[2].name).toBe("Lesson 3");
+			expect(result[0]?.name).toBe("Lesson 1");
+			expect(result[1]?.name).toBe("Lesson 2");
+			expect(result[2]?.name).toBe("Lesson 3");
 		});
 
 		it("returns empty array for unit with no lessons", async () => {
@@ -471,9 +471,9 @@ describe("Lessons", () => {
 			// (production returns by creation time, so we sort here to verify order values)
 			const sortedByOrder = [...lessons].sort((a, b) => a.order - b.order);
 
-			expect(sortedByOrder[0].name).toBe("Lesson 3");
-			expect(sortedByOrder[1].name).toBe("Lesson 1");
-			expect(sortedByOrder[2].name).toBe("Lesson 2");
+			expect(sortedByOrder[0]?.name).toBe("Lesson 3");
+			expect(sortedByOrder[1]?.name).toBe("Lesson 1");
+			expect(sortedByOrder[2]?.name).toBe("Lesson 2");
 		});
 
 		it("creates log entry when reordering", async () => {
@@ -564,8 +564,8 @@ describe("Lessons", () => {
 			});
 
 			expect(remaining).toHaveLength(2);
-			expect(remaining[0].order).toBe(0);
-			expect(remaining[1].order).toBe(1);
+			expect(remaining[0]?.order).toBe(0);
+			expect(remaining[1]?.order).toBe(1);
 		});
 
 		it("creates log entry when deleting", async () => {
@@ -741,7 +741,7 @@ describe("Lessons", () => {
 				searchTerm: "Searchable",
 			});
 
-			expect(results[0].unitName).toBe("Test Unit Name");
+			expect(results[0]?.unitName).toBe("Test Unit Name");
 		});
 
 		it("returns empty array for empty search term", async () => {

@@ -10,7 +10,7 @@
  */
 
 import { describe, expect, it, beforeEach } from "vitest";
-import { api } from "../_generated/api";
+import { api } from "../convex/_generated/api";
 import { createConvexTest } from "./convexTestHelper";
 import {
 	setupCompleteCourse,
@@ -115,9 +115,9 @@ describe("Courses", () => {
 
 			// Assert
 			expect(primaryResults.courses).toHaveLength(1);
-			expect(primaryResults.courses[0].name).toBe("Primary School Course");
+			expect(primaryResults.courses[0]?.name).toBe("Primary School Course");
 			expect(secondaryResults.courses).toHaveLength(1);
-			expect(secondaryResults.courses[0].name).toBe("Secondary School Course");
+			expect(secondaryResults.courses[0]?.name).toBe("Secondary School Course");
 		});
 	});
 
@@ -196,7 +196,7 @@ describe("Courses", () => {
 
 			expect(result).not.toBeNull();
 			expect(result?.units).toHaveLength(2);
-			expect(result?.units[0].lessons).toHaveLength(3);
+			expect(result?.units[0]?.lessons).toHaveLength(3);
 		});
 
 		it("excludes unpublished units and lessons", async () => {
@@ -239,9 +239,9 @@ describe("Courses", () => {
 			});
 
 			expect(result?.units).toHaveLength(1);
-			expect(result?.units[0].lessons).toHaveLength(1);
-			expect(result?.units[0].name).toBe("Published Unit");
-			expect(result?.units[0].lessons[0].name).toBe("Published Lesson");
+			expect(result?.units[0]?.lessons).toHaveLength(1);
+			expect(result?.units[0]?.name).toBe("Published Unit");
+			expect(result?.units[0]?.lessons[0]?.name).toBe("Published Lesson");
 		});
 
 		it("returns null for non-existent course", async () => {
@@ -402,8 +402,8 @@ describe("Courses", () => {
 			});
 
 			expect(result).toHaveLength(2);
-			expect(result[0].lessons).toHaveLength(2);
-			expect(result[0].course.name).toBe("Complete Test Course");
+			expect(result[0]?.lessons).toHaveLength(2);
+			expect(result[0]?.course.name).toBe("Complete Test Course");
 		});
 
 		it("includes embed data for lessons", async () => {
@@ -426,7 +426,7 @@ describe("Courses", () => {
 				school: TEST_SCHOOLS.PRIMARY,
 			});
 
-			expect(result[0].lessons[0].embeds).toBeDefined();
+			expect(result[0]?.lessons[0]?.embeds).toBeDefined();
 		});
 	});
 
@@ -456,8 +456,8 @@ describe("Courses", () => {
 				TEST_SCHOOLS.PRIMARY,
 			);
 
-			const unitId = units[0].unitId;
-			const lessonId = units[0].lessons[0].lessonId;
+			const unitId = units[0]?.unitId;
+			const lessonId = units[0]?.lessons[0]?.lessonId;
 
 			const result = await t.query(api.courses.getBreadcrumbData, {
 				courseId,

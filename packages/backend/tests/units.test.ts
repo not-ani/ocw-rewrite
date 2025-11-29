@@ -9,7 +9,7 @@
  */
 
 import { describe, expect, it } from "vitest";
-import { api } from "../_generated/api";
+import { api } from "../convex/_generated/api";
 import { createConvexTest } from "./convexTestHelper";
 import {
 	setupCompleteCourse,
@@ -64,9 +64,9 @@ describe("Units", () => {
 				school: TEST_SCHOOLS.PRIMARY,
 			});
 
-			expect(result[0].name).toBe("Unit 1");
-			expect(result[1].name).toBe("Unit 2");
-			expect(result[2].name).toBe("Unit 3");
+			expect(result[0]?.name).toBe("Unit 1");
+			expect(result[1]?.name).toBe("Unit 2");
+			expect(result[2]?.name).toBe("Unit 3");
 		});
 	});
 
@@ -139,7 +139,7 @@ describe("Units", () => {
 			expect(result?.name).toBe("Unit With Lessons");
 			expect(result?.course.name).toBe("Parent Course");
 			expect(result?.lessons).toHaveLength(1);
-			expect(result?.lessons[0].name).toBe("Published Lesson");
+			expect(result?.lessons[0]?.name).toBe("Published Lesson");
 		});
 
 		it("returns null for non-existent unit", async () => {
@@ -299,7 +299,7 @@ describe("Units", () => {
 			});
 
 			expect(logs).toHaveLength(1);
-			expect(logs[0].action).toBe("CREATE_UNIT");
+			expect(logs[0]?.action).toBe("CREATE_UNIT");
 		});
 	});
 
@@ -394,9 +394,9 @@ describe("Units", () => {
 			// (production returns by creation time, so we sort here to verify order values)
 			const sortedByOrder = [...units].sort((a, b) => a.order - b.order);
 
-			expect(sortedByOrder[0].name).toBe("Unit 3");
-			expect(sortedByOrder[1].name).toBe("Unit 1");
-			expect(sortedByOrder[2].name).toBe("Unit 2");
+			expect(sortedByOrder[0]?.name).toBe("Unit 3");
+			expect(sortedByOrder[1]?.name).toBe("Unit 1");
+			expect(sortedByOrder[2]?.name).toBe("Unit 2");
 		});
 
 		it("creates a log entry when reordering", async () => {
@@ -460,8 +460,8 @@ describe("Units", () => {
 			});
 
 			expect(remaining).toHaveLength(2);
-			expect(remaining[0].order).toBe(0);
-			expect(remaining[1].order).toBe(1);
+			expect(remaining[0]?.order).toBe(0);
+			expect(remaining[1]?.order).toBe(1);
 		});
 
 		it("throws error when unit not in course", async () => {

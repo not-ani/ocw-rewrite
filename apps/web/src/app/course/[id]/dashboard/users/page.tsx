@@ -46,7 +46,7 @@ export default async function UsersPage({
 	);
 
 	if (!authorized) {
-		redirect(`/course/${courseId}/dashboard`);
+		redirect("/unauthorized");
 	}
 
 	const allClerkUsers = await getAllClerkUsers();
