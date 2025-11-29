@@ -127,6 +127,8 @@ function LessonEditForm({
 					lessonId,
 					school,
 					raw: values.embedUrl,
+					// Skip logging since updateLesson already creates a log
+					skipLog: true,
 				});
 			}
 

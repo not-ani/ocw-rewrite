@@ -1,6 +1,35 @@
 import { ConvexError, v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { internal } from "./_generated/api";
+import { internalMutation, mutation, query } from "./_generated/server";
 import { assertEditorOrAdmin, getRequesterRole } from "./permissions";
+
+// Internal mutation for logging - called via scheduler to ensure it runs after the main mutation
+export const logLessonAction = internalMutation({
+	args: {
+		userId: v.string(),
+		courseId: v.id("courses"),
+		unitId: v.id("units"),
+		lessonId: v.optional(v.id("lessons")),
+		action: v.union(
+			v.literal("CREATE_LESSON"),
+			v.literal("UPDATE_LESSON"),
+			v.literal("DELETE_LESSON"),
+			v.literal("REORDER_LESSON"),
+		),
+		school: v.string(),
+	},
+	handler: async (ctx, args) => {
+		await ctx.db.insert("logs", {
+			userId: args.userId,
+			courseId: args.courseId,
+			unitId: args.unitId,
+			lessonId: args.lessonId,
+			action: args.action,
+			school: args.school,
+			timestamp: Date.now(),
+		});
+	},
+});
 
 export const getLessonById = query({
 	args: {
@@ -114,6 +143,8 @@ export const createOrUpdateEmbed = mutation({
 		lessonId: v.id("lessons"),
 		raw: v.string(),
 		school: v.string(),
+		// Skip logging when called alongside update mutation to avoid duplicate logs
+		skipLog: v.optional(v.boolean()),
 	},
 	handler: async (ctx, args) => {
 		const identity = await ctx.auth.getUserIdentity();
@@ -148,15 +179,17 @@ export const createOrUpdateEmbed = mutation({
 			});
 		}
 
-		await ctx.db.insert("logs", {
-			userId: identity.subject,
-			courseId: lesson.courseId,
-			unitId: lesson.unitId,
-			lessonId: args.lessonId,
-			action: "UPDATE_LESSON",
-			school: args.school,
-			timestamp: Date.now(),
-		});
+		// Only log if not skipped (to avoid duplicate logs when called with update)
+		if (!args.skipLog) {
+			await ctx.scheduler.runAfter(0, internal.lesson.logLessonAction, {
+				userId: identity.tokenIdentifier,
+				courseId: lesson.courseId,
+				unitId: lesson.unitId,
+				lessonId: args.lessonId,
+				action: "UPDATE_LESSON",
+				school: args.school,
+			});
+		}
 	},
 });
 export const getByUnit = query({
@@ -230,6 +263,9 @@ export const create = mutation({
 		});
 		assertEditorOrAdmin(role);
 
+		const identity = await ctx.auth.getUserIdentity();
+		const userId = identity?.tokenIdentifier ?? "unknown";
+
 		const existing = await ctx.db
 			.query("lessons")
 			.withIndex("by_unit_id", (q) => q.eq("unitId", args.unitId))
@@ -259,14 +295,14 @@ export const create = mutation({
 			});
 		}
 
-		await ctx.db.insert("logs", {
-			userId: (await ctx.auth.getUserIdentity())?.subject ?? "unknown",
+		// Schedule log after mutation completes
+		await ctx.scheduler.runAfter(0, internal.lesson.logLessonAction, {
+			userId,
 			courseId: args.courseId,
 			unitId: args.unitId,
 			lessonId,
 			action: "CREATE_LESSON",
 			school: args.school,
-			timestamp: Date.now(),
 		});
 
 		return lessonId;
@@ -302,6 +338,10 @@ export const update = mutation({
 			school: args.school,
 		});
 		assertEditorOrAdmin(role);
+
+		const identity = await ctx.auth.getUserIdentity();
+		const userId = identity?.tokenIdentifier ?? "unknown";
+
 		const lesson = await ctx.db.get(args.data.id);
 
 		if (!lesson) {
@@ -319,14 +359,14 @@ export const update = mutation({
 					: (args.data.content ?? undefined),
 		});
 
-		await ctx.db.insert("logs", {
-			userId: (await ctx.auth.getUserIdentity())?.subject ?? "unknown",
+		// Schedule log after mutation completes
+		await ctx.scheduler.runAfter(0, internal.lesson.logLessonAction, {
+			userId,
 			courseId: lesson.courseId,
 			unitId: lesson.unitId,
 			lessonId: args.data.id,
 			action: "UPDATE_LESSON",
 			school: args.school,
-			timestamp: Date.now(),
 		});
 	},
 });
@@ -345,6 +385,10 @@ export const reorder = mutation({
 			school: args.school,
 		});
 		assertEditorOrAdmin(role);
+
+		const identity = await ctx.auth.getUserIdentity();
+		const userId = identity?.tokenIdentifier ?? "unknown";
+
 		for (const item of args.data) {
 			const lesson = await ctx.db.get(item.id);
 			if (
@@ -356,13 +400,13 @@ export const reorder = mutation({
 			}
 		}
 
-		await ctx.db.insert("logs", {
-			userId: (await ctx.auth.getUserIdentity())?.subject ?? "unknown",
+		// Schedule log after mutation completes
+		await ctx.scheduler.runAfter(0, internal.lesson.logLessonAction, {
+			userId,
 			courseId: args.courseId,
 			unitId: args.unitId,
 			action: "REORDER_LESSON",
 			school: args.school,
-			timestamp: Date.now(),
 		});
 	},
 });
@@ -376,16 +420,24 @@ export const remove = mutation({
 			school: args.school,
 		});
 		assertEditorOrAdmin(role);
+
+		const identity = await ctx.auth.getUserIdentity();
+		const userId = identity?.tokenIdentifier ?? "unknown";
+
 		const lesson = await ctx.db.get(args.id);
 		if (!lesson) {
 			throw new Error("Lesson not found");
 		}
+
+		// Store lesson info before deletion for logging
+		const { courseId, unitId } = lesson;
+
 		await ctx.db.delete(args.id);
 
 		// Re-number remaining lessons within unit
 		const remaining = await ctx.db
 			.query("lessons")
-			.withIndex("by_unit_id", (q) => q.eq("unitId", lesson.unitId))
+			.withIndex("by_unit_id", (q) => q.eq("unitId", unitId))
 			.order("asc")
 			.collect();
 		for (const [index, l] of remaining.entries()) {
@@ -394,14 +446,14 @@ export const remove = mutation({
 			}
 		}
 
-		await ctx.db.insert("logs", {
-			userId: (await ctx.auth.getUserIdentity())?.subject ?? "unknown",
-			courseId: lesson.courseId,
-			unitId: lesson.unitId,
+		// Schedule log after mutation completes
+		await ctx.scheduler.runAfter(0, internal.lesson.logLessonAction, {
+			userId,
+			courseId,
+			unitId,
 			lessonId: args.id,
 			action: "DELETE_LESSON",
 			school: args.school,
-			timestamp: Date.now(),
 		});
 	},
 });
