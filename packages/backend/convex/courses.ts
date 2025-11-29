@@ -99,11 +99,11 @@ async function searchUnits(
 	const matches = await db
 		.query("units")
 		.withSearchIndex("search_name", (q) =>
-			q.search("name", term).eq("school", school),
+			q.search("name", term).eq("school", school).eq("isPublished", true),
 		)
 		.take(limit * 3);
 
-	return matches.filter((unit) => unit.isPublished).slice(0, limit);
+	return matches.slice(0, limit);
 }
 
 async function searchLessons(
@@ -115,11 +115,11 @@ async function searchLessons(
 	const matches = await db
 		.query("lessons")
 		.withSearchIndex("search_name", (q) =>
-			q.search("name", term).eq("school", school),
+			q.search("name", term).eq("school", school).eq("isPublished", true),
 		)
 		.take(limit * 3);
 
-	return matches.filter((lesson) => lesson.isPublished).slice(0, limit);
+	return matches.slice(0, limit);
 }
 
 function formatResults(
