@@ -11,6 +11,7 @@ export default function AdminLayout({
 				<LinkTabsList>
 					<LinkTabsTab href="/admin">Courses</LinkTabsTab>
 					<LinkTabsTab href="/admin/site-content">Site Content</LinkTabsTab>
+					<LinkTabsTab href="/admin/logs">Logs</LinkTabsTab>
 				</LinkTabsList>
 				<div className="flex-1">{children}</div>
 			</LinkTabs>
