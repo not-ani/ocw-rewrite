@@ -221,6 +221,7 @@ export const create = mutation({
 		name: v.string(),
 		embedRaw: v.string(),
 		school: v.string(),
+		isPublished: v.optional(v.boolean()),
 	},
 	handler: async (ctx, args) => {
 		const role = await getRequesterRole({
@@ -240,7 +241,7 @@ export const create = mutation({
 
 		const lessonId = await ctx.db.insert("lessons", {
 			order,
-			isPublished: false,
+			isPublished: args.isPublished ?? false,
 			pureLink: true,
 			contentType: detected?.contentType,
 			courseId: args.courseId,

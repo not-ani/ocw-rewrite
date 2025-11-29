@@ -2,3 +2,12 @@ node_modules
 .turbo
 .alchemy
 .env
+.env.local
+.env.*.local
+
+# Playwright
+e2e-report/
+playwright-report/
+playwright/.cache/
+**/playwright/.clerk/
+test-results/

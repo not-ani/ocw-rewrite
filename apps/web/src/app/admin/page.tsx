@@ -1,5 +1,6 @@
 import { api } from "@ocw/backend/convex/_generated/api";
 import { fetchQuery } from "convex/nextjs";
+import { Authenticated } from "convex/react";
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
 import { getAuthToken } from "@/lib/auth";
@@ -35,7 +36,7 @@ export default async function AdminPage() {
 	}
 
 	if (!token) {
-		redirect("/");
+		redirect("/unauthorized");
 	}
 
 	const isSiteAdmin = await fetchQuery(
@@ -45,7 +46,7 @@ export default async function AdminPage() {
 	);
 
 	if (!isSiteAdmin) {
-		redirect("/");
+		redirect("/unauthorized");
 	}
 
 	return (

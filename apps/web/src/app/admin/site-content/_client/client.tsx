@@ -1,7 +1,7 @@
 "use client";
 
 import { api } from "@ocw/backend/convex/_generated/api";
-import { useQuery } from "convex/react";
+import { Authenticated, useQuery } from "convex/react";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import {
@@ -21,6 +21,13 @@ type SiteContentClientProps = {
 };
 
 export function SiteContentClient({ school }: SiteContentClientProps) {
+	return (
+		<Authenticated>
+			<SiteContentClientContent school={school} />
+		</Authenticated>
+	);
+}
+function SiteContentClientContent({ school }: SiteContentClientProps) {
 	const { user } = useSite();
 	const router = useRouter();
 	const siteConfig = useQuery(api.site.getSiteConfig, {
