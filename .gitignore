@@ -9,5 +9,5 @@ node_modules
 e2e-report/
 playwright-report/
 playwright/.cache/
-playwright/.clerk/
+**/playwright/.clerk/
 test-results/
