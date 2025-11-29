@@ -13,7 +13,7 @@ export async function getAuthToken() {
 export async function checkAdminOrEditorPermission(
 	courseId: Id<"courses">,
 	subdomain: string,
-): Promise<boolean> {
+): Promise<void> {
 	const token = await getAuthToken();
 	if (!token) {
 		return redirect("/unauthorized");
@@ -37,5 +37,4 @@ export async function checkAdminOrEditorPermission(
 		return redirect("/unauthorized");
 	}
 
-	return true;
 }
