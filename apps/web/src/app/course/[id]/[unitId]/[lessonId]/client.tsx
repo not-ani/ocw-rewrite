@@ -11,6 +11,7 @@ import { LessonSidebarContainer } from "@/components/lesson-sidebar/container";
 import { GoogleDocsEmbed } from "@/components/render/google-docs";
 import { GoogleDriveEmbed } from "@/components/render/google-drive";
 import { QuizletEmbed } from "@/components/render/quizlet";
+import { YouTubeEmbed } from "@/components/render/youtube";
 import { Search } from "@/components/search";
 import { buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -107,6 +108,8 @@ function LessonEmbed({
 					password={password ?? null}
 				/>
 			);
+		case "youtube":
+			return <YouTubeEmbed embedId={embedId ?? null} />;
 		default:
 			return (
 				<div className="flex h-[60vh] items-center justify-center rounded-lg border">

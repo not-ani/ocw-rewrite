@@ -22,4 +22,5 @@ export type EmbedContent =
 	| "google_drive"
 	| "notion"
 	| "quizlet"
+	| "youtube"
 	| "other";

@@ -88,7 +88,7 @@ export function ForkCourseDialog() {
 					</DialogDescription>
 				</DialogHeader>
 
-				<div className=" py-4 space-y-4">
+				<div className="space-y-4 py-4">
 					<Popover open={searchOpen} onOpenChange={setSearchOpen}>
 						<PopoverTrigger asChild>
 							<Button
@@ -134,7 +134,7 @@ export function ForkCourseDialog() {
 												/>
 												<div className="flex flex-col">
 													<span>{course.name}</span>
-													<span className="text-xs text-muted-foreground ">
+													<span className="text-muted-foreground text-xs">
 														{course.school} • {course.unitLength} units
 													</span>
 												</div>

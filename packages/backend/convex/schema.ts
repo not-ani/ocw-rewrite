@@ -129,6 +129,7 @@ export default defineSchema({
 			v.literal("other"),
 			v.literal("notion"),
 			v.literal("quizlet"),
+			v.literal("youtube"),
 		),
 		courseId: v.id("courses"),
 		unitId: v.id("units"),
