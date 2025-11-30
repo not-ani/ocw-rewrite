@@ -1,11 +1,23 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "mint",
+  "theme": "quill",
   "name": "OpenCourseWare Platform",
   "colors": {
-    "primary": "#16A34A",
-    "light": "#07C983",
-    "dark": "#15803D"
+    "primary": "#D97706",
+    "light": "#F59E0B",
+    "dark": "#B45309",
+    "background": {
+      "light": "#FFFFFF",
+      "dark": "#1C1917"
+    }
+  },
+  "font": {
+    "headings": {
+      "family": "Geist Mono"
+    },
+    "body": {
+      "family": "Geist Mono"
+    }
   },
   "favicon": "/favicon.svg",
   "navigation": {
