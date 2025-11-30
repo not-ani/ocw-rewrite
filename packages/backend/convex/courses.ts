@@ -295,27 +295,38 @@ export const getCourseWithUnitsAndLessons = query({
 
 		const units = await ctx.db
 			.query("units")
-			.withIndex("by_course_id", (q) => q.eq("courseId", course._id))
-			.filter((q) => q.eq(q.field("isPublished"), true))
+			.withIndex("by_course_id_and_is_published", (q) => q.eq("courseId", course._id).eq("isPublished", true))
 			.collect();
 
 		const unitsWithLessons = await Promise.all(
 			units.map(async (unit) => {
 				const lessons = await ctx.db
 					.query("lessons")
-					.withIndex("by_unit_id", (q) => q.eq("unitId", unit._id))
-					.filter((q) => q.eq(q.field("isPublished"), true))
+					.withIndex("by_unit_id_and_is_published", (q) => q.eq("unitId", unit._id).eq("isPublished", true))
 					.collect();
+
+				const lessonsWithEmbeds = await Promise.all(
+					lessons.map(async (lesson) => {
+						const embeds = await ctx.db
+							.query("lessonEmbeds")
+							.withIndex("by_lesson_id", (q) => q.eq("lessonId", lesson._id))
+							.unique();
+
+						return {
+							id: lesson._id,
+							name: lesson.name,
+							contentType: lesson.contentType,
+							pureLink: lesson.pureLink,
+							embed: embeds,
+						};
+					}),
+				);
 
 				return {
 					id: unit._id,
 					order: unit.order,
 					name: unit.name,
-					lessons: lessons.map((lesson) => ({
-						id: lesson._id,
-						name: lesson.name,
-						contentType: lesson.contentType,
-					})),
+					lessons: lessonsWithEmbeds,
 				};
 			}),
 		);

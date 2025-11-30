@@ -127,16 +127,28 @@ export function CoursePageClient({
 										</AccordionTrigger>
 										<AccordionContent className="px-16">
 											<div className="space-y-3 py-2">
-												{unit.lessons.map((lesson) => (
-													<Link
-														className="block text-foreground hover:underline"
-														prefetch
-														key={lesson.id}
-														href={`/course/${course._id}/${unit.id}/${lesson.id}`}
-													>
-														{lesson.name}
-													</Link>
-												))}
+												{unit.lessons.map((lesson) =>
+													lesson.pureLink ? (
+														<a
+															className="block text-foreground hover:underline"
+															key={lesson.id}
+															href={lesson.embed?.embedUrl || "#"}
+															target="_blank"
+															rel="noopener noreferrer"
+														>
+															{lesson.name}
+														</a>
+													) : (
+														<Link
+															className="block text-foreground hover:underline"
+															prefetch
+															key={lesson.id}
+															href={`/course/${course._id}/${unit.id}/${lesson.id}`}
+														>
+															{lesson.name}
+														</Link>
+													),
+												)}
 											</div>
 										</AccordionContent>
 									</AccordionItem>
