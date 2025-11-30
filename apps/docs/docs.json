@@ -30,6 +30,17 @@
           {
             "group": "Getting started",
             "pages": ["index", "development"]
+          },
+          {
+            "group": "Mission",
+            "pages": ["mission"]
+          },
+          {
+            "group": "Content Management",
+            "pages": [
+              "admin-page",
+              "content-management/create-and-manage-content"
+            ]
           }
         ]
       }
