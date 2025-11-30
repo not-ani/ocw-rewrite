@@ -1,6 +1,6 @@
 {
   "$schema": "https://mintlify.com/docs.json",
-  "theme": "quill",
+  "theme": "maple",
   "name": "OpenCourseWare Platform",
   "colors": {
     "primary": "#D97706",
