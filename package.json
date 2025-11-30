@@ -13,6 +13,7 @@
 		"check-types": "turbo check-types",
 		"dev:native": "turbo -F native dev",
 		"dev:web": "turbo -F web dev",
+		"dev:docs": "turbo -F @ocw/docs dev",
 		"dev:server": "turbo -F @my-better-t-app/backend dev",
 		"dev:setup": "turbo -F @my-better-t-app/backend dev:setup"
 	},
@@ -26,6 +27,16 @@
 		"overrides": {
 			"@types/react": "19.2.2",
 			"@types/react-dom": "19.2.2"
+		},
+		"peerDependencyRules": {
+			"ignoreMissing": [
+				"react",
+				"react-dom"
+			],
+			"allowedVersions": {
+				"react": "19",
+				"react-dom": "19"
+			}
 		}
 	}
 }
