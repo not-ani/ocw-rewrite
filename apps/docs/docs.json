@@ -5,14 +5,16 @@
   "colors": {
     "primary": "#D97706",
     "light": "#F59E0B",
-    "dark": "#B45309",
-    "background": {
+    "dark": "#B45309"
+  },
+  "background": {
+    "color": {
       "light": "#FFFFFF",
       "dark": "#1C1917"
     }
   },
-  "font": {
-    "headings": {
+  "fonts": {
+    "heading": {
       "family": "Geist Mono"
     },
     "body": {
