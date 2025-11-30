@@ -255,6 +255,7 @@ export const create = mutation({
 		name: v.string(),
 		embedRaw: v.optional(v.string()),
 		pdfUrl: v.optional(v.string()),
+		pureLink: v.optional(v.boolean()),
 		school: v.string(),
 	},
 	handler: async (ctx, args) => {
@@ -279,7 +280,7 @@ export const create = mutation({
 			const lessonId = await ctx.db.insert("lessons", {
 				order,
 				isPublished: false,
-				pureLink: false,
+				pureLink: args.pureLink ?? false,
 				contentType: "pdf",
 				courseId: args.courseId,
 				unitId: args.unitId,
@@ -316,7 +317,7 @@ export const create = mutation({
 		const lessonId = await ctx.db.insert("lessons", {
 			order,
 			isPublished: false,
-			pureLink: true,
+			pureLink: args.pureLink ?? true,
 			contentType: detected?.contentType ?? "other",
 			courseId: args.courseId,
 			unitId: args.unitId,
@@ -377,6 +378,7 @@ export const update = mutation({
 			unitId: v.optional(v.id("units")),
 			content: v.optional(v.union(v.any(), v.null())),
 			pdfUrl: v.optional(v.union(v.string(), v.null())),
+			pureLink: v.optional(v.boolean()),
 		}),
 		school: v.string(),
 	},
@@ -410,6 +412,10 @@ export const update = mutation({
 				args.data.pdfUrl === undefined
 					? lesson.pdfUrl
 					: (args.data.pdfUrl ?? undefined),
+			pureLink:
+				args.data.pureLink === undefined
+					? lesson.pureLink
+					: args.data.pureLink,
 		});
 
 		// Schedule log after mutation completes

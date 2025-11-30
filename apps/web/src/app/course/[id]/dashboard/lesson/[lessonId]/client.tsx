@@ -21,6 +21,7 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
 	Select,
@@ -49,6 +50,7 @@ const lessonFormSchema = z.object({
 	]),
 	embedUrl: z.string(),
 	pdfUrl: z.string().optional(),
+	pureLink: z.boolean(),
 });
 
 type LessonFormValues = z.infer<typeof lessonFormSchema>;
@@ -103,6 +105,7 @@ function LessonEditForm({
 			contentType: lesson.contentType,
 			embedUrl: embed?.embedUrl || "",
 			pdfUrl: lesson.pdfUrl || "",
+			pureLink: lesson.pureLink,
 		},
 	});
 
@@ -129,6 +132,7 @@ function LessonEditForm({
 					contentType: values.contentType,
 					isPublished: values.isPublished,
 					pdfUrl: values.contentType === "pdf" ? values.pdfUrl : null,
+					pureLink: values.pureLink,
 				},
 			});
 
@@ -335,6 +339,27 @@ function LessonEditForm({
 										<FormLabel>Published</FormLabel>
 										<FormDescription>
 											Make this lesson visible to students
+										</FormDescription>
+									</div>
+								</FormItem>
+							)}
+						/>
+
+						<FormField
+							control={form.control}
+							name="pureLink"
+							render={({ field }) => (
+								<FormItem className="flex flex-row items-start space-x-3 space-y-0">
+									<FormControl>
+										<Checkbox
+											checked={field.value}
+											onCheckedChange={field.onChange}
+										/>
+									</FormControl>
+									<div className="space-y-1 leading-none">
+										<FormLabel>Pure Link</FormLabel>
+										<FormDescription>
+											Open lesson link in a new tab with no referrer
 										</FormDescription>
 									</div>
 								</FormItem>

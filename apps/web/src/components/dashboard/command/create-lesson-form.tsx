@@ -20,6 +20,7 @@ import {
 	FormLabel,
 	FormMessage,
 } from "@/components/ui/form";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import {
 	Combobox,
@@ -43,6 +44,7 @@ const formSchema = z.object({
 	embedRaw: z.string().optional(),
 	pdfUrl: z.string().optional(),
 	pdfName: z.string().optional(),
+	pureLink: z.boolean().optional(),
 });
 
 type FormValues = z.infer<typeof formSchema>;
@@ -74,6 +76,7 @@ export function CreateLessonInlineForm({
 			embedRaw: "",
 			pdfUrl: "",
 			pdfName: "",
+			pureLink: false,
 		},
 	});
 
@@ -102,6 +105,7 @@ export function CreateLessonInlineForm({
 					unitId: values.unitId as Id<"units">,
 					name: values.name,
 					pdfUrl: values.pdfUrl,
+					pureLink: values.pureLink,
 					school: subdomain,
 				});
 			} else {
@@ -110,6 +114,7 @@ export function CreateLessonInlineForm({
 					unitId: values.unitId as Id<"units">,
 					name: values.name,
 					embedRaw: values.embedRaw,
+					pureLink: values.pureLink,
 					school: subdomain,
 				});
 			}
@@ -303,6 +308,27 @@ export function CreateLessonInlineForm({
 								</FormItem>
 							</TabsContent>
 						</Tabs>
+
+						<FormField
+							control={form.control}
+							name="pureLink"
+							render={({ field }) => (
+								<FormItem className="flex flex-row items-start space-x-3 space-y-0">
+									<FormControl>
+										<Checkbox
+											checked={field.value}
+											onCheckedChange={field.onChange}
+										/>
+									</FormControl>
+									<div className="space-y-1 leading-none">
+										<FormLabel>Pure Link</FormLabel>
+										<FormDescription>
+											Open lesson link in a new tab with no referrer
+										</FormDescription>
+									</div>
+								</FormItem>
+							)}
+						/>
 
 						<div className="flex gap-2 pt-2">
 							<Button type="submit" disabled={isSubmitting} className="flex-1">
