@@ -2,6 +2,8 @@ import { api } from "@ocw/backend/convex/_generated/api";
 import { fetchQuery } from "convex/nextjs";
 import type { Metadata } from "next";
 import { HeroSection } from "@/components/hero";
+import { getAbsoluteUrl } from "@/lib/og-utils";
+import { extractSubdomain } from "@/lib/multi-tenant/server";
 
 export async function generateMetadata({
 	params,
@@ -9,28 +11,59 @@ export async function generateMetadata({
 	params: Promise<{ domain: string }>;
 }): Promise<Metadata> {
 	const { domain } = await params;
+	const currentSubdomain = await extractSubdomain();
 
 	const siteConfig = await fetchQuery(api.site.getSiteConfig, {
 		school: domain,
 	});
 
-	if (!siteConfig) {
-		return {
-			title: "OpenCourseWare",
-			description: "Free, high-quality educational resources",
-		};
-	}
+	const title = siteConfig
+		? `${siteConfig.schoolName} OpenCourseWare`
+		: "OpenCourseWare";
+	const description = siteConfig
+		? siteConfig.siteHero ||
+			`${siteConfig.schoolName} OpenCourseWare is a platform for free, high-quality resources to students at ${siteConfig.schoolName}`
+		: "Free, high-quality educational resources";
+
+	// If accessed via subdomain, use /opengraph-image (which gets rewritten)
+	// Otherwise, use the full path /s/[domain]/opengraph-image
+	const ogImagePath =
+		currentSubdomain === domain ? "/opengraph-image" : `/s/${domain}/opengraph-image`;
+	const urlPath = currentSubdomain === domain ? "/" : `/s/${domain}`;
+
+	const ogImageUrl = await getAbsoluteUrl(ogImagePath);
+	const url = await getAbsoluteUrl(urlPath);
 
 	return {
-		title: `${siteConfig.schoolName} OpenCourseWare`,
-		description:
-			siteConfig.siteHero ||
-			`${siteConfig.schoolName} OpenCourseWare is a platform for free, high-quality resources to students at ${siteConfig.schoolName}`,
+		title,
+		description,
+		openGraph: {
+			title,
+			description,
+			url,
+			siteName: title,
+			images: [
+				{
+					url: ogImageUrl,
+					width: 1200,
+					height: 630,
+					alt: title,
+				},
+			],
+			locale: "en_US",
+			type: "website",
+		},
+		twitter: {
+			card: "summary_large_image",
+			title,
+			description,
+			images: [ogImageUrl],
+		},
 		icons: {
 			icon: [
 				{
 					rel: "icon",
-					url: siteConfig.siteLogo ?? "",
+					url: siteConfig?.siteLogo ?? "",
 				},
 			],
 		},
