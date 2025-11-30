@@ -130,11 +130,13 @@ export default defineSchema({
 			v.literal("notion"),
 			v.literal("quizlet"),
 			v.literal("youtube"),
+			v.literal("pdf"),
 		),
 		courseId: v.id("courses"),
 		unitId: v.id("units"),
 		name: v.string(),
 		content: v.optional(v.any()), // JSONContent type
+		pdfUrl: v.optional(v.string()), // URL from uploadthing for PDF files
 	})
 		.index("by_course_id", ["courseId"])
 		.index("by_unit_id", ["unitId"])

@@ -10,6 +10,7 @@ import { BreadcrumbCourse } from "@/components/lesson-sidebar/breadcrumb-course"
 import { LessonSidebarContainer } from "@/components/lesson-sidebar/container";
 import { GoogleDocsEmbed } from "@/components/render/google-docs";
 import { GoogleDriveEmbed } from "@/components/render/google-drive";
+import { PdfViewer } from "@/components/render/pdf-viewer";
 import { QuizletEmbed } from "@/components/render/quizlet";
 import { YouTubeEmbed } from "@/components/render/youtube";
 import { Search } from "@/components/search";
@@ -89,10 +90,12 @@ function LessonEmbed({
 	contentType,
 	embedId,
 	password,
+	pdfUrl,
 }: {
 	contentType: EmbedContent;
 	embedId: string | null;
 	password: string | null;
+	pdfUrl: string | null;
 }) {
 	switch (contentType) {
 		case "quizlet":
@@ -110,6 +113,8 @@ function LessonEmbed({
 			);
 		case "youtube":
 			return <YouTubeEmbed embedId={embedId ?? null} />;
+		case "pdf":
+			return <PdfViewer url={pdfUrl} />;
 		default:
 			return (
 				<div className="flex h-[60vh] items-center justify-center rounded-lg border">
@@ -202,6 +207,7 @@ export function LessonPageClient({
 						contentType={lesson.lesson.contentType}
 						embedId={lesson.embed.embedUrl}
 						password={lesson.embed.password ?? null}
+						pdfUrl={lesson.lesson.pdfUrl ?? null}
 					/>
 				</Suspense>
 			</main>

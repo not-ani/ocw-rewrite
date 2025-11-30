@@ -23,4 +23,5 @@ export type EmbedContent =
 	| "notion"
 	| "quizlet"
 	| "youtube"
+	| "pdf"
 	| "other";

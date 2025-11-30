@@ -64,6 +64,7 @@ function detectEmbed(input: string): {
 		| "quizlet"
 		| "notion"
 		| "youtube"
+		| "pdf"
 		| "other";
 	embedUrl?: string;
 } {
@@ -252,7 +253,8 @@ export const create = mutation({
 		courseId: v.id("courses"),
 		unitId: v.id("units"),
 		name: v.string(),
-		embedRaw: v.string(),
+		embedRaw: v.optional(v.string()),
+		pdfUrl: v.optional(v.string()),
 		school: v.string(),
 	},
 	handler: async (ctx, args) => {
@@ -272,13 +274,50 @@ export const create = mutation({
 			.collect();
 		const order = existing.length;
 
-		const detected = detectEmbed(args.embedRaw);
+		// Handle PDF upload - if pdfUrl is provided, use pdf contentType
+		if (args.pdfUrl) {
+			const lessonId = await ctx.db.insert("lessons", {
+				order,
+				isPublished: false,
+				pureLink: false,
+				contentType: "pdf",
+				courseId: args.courseId,
+				unitId: args.unitId,
+				name: args.name,
+				content: undefined,
+				pdfUrl: args.pdfUrl,
+				school: args.school,
+			});
+
+			// Create a placeholder embed entry for consistency
+			await ctx.db.insert("lessonEmbeds", {
+				lessonId,
+				embedUrl: args.pdfUrl,
+				password: undefined,
+				school: args.school,
+			});
+
+			// Schedule log after mutation completes
+			await ctx.scheduler.runAfter(0, internal.lesson.logLessonAction, {
+				userId,
+				courseId: args.courseId,
+				unitId: args.unitId,
+				lessonId,
+				action: "CREATE_LESSON",
+				school: args.school,
+			});
+
+			return lessonId;
+		}
+
+		// Handle embed-based content
+		const detected = args.embedRaw ? detectEmbed(args.embedRaw) : null;
 
 		const lessonId = await ctx.db.insert("lessons", {
 			order,
 			isPublished: false,
 			pureLink: true,
-			contentType: detected?.contentType,
+			contentType: detected?.contentType ?? "other",
 			courseId: args.courseId,
 			unitId: args.unitId,
 			name: args.name,
@@ -290,6 +329,14 @@ export const create = mutation({
 			await ctx.db.insert("lessonEmbeds", {
 				lessonId,
 				embedUrl: detected.embedUrl,
+				password: undefined,
+				school: args.school,
+			});
+		} else {
+			// Create empty embed entry for consistency
+			await ctx.db.insert("lessonEmbeds", {
+				lessonId,
+				embedUrl: "",
 				password: undefined,
 				school: args.school,
 			});
@@ -324,10 +371,12 @@ export const update = mutation({
 					v.literal("other"),
 					v.literal("quizlet"),
 					v.literal("youtube"),
+					v.literal("pdf"),
 				),
 			),
 			unitId: v.optional(v.id("units")),
 			content: v.optional(v.union(v.any(), v.null())),
+			pdfUrl: v.optional(v.union(v.string(), v.null())),
 		}),
 		school: v.string(),
 	},
@@ -357,6 +406,10 @@ export const update = mutation({
 				args.data.content === undefined
 					? lesson.content
 					: (args.data.content ?? undefined),
+			pdfUrl:
+				args.data.pdfUrl === undefined
+					? lesson.pdfUrl
+					: (args.data.pdfUrl ?? undefined),
 		});
 
 		// Schedule log after mutation completes
