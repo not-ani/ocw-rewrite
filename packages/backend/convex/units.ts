@@ -124,8 +124,6 @@ export const create = mutation({
 			order,
 		});
 
-
-
 		await ctx.db.insert("logs", {
 			userId: (await ctx.auth.getUserIdentity())?.tokenIdentifier ?? "unknown",
 			courseId: args.courseId,

@@ -150,4 +150,3 @@ function LogsPageClientContent({ school }: LogsPageClientProps) {
 		</div>
 	);
 }
-

@@ -5,6 +5,8 @@ import { ClerkProvider } from "@clerk/nextjs";
 import { api } from "@ocw/backend/convex/_generated/api";
 import { fetchQuery } from "convex/nextjs";
 import type { Metadata } from "next";
+// Add headers import
+import { headers } from "next/headers";
 import Providers from "@/components/providers";
 import { PostHogIdentify } from "@/components/providers/posthog";
 import { SiteContextProvider } from "@/lib/multi-tenant/context";
@@ -23,6 +25,15 @@ const geistMono = Geist_Mono({
 export async function generateMetadata(): Promise<Metadata> {
 	const subdomain = await extractSubdomain();
 
+	// FIX: Resolve the current host dynamically to prevent Next.js from defaulting to 'localhost'
+	const headersList = await headers();
+	const host = headersList.get("host") || "localhost:3000";
+	const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
+
+	const baseConfig = {
+		metadataBase: new URL(`${protocol}://${host}`),
+	};
+
 	if (
 		!subdomain ||
 		subdomain === "www" ||
@@ -30,6 +41,7 @@ export async function generateMetadata(): Promise<Metadata> {
 		subdomain === "ocwproject.org"
 	) {
 		return {
+			...baseConfig,
 			title: "The OpenCourseWare Project",
 			description:
 				"The OpenCourseWare Project is a platform for free, high-quality resources for free",
@@ -48,6 +60,7 @@ export async function generateMetadata(): Promise<Metadata> {
 		school: subdomain,
 	});
 	return {
+		...baseConfig,
 		title: `${siteConfig?.schoolName} OpenCourseWare`,
 		description: `${siteConfig?.schoolName} OpenCourseWare is a platform for free, high-quality resources to students at ${siteConfig?.schoolName}`,
 		icons: {

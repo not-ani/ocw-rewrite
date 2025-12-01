@@ -2,8 +2,8 @@ import { api } from "@ocw/backend/convex/_generated/api";
 import { fetchQuery } from "convex/nextjs";
 import type { Metadata } from "next";
 import { HeroSection } from "@/components/hero";
-import { getAbsoluteUrl } from "@/lib/og-utils";
 import { extractSubdomain } from "@/lib/multi-tenant/server";
+import { getAbsoluteUrl } from "@/lib/og-utils";
 
 export async function generateMetadata({
 	params,
@@ -28,7 +28,9 @@ export async function generateMetadata({
 	// If accessed via subdomain, use /opengraph-image (which gets rewritten)
 	// Otherwise, use the full path /s/[domain]/opengraph-image
 	const ogImagePath =
-		currentSubdomain === domain ? "/opengraph-image" : `/s/${domain}/opengraph-image`;
+		currentSubdomain === domain
+			? "/opengraph-image"
+			: `/s/${domain}/opengraph-image`;
 	const urlPath = currentSubdomain === domain ? "/" : `/s/${domain}`;
 
 	const ogImageUrl = await getAbsoluteUrl(ogImagePath);

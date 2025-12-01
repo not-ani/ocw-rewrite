@@ -75,4 +75,3 @@ export const LOG_ACTION_CATEGORIES: Record<string, LogAction[]> = {
 	Courses: ["CREATE_COURSE", "UPDATE_COURSE", "DELETE_COURSE"],
 	Users: ["DELETE_USER", "UPDATE_USER"],
 };
-

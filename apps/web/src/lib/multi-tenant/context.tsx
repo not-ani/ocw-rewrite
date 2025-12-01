@@ -1,11 +1,12 @@
 "use client";
+
 import { api } from "@ocw/backend/convex/_generated/api";
 import { useQuery } from "convex/react";
 import type { FunctionReturnType } from "convex/server";
 import type React from "react";
 import { createContext, useContext, useMemo } from "react";
 
-type SiteContext = {
+type SiteContextType = {
 	siteConfig: FunctionReturnType<typeof api.site.getSiteConfig> | null;
 	subdomain: string;
 	user?: {
@@ -13,7 +14,14 @@ type SiteContext = {
 	};
 };
 
-export const SiteContext = createContext<SiteContext | null>(null);
+// Create a default context value to ensure context is never null
+const defaultContextValue: SiteContextType = {
+	siteConfig: null,
+	subdomain: "",
+	user: undefined,
+};
+
+export const SiteContext = createContext<SiteContextType>(defaultContextValue);
 
 export const SiteContextProvider = ({
 	children,
@@ -22,17 +30,19 @@ export const SiteContextProvider = ({
 	children: React.ReactNode;
 	subdomain: string | null;
 }) => {
+	// We skip the query if subdomain is null, but the hook usage order remains constant
+	const shouldSkip = !subdomain;
+
 	const siteConfig = useQuery(
 		api.site.getSiteConfig,
-		subdomain ? { school: subdomain } : "skip",
+		shouldSkip ? "skip" : { school: subdomain },
 	);
 
 	const user = useQuery(
 		api.permissions.getSiteUser,
-		subdomain ? { school: subdomain } : "skip",
+		shouldSkip ? "skip" : { school: subdomain },
 	);
 
-	// Memoize the context value to prevent unnecessary re-renders
 	const contextValue = useMemo(
 		() => ({
 			siteConfig: siteConfig ?? null,
@@ -42,19 +52,12 @@ export const SiteContextProvider = ({
 		[siteConfig, subdomain, user],
 	);
 
-	if (!subdomain) {
-		return <>{children}</>;
-	}
-
 	return (
 		<SiteContext.Provider value={contextValue}>{children}</SiteContext.Provider>
 	);
 };
 
-export const useSite = () => {
+export const useSite = (): SiteContextType => {
 	const context = useContext(SiteContext);
-	if (!context) {
-		throw new Error("useSiteContext must be used within a SiteContextProvider");
-	}
 	return context;
 };

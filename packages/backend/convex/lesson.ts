@@ -413,9 +413,7 @@ export const update = mutation({
 					? lesson.pdfUrl
 					: (args.data.pdfUrl ?? undefined),
 			pureLink:
-				args.data.pureLink === undefined
-					? lesson.pureLink
-					: args.data.pureLink,
+				args.data.pureLink === undefined ? lesson.pureLink : args.data.pureLink,
 		});
 
 		// Schedule log after mutation completes

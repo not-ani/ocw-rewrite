@@ -39,4 +39,3 @@ export default async function LogsPage() {
 
 	return <LogsPageClient school={school} />;
 }
-

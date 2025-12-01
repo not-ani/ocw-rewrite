@@ -9,4 +9,3 @@ export async function getAbsoluteUrl(path: string): Promise<string> {
 
 	return `${protocolToUse}://${host}${path}`;
 }
-

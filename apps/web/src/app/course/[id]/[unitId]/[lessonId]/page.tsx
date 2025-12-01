@@ -4,6 +4,7 @@ import { fetchQuery } from "convex/nextjs";
 import type { Metadata } from "next";
 import { isValidConvexId } from "@/lib/convex-utils";
 import { extractSubdomain } from "@/lib/multi-tenant/server";
+import { getAbsoluteUrl } from "@/lib/og-utils";
 import { LessonPageClient } from "./client";
 
 export async function generateMetadata({
@@ -20,45 +21,85 @@ export async function generateMetadata({
 		!isValidConvexId(unitId) ||
 		!isValidConvexId(id)
 	) {
+		const ogImageUrl = await getAbsoluteUrl("/opengraph-image");
 		return {
 			title: "Lesson",
 			description: "View and study this lesson",
+			openGraph: {
+				title: "Course",
+				description: "Course details",
+				images: [
+					{
+						url: ogImageUrl,
+						width: 1200,
+						height: 630,
+						alt: "Course",
+					},
+				],
+				type: "website",
+			},
+			twitter: {
+				card: "summary_large_image",
+				title: "Course",
+				description: "Course details",
+				images: [ogImageUrl],
+			},
 		};
 	}
 
-	try {
-		const [lessonData, unit, course, siteConfig] = await Promise.all([
-			fetchQuery(api.lesson.getLessonById, {
-				id: lessonId as Id<"lessons">,
-				school: subdomain,
-			}),
-			fetchQuery(api.units.getById, {
-				id: unitId as Id<"units">,
-				school: subdomain,
-			}),
-			fetchQuery(api.courses.getCourseById, {
-				courseId: id as Id<"courses">,
-				school: subdomain,
-			}),
-			fetchQuery(api.site.getSiteConfig, {
-				school: subdomain,
-			}),
-		]);
+	const [course, lesson, unit, siteConfig] = await Promise.all([
+		fetchQuery(api.courses.getCourseById, {
+			courseId: id as Id<"courses">,
+			school: subdomain,
+		}),
+		fetchQuery(api.lesson.getLessonById, {
+			id: lessonId as Id<"lessons">,
+			school: subdomain,
+		}),
+		fetchQuery(api.units.getById, {
+			id: unitId as Id<"units">,
+			school: subdomain,
+		}),
+		fetchQuery(api.site.getSiteConfig, {
+			school: subdomain,
+		}),
+	]);
 
-		const lessonName = lessonData?.lesson?.name || "Lesson";
-		const unitName = unit?.name || "Unit";
-		const courseName = course?.name || "Course";
+	const lessonName = lesson?.lesson?.name || "Lesson";
+	const unitName = unit?.name || "Unit";
+	const courseName = course?.name || "Course";
 
-		return {
+	const [url, ogImageUrl] = await Promise.all([
+		getAbsoluteUrl(`/course/${id}/${unitId}/${lessonId}`),
+		getAbsoluteUrl(`/course/${id}/${unitId}/${lessonId}/opengraph-image`),
+	]);
+
+	return {
+		title: `${lessonName} | ${unitName} | ${courseName} | ${siteConfig?.schoolName ?? "OpenCourseWare"}`,
+		description: `Study ${lessonName} from ${unitName} in ${courseName}. Free educational resources at ${siteConfig?.schoolName ?? "OpenCourseWare"}.`,
+		openGraph: {
 			title: `${lessonName} | ${unitName} | ${courseName} | ${siteConfig?.schoolName ?? "OpenCourseWare"}`,
 			description: `Study ${lessonName} from ${unitName} in ${courseName}. Free educational resources at ${siteConfig?.schoolName ?? "OpenCourseWare"}.`,
-		};
-	} catch {
-		return {
-			title: "Lesson",
-			description: "View and study this lesson",
-		};
-	}
+			url: url,
+			siteName: siteConfig?.schoolName ?? "OpenCourseWare",
+			images: [
+				{
+					url: ogImageUrl,
+					width: 1200,
+					height: 630,
+					alt: lessonName,
+				},
+			],
+			locale: "en_US",
+			type: "website",
+		},
+		twitter: {
+			card: "summary_large_image",
+			title: `${lessonName} | ${unitName} | ${courseName} | ${siteConfig?.schoolName ?? "OpenCourseWare"}`,
+			description: `Study ${lessonName} from ${unitName} in ${courseName}. Free educational resources at ${siteConfig?.schoolName ?? "OpenCourseWare"}.`,
+			images: [ogImageUrl],
+		},
+	};
 }
 
 export default async function Page({

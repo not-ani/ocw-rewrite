@@ -3,26 +3,38 @@ import { headers } from "next/headers";
 
 export async function extractSubdomain(): Promise<string | null> {
 	const headersList = await headers();
-	const host = headersList.get("host") || "";
-	const hostname = host.split(":")[0];
 
-	// Handle localhost subdomains (e.g., creek.localhost)
-	if (hostname.includes("localhost") || hostname.includes("127.0.0.1")) {
-		if (hostname.includes(".localhost")) {
-			return hostname.split(".")[0];
+	const host =
+		headersList.get("x-forwarded-host") ||
+		headersList.get("host") ||
+		parseHostFromReferer(headersList.get("referer")) ||
+		"";
+
+	const hostname = host.split(":")[0];
+	const parts = hostname.split(".");
+
+	if (parts.length === 2 && parts[1] === "localhost") {
+		if (parts[0] !== "www") {
+			return parts[0];
 		}
-		return null;
+		return parts[0];
 	}
 
-	// For production, extract subdomain from hostname
-	// This assumes subdomain.domain.com format
-	const parts = hostname.split(".");
 	if (parts.length >= 3) {
-		// Check if it's a subdomain (not www)
 		if (parts[0] !== "www") {
 			return parts[0];
 		}
 	}
 
 	return null;
+}
+
+function parseHostFromReferer(referer: string | null): string | null {
+	if (!referer) return null;
+	try {
+		const url = new URL(referer);
+		return url.host;
+	} catch {
+		return null;
+	}
 }

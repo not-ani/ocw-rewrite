@@ -18,10 +18,10 @@ export const dynamic = "force-dynamic";
 export default async function Image({
 	params,
 }: {
-	params: Promise<{ id: string }>;
+	params: Promise<{ id: string; unitId: string }>;
 }) {
 	try {
-		const { id } = await params;
+		const { unitId } = await params;
 		const domain = await extractSubdomain();
 
 		if (!domain) {
@@ -33,31 +33,43 @@ export default async function Image({
 			);
 		}
 
-		if (!isValidConvexId(id)) {
+		if (!isValidConvexId(unitId)) {
 			return new ImageResponse(
 				<div>
-					<h1>Invalid course ID</h1>
+					<h1>Invalid unit ID</h1>
 				</div>,
 				{ ...size },
 			);
 		}
 
-		const [siteConfig, course] = await Promise.all([
+		const [siteConfig, unit] = await Promise.all([
 			fetchQuery(api.site.getSiteConfig, {
 				school: domain,
 			}),
-			fetchQuery(api.courses.getCourseById, {
-				courseId: id as Id<"courses">,
+			fetchQuery(api.units.getById, {
+				id: unitId as Id<"units">,
 				school: domain,
 			}),
 		]);
 
-		const schoolName = siteConfig?.schoolName || "OpenCourseWare";
-		//should be the courses name
-		const titleText = course?.name || "";
+		if (!unit) {
+			return new ImageResponse(
+				<div>
+					<h1>Unit not found</h1>
+				</div>,
+				{ ...size },
+			);
+		}
 
-		// descrption of the course if it doesn't exist it should be blank
-		const siteHero = course?.description || "";
+		const course = await fetchQuery(api.courses.getCourseById, {
+			courseId: unit.courseId,
+			school: domain,
+		});
+
+		const schoolName = siteConfig?.schoolName || "OpenCourseWare";
+		const courseName = course?.name || "";
+		const titleText = unit.name || "";
+
 		return new ImageResponse(
 			<div
 				style={{
@@ -87,7 +99,7 @@ export default async function Image({
 						fontWeight: 400,
 					}}
 				>
-					{schoolName} OCW
+					{schoolName} OCW | {courseName}
 				</div>
 
 				{/* Title */}
@@ -121,7 +133,7 @@ export default async function Image({
 						fontWeight: 400,
 					}}
 				>
-					{siteHero}
+					Study the {unit.name} in {courseName}
 				</div>
 			</div>,
 			{

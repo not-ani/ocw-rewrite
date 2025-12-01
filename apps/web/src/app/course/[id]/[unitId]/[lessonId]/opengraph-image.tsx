@@ -15,49 +15,120 @@ export const contentType = "image/png";
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-export default async function Image({
-	params,
-}: {
-	params: Promise<{ id: string }>;
-}) {
+type Params = {
+	id: string;
+	unitId: string;
+	lessonId: string;
+};
+
+export default async function Image({ params }: { params: Promise<Params> }) {
 	try {
-		const { id } = await params;
+		const { unitId, lessonId } = await params;
 		const domain = await extractSubdomain();
 
 		if (!domain) {
 			return new ImageResponse(
-				<div>
-					<h1>No domain found</h1>
+				<div
+					style={{
+						height: "100%",
+						width: "100%",
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						backgroundColor: "#121112",
+						fontFamily: '"Inter", sans-serif',
+					}}
+				>
+					<h1
+						style={{
+							margin: 0,
+							fontSize: "32px",
+							color: "#C1C1C1",
+						}}
+					>
+						No domain found
+					</h1>
 				</div>,
 				{ ...size },
 			);
 		}
 
-		if (!isValidConvexId(id)) {
+		if (!isValidConvexId(unitId) || !isValidConvexId(lessonId)) {
 			return new ImageResponse(
-				<div>
-					<h1>Invalid course ID</h1>
+				<div
+					style={{
+						height: "100%",
+						width: "100%",
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						backgroundColor: "#121112",
+						fontFamily: '"Inter", sans-serif',
+					}}
+				>
+					<h1
+						style={{
+							margin: 0,
+							fontSize: "32px",
+							color: "#C1C1C1",
+						}}
+					>
+						Invalid unit or lesson ID
+					</h1>
 				</div>,
 				{ ...size },
 			);
 		}
 
-		const [siteConfig, course] = await Promise.all([
-			fetchQuery(api.site.getSiteConfig, {
+		const [siteConfig, lessonData, unit] = await Promise.all([
+			fetchQuery(api.site.getSiteConfig, { school: domain }),
+			fetchQuery(api.lesson.getLessonById, {
+				id: lessonId as Id<"lessons">,
 				school: domain,
 			}),
-			fetchQuery(api.courses.getCourseById, {
-				courseId: id as Id<"courses">,
+			fetchQuery(api.units.getById, {
+				id: unitId as Id<"units">,
 				school: domain,
 			}),
 		]);
 
-		const schoolName = siteConfig?.schoolName || "OpenCourseWare";
-		//should be the courses name
-		const titleText = course?.name || "";
+		if (!lessonData || !unit) {
+			return new ImageResponse(
+				<div
+					style={{
+						height: "100%",
+						width: "100%",
+						display: "flex",
+						alignItems: "center",
+						justifyContent: "center",
+						backgroundColor: "#121112",
+						fontFamily: '"Inter", sans-serif',
+					}}
+				>
+					<h1
+						style={{
+							margin: 0,
+							fontSize: "32px",
+							color: "#C1C1C1",
+						}}
+					>
+						Lesson or unit not found
+					</h1>
+				</div>,
+				{ ...size },
+			);
+		}
 
-		// descrption of the course if it doesn't exist it should be blank
-		const siteHero = course?.description || "";
+		const course = await fetchQuery(api.courses.getCourseById, {
+			courseId: unit.courseId,
+			school: domain,
+		});
+
+		const schoolName = siteConfig?.schoolName || "OpenCourseWare";
+		const courseName = course?.name || "";
+		const unitName = unit.name || "";
+		const titleText = lessonData.lesson.name || "";
+
 		return new ImageResponse(
 			<div
 				style={{
@@ -74,29 +145,27 @@ export default async function Image({
 					fontFamily: '"Inter", sans-serif',
 				}}
 			>
-				{/* Label */}
 				<div
 					style={{
 						position: "absolute",
 						left: "66px",
 						top: "320px",
-						display: "flex", // Added strictly for Satori compliance
+						display: "flex",
 						fontSize: "24px",
 						color: "#E78A53",
 						lineHeight: "29px",
 						fontWeight: 400,
 					}}
 				>
-					{schoolName} OCW
+					{schoolName} OCW | {courseName} | {unitName}
 				</div>
 
-				{/* Title */}
 				<div
 					style={{
 						position: "absolute",
 						left: "66px",
 						top: "359px",
-						display: "flex", // Added strictly for Satori compliance
+						display: "flex",
 						fontSize: "64px",
 						color: "#C1C1C1",
 						lineHeight: "77px",
@@ -106,27 +175,8 @@ export default async function Image({
 				>
 					{titleText}
 				</div>
-
-				{/* Description */}
-				<div
-					style={{
-						position: "absolute",
-						left: "66px",
-						top: "456px",
-						width: "603px",
-						display: "flex", // Added strictly for Satori compliance
-						fontSize: "19px",
-						color: "#C1C1C1",
-						lineHeight: "23px",
-						fontWeight: 400,
-					}}
-				>
-					{siteHero}
-				</div>
 			</div>,
-			{
-				...size,
-			},
+			{ ...size },
 		);
 	} catch (error) {
 		console.error("Error generating opengraph image:", error);
@@ -140,6 +190,7 @@ export default async function Image({
 					alignItems: "center",
 					justifyContent: "center",
 					backgroundColor: "#121112",
+					fontFamily: '"Inter", sans-serif',
 				}}
 			>
 				<div
@@ -152,9 +203,7 @@ export default async function Image({
 					OpenCourseWare
 				</div>
 			</div>,
-			{
-				...size,
-			},
+			{ ...size },
 		);
 	}
 }

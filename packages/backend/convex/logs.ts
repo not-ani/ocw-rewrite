@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { query, type QueryCtx } from "./_generated/server";
+import { type QueryCtx, query } from "./_generated/server";
 
 const LOG_ACTION_TYPES = [
 	"CREATE_LESSON",
@@ -95,6 +95,7 @@ export const getLogs = query({
 		const limit = args.limit ?? 100;
 
 		// Choose the right index based on filters
+		// biome-ignore lint/suspicious/noImplicitAnyLet: we need to use a type that is not yet defined
 		let logsQuery;
 
 		if (args.action && args.userId) {
@@ -233,4 +234,3 @@ export const getActionTypes = query({
 		return [...LOG_ACTION_TYPES];
 	},
 });
-

@@ -1,70 +1,70 @@
 {
-  "$schema": "https://mintlify.com/docs.json",
-  "theme": "maple",
-  "name": "OpenCourseWare Platform",
-  "colors": {
-    "primary": "#D97706",
-    "light": "#F59E0B",
-    "dark": "#B45309"
-  },
-  "background": {
-    "color": {
-      "light": "#FFFFFF",
-      "dark": "#1C1917"
-    }
-  },
-  "fonts": {
-    "heading": {
-      "family": "Geist Mono"
-    },
-    "body": {
-      "family": "Geist Mono"
-    }
-  },
-  "favicon": "/favicon.svg",
-  "navigation": {
-    "tabs": [
-      {
-        "tab": "Guides",
-        "groups": [
-          {
-            "group": "Getting started",
-            "pages": ["index", "development"]
-          },
-          {
-            "group": "Mission",
-            "pages": ["mission"]
-          },
-          {
-            "group": "Content Management",
-            "pages": [
-              "admin-page",
-              "content-management/create-and-manage-content"
-            ]
-          }
-        ]
-      }
-    ],
-    "global": {
-      "anchors": [
-        {
-          "anchor": "Documentation",
-          "href": "https://docs.ocwproject.org/",
-          "icon": "book-open-cover"
-        }
-      ]
-    }
-  },
-  "contextual": {
-    "options": [
-      "copy",
-      "view",
-      "chatgpt",
-      "claude",
-      "perplexity",
-      "mcp",
-      "cursor",
-      "vscode"
-    ]
-  }
+	"$schema": "https://mintlify.com/docs.json",
+	"theme": "maple",
+	"name": "OpenCourseWare Platform",
+	"colors": {
+		"primary": "#D97706",
+		"light": "#F59E0B",
+		"dark": "#B45309"
+	},
+	"background": {
+		"color": {
+			"light": "#FFFFFF",
+			"dark": "#1C1917"
+		}
+	},
+	"fonts": {
+		"heading": {
+			"family": "Geist Mono"
+		},
+		"body": {
+			"family": "Geist Mono"
+		}
+	},
+	"favicon": "/favicon.svg",
+	"navigation": {
+		"tabs": [
+			{
+				"tab": "Guides",
+				"groups": [
+					{
+						"group": "Getting started",
+						"pages": ["index", "development"]
+					},
+					{
+						"group": "Mission",
+						"pages": ["mission"]
+					},
+					{
+						"group": "Content Management",
+						"pages": [
+							"admin-page",
+							"content-management/create-and-manage-content"
+						]
+					}
+				]
+			}
+		],
+		"global": {
+			"anchors": [
+				{
+					"anchor": "Documentation",
+					"href": "https://docs.ocwproject.org/",
+					"icon": "book-open-cover"
+				}
+			]
+		}
+	},
+	"contextual": {
+		"options": [
+			"copy",
+			"view",
+			"chatgpt",
+			"claude",
+			"perplexity",
+			"mcp",
+			"cursor",
+			"vscode"
+		]
+	}
 }

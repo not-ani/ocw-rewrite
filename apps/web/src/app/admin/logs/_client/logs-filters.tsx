@@ -3,17 +3,16 @@
 import { api } from "@ocw/backend/convex/_generated/api";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
-import {
-	CalendarIcon,
-	FilterIcon,
-	FilterXIcon,
-	UserIcon,
-} from "lucide-react";
+import { CalendarIcon, FilterIcon, FilterXIcon, UserIcon } from "lucide-react";
 import { useCallback, useMemo } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from "@/components/ui/popover";
 import {
 	Select,
 	SelectContent,
@@ -245,7 +244,9 @@ export function LogsFilters({
 					<PopoverContent className="w-auto p-4" align="start">
 						<div className="space-y-4">
 							<div className="space-y-2">
-								<label htmlFor="start-date" className="font-medium text-sm">Start Date</label>
+								<label htmlFor="start-date" className="font-medium text-sm">
+									Start Date
+								</label>
 								<Input
 									id="start-date"
 									type="date"
@@ -254,7 +255,9 @@ export function LogsFilters({
 								/>
 							</div>
 							<div className="space-y-2">
-								<label htmlFor="end-date" className="font-medium text-sm">End Date</label>
+								<label htmlFor="end-date" className="font-medium text-sm">
+									End Date
+								</label>
 								<Input
 									id="end-date"
 									type="date"
@@ -282,7 +285,7 @@ export function LogsFilters({
 
 			{/* Active Filters Summary */}
 			{hasActiveFilters && (
-				<div className="flex flex-wrap items-center gap-2 text-sm text-muted-foreground">
+				<div className="flex flex-wrap items-center gap-2 text-muted-foreground text-sm">
 					<FilterIcon className="h-4 w-4" />
 					<span>Filtering by:</span>
 					{filters.action !== "all" && (
@@ -311,4 +314,3 @@ export function LogsFilters({
 		</div>
 	);
 }
-

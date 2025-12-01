@@ -24,9 +24,19 @@ import {
 	TableProvider,
 	TableRow,
 } from "@/components/ui/kibo-ui/table";
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
+import {
+	Tooltip,
+	TooltipContent,
+	TooltipProvider,
+	TooltipTrigger,
+} from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
-import { type ClerkUser, type EnrichedLog, LOG_ACTION_LABELS, type LogAction } from "./types";
+import {
+	type ClerkUser,
+	type EnrichedLog,
+	LOG_ACTION_LABELS,
+	type LogAction,
+} from "./types";
 
 type LogsTableProps = {
 	logs: EnrichedLog[];
@@ -50,7 +60,10 @@ const ENTITY_ICON_MAP: Record<string, typeof FileTextIcon> = {
 	USER: UserIcon,
 };
 
-const VARIANT_MAP: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
+const VARIANT_MAP: Record<
+	string,
+	"default" | "secondary" | "destructive" | "outline"
+> = {
 	CREATE: "default",
 	UPDATE: "secondary",
 	DELETE: "destructive",
@@ -74,7 +87,11 @@ function getActionParts(action: LogAction) {
 	return { actionType, entityType };
 }
 
-const ActionBadge = memo(function ActionBadge({ action }: { action: LogAction }) {
+const ActionBadge = memo(function ActionBadge({
+	action,
+}: {
+	action: LogAction;
+}) {
 	const { actionType, entityType } = getActionParts(action);
 	const actionStyle = ACTION_ICON_MAP[actionType] ?? {
 		icon: PencilIcon,
@@ -146,7 +163,7 @@ const UserCell = memo(function UserCell({ userId, user }: UserCellProps) {
 									{initials}
 								</AvatarFallback>
 							</Avatar>
-							<span className="text-sm font-medium">{user.fullName}</span>
+							<span className="font-medium text-sm">{user.fullName}</span>
 						</div>
 					</TooltipTrigger>
 					<TooltipContent>
@@ -158,7 +175,10 @@ const UserCell = memo(function UserCell({ userId, user }: UserCellProps) {
 	}
 
 	// Fallback if user not found
-	const displayId = clerkId.length > 12 ? `${clerkId.slice(0, 6)}...${clerkId.slice(-4)}` : clerkId;
+	const displayId =
+		clerkId.length > 12
+			? `${clerkId.slice(0, 6)}...${clerkId.slice(-4)}`
+			: clerkId;
 
 	return (
 		<TooltipProvider>
@@ -170,7 +190,7 @@ const UserCell = memo(function UserCell({ userId, user }: UserCellProps) {
 								<UserIcon className="h-3 w-3" />
 							</AvatarFallback>
 						</Avatar>
-						<span className="text-sm text-muted-foreground">{displayId}</span>
+						<span className="text-muted-foreground text-sm">{displayId}</span>
 					</div>
 				</TooltipTrigger>
 				<TooltipContent>
@@ -187,7 +207,11 @@ type TargetCellProps = {
 	lessonName?: string;
 };
 
-const TargetCell = memo(function TargetCell({ courseName, unitName, lessonName }: TargetCellProps) {
+const TargetCell = memo(function TargetCell({
+	courseName,
+	unitName,
+	lessonName,
+}: TargetCellProps) {
 	const targets = useMemo(() => {
 		const result: string[] = [];
 		if (courseName) result.push(`📚 ${courseName}`);
@@ -238,6 +262,7 @@ export function LogsTable({ logs, userMap }: LogsTableProps) {
 	const usersLoaded = userMap.size > 0;
 
 	// Column definitions - recreated when usersLoaded changes to force cell re-renders
+	// biome-ignore lint/correctness/useExhaustiveDependencies: we intentionally depend on usersLoaded to force re-render when users load
 	const columns: ColumnDef<EnrichedLog>[] = useMemo(
 		() => [
 			{
@@ -255,12 +280,7 @@ export function LogsTable({ logs, userMap }: LogsTableProps) {
 				cell: ({ row }) => {
 					const clerkId = extractClerkId(row.original.userId);
 					const user = userMap.get(clerkId);
-					return (
-						<UserCell
-							userId={row.original.userId}
-							user={user}
-						/>
-					);
+					return <UserCell userId={row.original.userId} user={user} />;
 				},
 			},
 			{
@@ -323,4 +343,3 @@ export function LogsTable({ logs, userMap }: LogsTableProps) {
 		</TableProvider>
 	);
 }
-
