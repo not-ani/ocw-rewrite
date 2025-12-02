@@ -8,10 +8,47 @@ import Link from "next/link";
 import { Suspense } from "react";
 import { BreadcrumbCourse } from "@/components/lesson-sidebar/breadcrumb-course";
 import { LessonSidebarContainer } from "@/components/lesson-sidebar/container";
-import { GoogleDocsEmbed } from "@/components/render/google-docs";
-import { GoogleDriveEmbed } from "@/components/render/google-drive";
-import { QuizletEmbed } from "@/components/render/quizlet";
-import { YouTubeEmbed } from "@/components/render/youtube";
+
+const GoogleDocsEmbed = dynamic(
+	() =>
+		import("@/components/render/google-docs").then(
+			(mod) => mod.GoogleDocsEmbed,
+		),
+	{
+		ssr: false,
+	},
+);
+
+const GoogleDriveEmbed = dynamic(
+	() =>
+		import("@/components/render/google-drive").then(
+			(mod) => mod.GoogleDriveEmbed,
+		),
+	{
+		ssr: false,
+	},
+);
+
+const PdfViewer = dynamic(
+	() => import("@/components/render/pdf-viewer").then((mod) => mod.PdfViewer),
+	{
+		ssr: false,
+	},
+);
+const QuizletEmbed = dynamic(
+	() => import("@/components/render/quizlet").then((mod) => mod.QuizletEmbed),
+	{
+		ssr: false,
+	},
+);
+const YouTubeEmbed = dynamic(
+	() => import("@/components/render/youtube").then((mod) => mod.YouTubeEmbed),
+	{
+		ssr: false,
+	},
+);
+
+import dynamic from "next/dynamic";
 import { Search } from "@/components/search";
 import { buttonVariants } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
@@ -89,10 +126,12 @@ function LessonEmbed({
 	contentType,
 	embedId,
 	password,
+	pdfUrl,
 }: {
 	contentType: EmbedContent;
 	embedId: string | null;
 	password: string | null;
+	pdfUrl: string | null;
 }) {
 	switch (contentType) {
 		case "quizlet":
@@ -110,6 +149,8 @@ function LessonEmbed({
 			);
 		case "youtube":
 			return <YouTubeEmbed embedId={embedId ?? null} />;
+		case "pdf":
+			return <PdfViewer url={pdfUrl} />;
 		default:
 			return (
 				<div className="flex h-[60vh] items-center justify-center rounded-lg border">
@@ -202,6 +243,7 @@ export function LessonPageClient({
 						contentType={lesson.lesson.contentType}
 						embedId={lesson.embed.embedUrl}
 						password={lesson.embed.password ?? null}
+						pdfUrl={lesson.lesson.pdfUrl ?? null}
 					/>
 				</Suspense>
 			</main>

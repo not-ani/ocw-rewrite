@@ -20,7 +20,16 @@ const nextConfig: NextConfig = {
 	// This is required to support PostHog trailing slash API requests
 	skipTrailingSlashRedirect: true,
 	images: {
-		domains: ["ugakd4mkxv.ufs.sh", "utfs.io"],
+		remotePatterns: [
+			{
+				protocol: "https",
+				hostname: "ugakd4mkxv.ufs.sh",
+			},
+			{
+				protocol: "https",
+				hostname: "utfs.io",
+			},
+		],
 	},
 	reactCompiler: true,
 };

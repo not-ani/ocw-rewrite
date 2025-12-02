@@ -1,0 +1,13 @@
+{
+	"name": "@ocw/docs",
+	"version": "0.1.0",
+	"private": true,
+	"scripts": {
+		"dev": "mintlify dev",
+		"build": "echo 'Mintlify builds are handled by Mintlify cloud'",
+		"update": "mintlify update"
+	},
+	"devDependencies": {
+		"mintlify": "^4.0.0"
+	}
+}

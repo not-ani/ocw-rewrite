@@ -5,13 +5,14 @@ import { api } from "@ocw/backend/convex/_generated/api";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
 import type { FunctionReturnType } from "convex/server";
-import { ArrowLeft, Save } from "lucide-react";
+import { ArrowLeft, FileText, Loader2, Save, X } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { Suspense } from "react";
+import { memo, Suspense, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
 	Form,
 	FormControl,
@@ -31,6 +32,9 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
+import { UploadDropzone } from "@/lib/uploadthing";
+import { cn } from "@/lib/utils";
+import LessonPageLoading from "./loading";
 
 const lessonFormSchema = z.object({
 	name: z.string().min(1, "Lesson name is required").max(200),
@@ -41,9 +45,12 @@ const lessonFormSchema = z.object({
 		"quizlet",
 		"google_drive",
 		"youtube",
+		"pdf",
 		"other",
 	]),
 	embedUrl: z.string(),
+	pdfUrl: z.string().optional(),
+	pureLink: z.boolean(),
 });
 
 type LessonFormValues = z.infer<typeof lessonFormSchema>;
@@ -88,6 +95,7 @@ function LessonEditForm({
 	const router = useRouter();
 	const updateLesson = useMutation(api.lesson.update);
 	const createOrUpdateEmbed = useMutation(api.lesson.createOrUpdateEmbed);
+	const [isUploading, setIsUploading] = useState(false);
 
 	const form = useForm<LessonFormValues>({
 		resolver: zodResolver(lessonFormSchema),
@@ -96,9 +104,13 @@ function LessonEditForm({
 			isPublished: lesson.isPublished,
 			contentType: lesson.contentType,
 			embedUrl: embed?.embedUrl || "",
+			pdfUrl: lesson.pdfUrl || "",
+			pureLink: lesson.pureLink,
 		},
 	});
 
+	const contentType = form.watch("contentType");
+	const pdfUrl = form.watch("pdfUrl");
 	const canSubmit = form.formState.isValid;
 
 	if (!lesson) {
@@ -119,14 +131,18 @@ function LessonEditForm({
 					name: values.name,
 					contentType: values.contentType,
 					isPublished: values.isPublished,
+					pdfUrl: values.contentType === "pdf" ? values.pdfUrl : null,
+					pureLink: values.pureLink,
 				},
 			});
 
-			if (values.embedUrl?.trim()) {
+			// Only update embed if not PDF type and embedUrl exists
+			if (values.contentType !== "pdf" && values.embedUrl?.trim()) {
 				await createOrUpdateEmbed({
 					lessonId,
 					school,
 					raw: values.embedUrl,
+					skipLog: true,
 				});
 			}
 
@@ -136,6 +152,22 @@ function LessonEditForm({
 			console.error("Failed to update lesson", error);
 		}
 	};
+
+	function clearPdf() {
+		form.setValue("pdfUrl", "");
+	}
+
+	// Extract PDF filename from URL
+	function getPdfFilename(url: string): string {
+		try {
+			const urlObj = new URL(url);
+			const pathname = urlObj.pathname;
+			const filename = pathname.split("/").pop();
+			return filename || "PDF file";
+		} catch {
+			return "PDF file";
+		}
+	}
 
 	return (
 		<Form {...form}>
@@ -192,6 +224,7 @@ function LessonEditForm({
 											<SelectItem value="notion">Notion</SelectItem>
 											<SelectItem value="quizlet">Quizlet</SelectItem>
 											<SelectItem value="youtube">YouTube</SelectItem>
+											<SelectItem value="pdf">PDF Upload</SelectItem>
 											<SelectItem value="other">Other</SelectItem>
 										</SelectContent>
 									</Select>
@@ -203,26 +236,88 @@ function LessonEditForm({
 							)}
 						/>
 
-						<FormField
-							control={form.control}
-							name="embedUrl"
-							render={({ field }) => (
-								<FormItem>
-									<FormLabel>Embed URL or iFrame</FormLabel>
-									<FormControl>
-										<Textarea
-											placeholder="Paste embed URL or iframe code"
-											className="min-h-[80px] font-mono text-sm"
-											{...field}
-										/>
-									</FormControl>
-									<FormDescription>
-										Paste the embed URL or full iframe code for external content
-									</FormDescription>
-									<FormMessage />
-								</FormItem>
-							)}
-						/>
+						{contentType === "pdf" ? (
+							<FormItem>
+								<FormLabel>PDF File</FormLabel>
+								{pdfUrl ? (
+									<div className="flex items-center gap-3 rounded-lg border bg-muted/50 p-3">
+										<FileText className="h-8 w-8 text-primary" />
+										<div className="min-w-0 flex-1">
+											<p className="truncate font-medium text-sm">
+												{getPdfFilename(pdfUrl)}
+											</p>
+											<a
+												href={pdfUrl}
+												target="_blank"
+												rel="noopener noreferrer"
+												className="text-muted-foreground text-xs hover:underline"
+											>
+												View PDF
+											</a>
+										</div>
+										<Button
+											type="button"
+											variant="ghost"
+											size="icon"
+											onClick={clearPdf}
+											className="h-8 w-8 shrink-0"
+										>
+											<X className="h-4 w-4" />
+										</Button>
+									</div>
+								) : (
+									<UploadDropzone
+										endpoint="pdfUploader"
+										onUploadBegin={() => setIsUploading(true)}
+										onClientUploadComplete={(res) => {
+											setIsUploading(false);
+											if (res?.[0]) {
+												form.setValue("pdfUrl", res[0].ufsUrl);
+												toast.success("PDF uploaded successfully");
+											}
+										}}
+										onUploadError={(error: Error) => {
+											setIsUploading(false);
+											toast.error(`Upload failed: ${error.message}`);
+										}}
+										className={cn(
+											"cursor-pointer rounded-lg border-2 border-dashed p-6 transition-colors",
+											"hover:border-primary/50 hover:bg-muted/50",
+											"ut-uploading:border-primary ut-uploading:bg-primary/5",
+										)}
+										content={{
+											label: "Drop PDF here or click to browse",
+											allowedContent: "PDF up to 16MB",
+										}}
+									/>
+								)}
+								<FormDescription>
+									Upload a PDF file for this lesson (max 16MB)
+								</FormDescription>
+							</FormItem>
+						) : (
+							<FormField
+								control={form.control}
+								name="embedUrl"
+								render={({ field }) => (
+									<FormItem>
+										<FormLabel>Embed URL or iFrame</FormLabel>
+										<FormControl>
+											<Textarea
+												placeholder="Paste embed URL or iframe code"
+												className="min-h-[80px] font-mono text-sm"
+												{...field}
+											/>
+										</FormControl>
+										<FormDescription>
+											Paste the embed URL or full iframe code for external
+											content
+										</FormDescription>
+										<FormMessage />
+									</FormItem>
+								)}
+							/>
+						)}
 
 						<FormField
 							control={form.control}
@@ -249,12 +344,42 @@ function LessonEditForm({
 								</FormItem>
 							)}
 						/>
+
+						<FormField
+							control={form.control}
+							name="pureLink"
+							render={({ field }) => (
+								<FormItem className="flex flex-row items-start space-x-3 space-y-0">
+									<FormControl>
+										<Checkbox
+											checked={field.value}
+											onCheckedChange={field.onChange}
+										/>
+									</FormControl>
+									<div className="space-y-1 leading-none">
+										<FormLabel>Pure Link</FormLabel>
+										<FormDescription>
+											Open lesson link in a new tab with no referrer
+										</FormDescription>
+									</div>
+								</FormItem>
+							)}
+						/>
 					</div>
 
 					<div className="mt-6 flex items-center gap-3">
-						<Button type="submit">
-							<Save className="mr-2 h-4 w-4" />
-							Save Changes
+						<Button type="submit" disabled={isUploading}>
+							{isUploading ? (
+								<>
+									<Loader2 className="mr-2 h-4 w-4 animate-spin" />
+									Uploading...
+								</>
+							) : (
+								<>
+									<Save className="mr-2 h-4 w-4" />
+									Save Changes
+								</>
+							)}
 						</Button>
 						<Button
 							type="button"
@@ -274,9 +399,6 @@ function LessonEditForm({
 		</Form>
 	);
 }
-
-import { memo } from "react";
-import LessonPageLoading from "./loading";
 
 type LessonPageClientProps = {
 	courseId: Id<"courses">;

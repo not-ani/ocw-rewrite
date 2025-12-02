@@ -15,6 +15,7 @@ import type * as courses from "../courses.js";
 import type * as forking from "../forking.js";
 import type * as healthCheck from "../healthCheck.js";
 import type * as lesson from "../lesson.js";
+import type * as logs from "../logs.js";
 import type * as migrations from "../migrations.js";
 import type * as permissions from "../permissions.js";
 import type * as privateData from "../privateData.js";
@@ -43,6 +44,7 @@ declare const fullApi: ApiFromModules<{
   forking: typeof forking;
   healthCheck: typeof healthCheck;
   lesson: typeof lesson;
+  logs: typeof logs;
   migrations: typeof migrations;
   permissions: typeof permissions;
   privateData: typeof privateData;

@@ -125,7 +125,7 @@ export const create = mutation({
 		});
 
 		await ctx.db.insert("logs", {
-			userId: (await ctx.auth.getUserIdentity())?.subject ?? "unknown",
+			userId: (await ctx.auth.getUserIdentity())?.tokenIdentifier ?? "unknown",
 			courseId: args.courseId,
 			school: args.school,
 			action: "CREATE_UNIT",
@@ -171,7 +171,7 @@ export const update = mutation({
 		});
 
 		await ctx.db.insert("logs", {
-			userId: (await ctx.auth.getUserIdentity())?.subject ?? "unknown",
+			userId: (await ctx.auth.getUserIdentity())?.tokenIdentifier ?? "unknown",
 			courseId: args.courseId,
 			unitId: args.data.id,
 			action: "UPDATE_UNIT",
@@ -213,7 +213,7 @@ export const reorder = mutation({
 		}
 
 		await ctx.db.insert("logs", {
-			userId: (await ctx.auth.getUserIdentity())?.subject ?? "unknown",
+			userId: (await ctx.auth.getUserIdentity())?.tokenIdentifier ?? "unknown",
 			courseId: args.courseId,
 			action: "REORDER_UNIT",
 			school: args.school,
@@ -255,7 +255,7 @@ export const remove = mutation({
 		}
 
 		await ctx.db.insert("logs", {
-			userId: (await ctx.auth.getUserIdentity())?.subject ?? "unknown",
+			userId: (await ctx.auth.getUserIdentity())?.tokenIdentifier ?? "unknown",
 			courseId: args.courseId,
 			unitId: args.id,
 			action: "DELETE_UNIT",

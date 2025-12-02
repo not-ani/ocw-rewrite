@@ -117,7 +117,7 @@ export const forkCourse = mutation({
 		if (user) {
 			await ctx.db.insert("logs", {
 				school: args.targetSchool,
-				userId: user.subject,
+				userId: user.tokenIdentifier,
 				action: "CREATE_COURSE",
 				courseId: newCourseId,
 				timestamp: Date.now(),
@@ -216,7 +216,7 @@ export const forkUnit = mutation({
 		if (user) {
 			await ctx.db.insert("logs", {
 				school: args.targetSchool,
-				userId: user.subject,
+				userId: user.tokenIdentifier,
 				action: "CREATE_UNIT",
 				courseId: args.targetCourseId,
 				unitId: newUnitId,
@@ -306,7 +306,7 @@ export const forkLesson = mutation({
 		if (user) {
 			await ctx.db.insert("logs", {
 				school: args.targetSchool,
-				userId: user.subject,
+				userId: user.tokenIdentifier,
 				action: "CREATE_LESSON",
 				courseId: args.targetCourseId,
 				unitId: args.targetUnitId,

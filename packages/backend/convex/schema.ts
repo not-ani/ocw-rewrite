@@ -106,6 +106,7 @@ export default defineSchema({
 	})
 		.index("by_course_id", ["courseId"])
 		.index("by_course_id_and_school", ["courseId", "school"])
+		.index("by_course_id_and_is_published", ["courseId", "isPublished"])
 		.index("by_course_and_order_and_school", ["courseId", "school", "order"])
 		.index("by_is_published_and_school", ["isPublished", "school"])
 		.searchIndex("search_name", {
@@ -130,14 +131,17 @@ export default defineSchema({
 			v.literal("notion"),
 			v.literal("quizlet"),
 			v.literal("youtube"),
+			v.literal("pdf"),
 		),
 		courseId: v.id("courses"),
 		unitId: v.id("units"),
 		name: v.string(),
 		content: v.optional(v.any()), // JSONContent type
+		pdfUrl: v.optional(v.string()), // URL from uploadthing for PDF files
 	})
 		.index("by_course_id", ["courseId"])
 		.index("by_unit_id", ["unitId"])
+		.index("by_unit_id_and_is_published", ["unitId", "isPublished"])
 		.index("by_is_published_and_school", ["isPublished", "school"])
 		.index("by_content_type_and_school", ["contentType", "school"])
 		.searchIndex("search_name", {

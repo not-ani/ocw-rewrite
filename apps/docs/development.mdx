@@ -1,0 +1,58 @@
+---
+title: "Development of the Platform"
+description: "How to set up developing on the platform"
+---
+
+<Info>
+  **Prerequisites**:
+
+  - Node.js version 19 or higher
+  - PNPM installed 
+</Info>
+
+Follow these steps to install and run the OpenCourseWare Platform on your operating system.
+
+<Steps>
+  <Step title="Clone the repo">
+    ```bash
+    git clone https://not-ani/ocw-rewrite.git
+    ```
+  </Step>
+  <Step title="Preview locally">
+    
+
+    ```bash
+    cd ocw-rewrite && pnpm i 
+    ```
+  </Step>
+  <Step title="Set Convex Up" stepNumber={3}>
+    ```bash
+    pnpm dev:setup
+    ```
+  </Step>
+  <Step title="Fill out the env file">
+    ```
+    NEXT_PUBLIC_CONVEX_URL=
+    NEXT_PUBLIC_CLERK_FRONTEND_API_URL=
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=
+    CLERK_SECRET_KEY=
+    NEXT_PUBLIC_POSTHOG_KEY=
+    NEXT_PUBLIC_POSTHOG_HOST=""
+    ```
+  </Step>
+  <Step title="Run the server">
+    ```bash
+    pnpm dev
+    ```
+  </Step>
+</Steps>
+
+By default, the app runs on port 3001. 
+
+## Relevent Guides For Setting Up Your Own Env Variables
+
+1. https://docs.convex.dev/auth/clerk
+
+## Code formatting
+
+We suggest using extensions on your IDE to recognize and format your code. Your code must be inline with out eslint config and our prettier config. Most modern IDE's have support for those things.
