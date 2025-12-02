@@ -1,7 +1,7 @@
 "use client";
 
 import { api } from "@ocw/backend/convex/_generated/api";
-import { useQuery } from "convex/react";
+import { Authenticated, useQuery } from "convex/react";
 import { useEffect, useMemo, useState } from "react";
 import { AddAdminDialog } from "@/components/admin/add-admin-dialog";
 import { AddCourseDialog } from "@/components/admin/add-course-dialog";
@@ -22,6 +22,13 @@ type AdminPageClientProps = {
 };
 
 export function AdminPageClient({ subdomain }: AdminPageClientProps) {
+	return (
+		<Authenticated>
+			<AdminPageClientContent subdomain={subdomain} />
+		</Authenticated>
+	);
+}
+function AdminPageClientContent({ subdomain }: AdminPageClientProps) {
 	const courses = useQuery(api.admin.getAllCourses, {
 		school: subdomain,
 	});

@@ -257,6 +257,7 @@ export const create = mutation({
 		pdfUrl: v.optional(v.string()),
 		pureLink: v.optional(v.boolean()),
 		school: v.string(),
+		isPublished: v.optional(v.boolean()),
 	},
 	handler: async (ctx, args) => {
 		const role = await getRequesterRole({

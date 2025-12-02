@@ -11,12 +11,14 @@ import {
 	useQuery,
 } from "convex/react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { CreateUnitDialog } from "@/components/dashboard/units/create-unit";
 import { ForkUnitDialog } from "@/components/dashboard/units/fork-unit-dialog";
 import { UnitsTable } from "@/components/dashboard/units/units-table";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useSite } from "@/lib/multi-tenant/context";
 
 function DashboardHeaderSkeleton() {
 	return (
@@ -69,16 +71,6 @@ function DashboardContent({
 	courseId: Id<"courses">;
 	subdomain: string;
 }) {
-	const user = useUser();
-	const roleFromClerk = user.user?.publicMetadata?.role;
-	const userRole =
-		typeof roleFromClerk === "string" ? roleFromClerk : undefined;
-
-	const membership = useQuery(api.courseUsers.getMyMembership, {
-		courseId,
-		school: subdomain,
-	});
-
 	const dashboard = useQuery(api.courses.getDashboardSummary, {
 		courseId,
 		school: subdomain,
@@ -110,7 +102,7 @@ function DashboardContent({
 			id: Id<"units">;
 			data: Partial<{ isPublished: boolean }>;
 		}) => {
-			await updateUnit({
+			updateUnit({
 				courseId,
 				school: subdomain,
 				data: { id: payload.id, ...payload.data },
@@ -120,55 +112,19 @@ function DashboardContent({
 	);
 
 	const handleRemoveUnit = useCallback(
-		async (id: Id<"units">) => {
-			await removeUnit({ courseId, id, school: subdomain });
+		(id: Id<"units">) => {
+			removeUnit({ courseId, id, school: subdomain });
 			setSelectedUnitId((prev) => (prev === id ? null : prev));
 		},
 		[removeUnit, courseId, subdomain],
 	);
 
 	const handleReorderUnits = useCallback(
-		async (data: { id: Id<"units">; position: number }[]) => {
-			await reorderUnits({ courseId, data, school: subdomain });
+		(data: { id: Id<"units">; position: number }[]) => {
+			reorderUnits({ courseId, data, school: subdomain });
 		},
 		[reorderUnits, courseId, subdomain],
 	);
-
-	if (!user.isLoaded) {
-		return null;
-	}
-
-	const isLoadingMembership = membership === undefined;
-
-	const isAuthorized =
-		membership?.role === "admin" ||
-		membership?.role === "editor" ||
-		userRole === "admin";
-
-	if (isLoadingMembership) {
-		return (
-			<div className="space-y-6">
-				<DashboardHeaderSkeleton />
-				<UnitsTableSkeleton />
-			</div>
-		);
-	}
-
-	if (!isAuthorized) {
-		return (
-			<div className="mx-auto max-w-xl text-center">
-				<h1 className="mb-2 font-semibold text-2xl">Access denied</h1>
-				<p className="text-muted-foreground">
-					You do not have permission to view this course dashboard.
-				</p>
-				<div className="mt-4">
-					<Link href={`/course/${courseId}`} className="text-primary underline">
-						Back to course
-					</Link>
-				</div>
-			</div>
-		);
-	}
 
 	if (!dashboard || dashboard === undefined) {
 		return (

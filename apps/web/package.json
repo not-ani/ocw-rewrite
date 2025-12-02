@@ -5,7 +5,13 @@
 	"scripts": {
 		"dev": "next dev --port=3001",
 		"build": "next build",
-		"start": "next start"
+		"start": "next start",
+		"test:e2e": "playwright test",
+		"test:e2e:ui": "playwright test --ui",
+		"test:e2e:headed": "playwright test --headed",
+		"test:e2e:debug": "playwright test --debug",
+		"test:e2e:report": "playwright show-report e2e-report",
+		"test:e2e:install": "playwright install"
 	},
 	"dependencies": {
 		"@base-ui-components/react": "1.0.0-beta.4",
@@ -91,6 +97,8 @@
 		"zod": "^4.1.11"
 	},
 	"devDependencies": {
+		"@clerk/testing": "^1.13.19",
+		"@playwright/test": "^1.57.0",
 		"@tailwindcss/postcss": "^4.1.10",
 		"@types/culori": "^4.0.1",
 		"@types/node": "catalog:",

@@ -57,12 +57,12 @@ type Unit = {
 type UnitsTableProps = {
 	units: Unit[];
 	courseId: Id<"courses">;
-	onReorder: (data: { id: Id<"units">; position: number }[]) => Promise<void>;
+	onReorder: (data: { id: Id<"units">; position: number }[]) => void;
 	onUpdateUnit: (payload: {
 		id: Id<"units">;
 		data: Partial<{ isPublished: boolean }>;
-	}) => Promise<void>;
-	onRemoveUnit: (id: Id<"units">) => Promise<void>;
+	}) => void;
+	onRemoveUnit: (id: Id<"units">) => void;
 };
 
 type ConfirmationDialog = {
@@ -83,8 +83,8 @@ function SortableUnitRow({
 	onUpdateUnit: (payload: {
 		id: Id<"units">;
 		data: Partial<{ isPublished: boolean }>;
-	}) => Promise<void>;
-	onRemoveUnit: (id: Id<"units">) => Promise<void>;
+	}) => void;
+	onRemoveUnit: (id: Id<"units">) => void;
 }) {
 	const unit = row.original;
 	const router = useRouter();
@@ -107,7 +107,7 @@ function SortableUnitRow({
 	};
 
 	const handleUnpublish = useCallback(async () => {
-		await onUpdateUnit({
+		onUpdateUnit({
 			id: unit.id,
 			data: { isPublished: false },
 		});

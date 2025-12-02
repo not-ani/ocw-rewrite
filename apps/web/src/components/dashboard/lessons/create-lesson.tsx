@@ -246,6 +246,27 @@ export function CreateLessonForm({
 					)}
 				/>
 
+				<FormField
+					control={form.control}
+					name="isPublished"
+					render={({ field }) => (
+						<FormItem className="flex flex-row items-start space-x-3 space-y-0">
+							<FormControl>
+								<Checkbox
+									checked={field.value}
+									onCheckedChange={field.onChange}
+								/>
+							</FormControl>
+							<div className="space-y-1 leading-none">
+								<FormLabel>Publish lesson</FormLabel>
+								<FormDescription>
+									Make this lesson visible to students
+								</FormDescription>
+							</div>
+						</FormItem>
+					)}
+				/>
+
 				<Button type="submit" disabled={isSubmitting}>
 					{isSubmitting ? (
 						<>
