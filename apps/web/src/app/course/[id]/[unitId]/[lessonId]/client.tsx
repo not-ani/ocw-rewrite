@@ -1,8 +1,9 @@
 "use client";
 
-import { api } from "@ocw/backend/convex/_generated/api";
+import type { api } from "@ocw/backend/convex/_generated/api";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
-import { useQuery } from "convex/react";
+import type { Preloaded } from "convex/react";
+import { usePreloadedQuery } from "convex/react";
 import { HomeIcon } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -213,38 +214,45 @@ function Layout({
 	);
 }
 
-export function LessonPageClient({
-	courseId,
-	lessonId,
-	subdomain,
+function LessonEmbedData({
+	preloadedLesson,
 }: {
-	courseId: Id<"courses">;
-	lessonId: Id<"lessons">;
-	subdomain: string;
+	preloadedLesson: Preloaded<typeof api.lesson.getLessonById>;
 }) {
-	const lesson = useQuery(api.lesson.getLessonById, {
-		id: lessonId,
-		school: subdomain,
-	});
+	const lesson = usePreloadedQuery(preloadedLesson);
 
 	if (lesson === undefined) {
-		return <LessonPageSkeleton />;
+		return <LessonEmbedSkeleton />;
 	}
 
 	if (!lesson) {
-		return <LessonPageSkeleton />;
+		return <LessonEmbedSkeleton />;
 	}
 
+	return (
+		<LessonEmbed
+			contentType={lesson.lesson.contentType}
+			embedId={lesson.embed.embedUrl}
+			password={lesson.embed.password ?? null}
+			pdfUrl={lesson.lesson.pdfUrl ?? null}
+		/>
+	);
+}
+
+export function LessonPageClient({
+	courseId,
+	subdomain,
+	preloadedLesson,
+}: {
+	courseId: Id<"courses">;
+	subdomain: string;
+	preloadedLesson: Preloaded<typeof api.lesson.getLessonById>;
+}) {
 	return (
 		<Layout courseId={courseId} subdomain={subdomain}>
 			<main className="h-min-screen w-full">
 				<Suspense fallback={<LessonEmbedSkeleton />}>
-					<LessonEmbed
-						contentType={lesson.lesson.contentType}
-						embedId={lesson.embed.embedUrl}
-						password={lesson.embed.password ?? null}
-						pdfUrl={lesson.lesson.pdfUrl ?? null}
-					/>
+					<LessonEmbedData preloadedLesson={preloadedLesson} />
 				</Suspense>
 			</main>
 		</Layout>

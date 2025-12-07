@@ -18,7 +18,7 @@ import { CSS } from "@dnd-kit/utilities";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { GripVerticalIcon, MoreHorizontalIcon, TrashIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { memo, useCallback, useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -230,7 +230,7 @@ function SortableUnitRow({
 	);
 }
 
-export function UnitsTable({
+export const UnitsTable = memo(function UnitsTable({
 	units,
 	courseId,
 	onReorder,
@@ -347,4 +347,4 @@ export function UnitsTable({
 			</SortableContext>
 		</DndContext>
 	);
-}
+});

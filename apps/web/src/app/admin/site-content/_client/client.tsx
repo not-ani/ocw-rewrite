@@ -33,12 +33,15 @@ function SiteContentClientContent({ school }: SiteContentClientProps) {
 	const siteConfig = useQuery(api.site.getSiteConfig, {
 		school,
 	});
+	const contributors = useQuery(api.site.getContributors, {
+		school,
+	});
 
 	if (!user?.isSiteAdmin) {
 		router.push("/");
 	}
 
-	if (siteConfig === undefined) {
+	if (siteConfig === undefined || contributors === undefined) {
 		return (
 			<div className="flex items-center justify-center p-8">
 				<Loader2 className="h-8 w-8 animate-spin" />
@@ -88,7 +91,7 @@ function SiteContentClientContent({ school }: SiteContentClientProps) {
 
 			<ContributorsCard
 				school={siteConfig.school}
-				contributors={siteConfig.contributors || []}
+				contributors={contributors || []}
 			/>
 
 			<ContactPersonsCard

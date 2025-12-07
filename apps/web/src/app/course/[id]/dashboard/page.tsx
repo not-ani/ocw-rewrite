@@ -1,6 +1,6 @@
 import { api } from "@ocw/backend/convex/_generated/api";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
-import { fetchQuery } from "convex/nextjs";
+import { fetchQuery, preloadQuery } from "convex/nextjs";
 import type { Metadata } from "next";
 import { checkAdminOrEditorPermission, getAuthToken } from "@/lib/auth";
 import { isValidConvexId } from "@/lib/convex-utils";
@@ -74,7 +74,37 @@ export default async function Dashboard({
 	}
 
 	await checkAdminOrEditorPermission(id as Id<"courses">, subdomain);
+
+	const token = await getAuthToken();
+	const courseId = id as Id<"courses">;
+
+	// Preload dashboard data
+	const [preloadedDashboard, preloadedUnits] = await Promise.all([
+		preloadQuery(
+			api.courses.getDashboardSummary,
+			{
+				courseId,
+				school: subdomain,
+				userRole: undefined,
+			},
+			{ token },
+		),
+		preloadQuery(
+			api.units.getTableData,
+			{
+				courseId,
+				school: subdomain,
+			},
+			{ token },
+		),
+	]);
+
 	return (
-		<DashboardPageClient courseId={id as Id<"courses">} subdomain={subdomain} />
+		<DashboardPageClient
+			courseId={courseId}
+			subdomain={subdomain}
+			preloadedDashboard={preloadedDashboard}
+			preloadedUnits={preloadedUnits}
+		/>
 	);
 }

@@ -1,7 +1,7 @@
 "use client";
 
 import { api } from "@ocw/backend/convex/_generated/api";
-import { useQuery } from "convex/react";
+import { usePreloadedQuery, useQuery, type Preloaded } from "convex/react";
 import type { FunctionReturnType } from "convex/server";
 import type React from "react";
 import { createContext, useContext, useMemo } from "react";
@@ -26,16 +26,17 @@ export const SiteContext = createContext<SiteContextType>(defaultContextValue);
 export const SiteContextProvider = ({
 	children,
 	subdomain,
+	initialSiteConfig,
 }: {
 	children: React.ReactNode;
 	subdomain: string | null;
+	initialSiteConfig: Preloaded<typeof api.site.getSiteConfig>;
 }) => {
 	// We skip the query if subdomain is null, but the hook usage order remains constant
 	const shouldSkip = !subdomain;
 
-	const siteConfig = useQuery(
-		api.site.getSiteConfig,
-		shouldSkip ? "skip" : { school: subdomain },
+	const siteConfig = usePreloadedQuery(
+		initialSiteConfig,
 	);
 
 	const user = useQuery(
@@ -43,9 +44,10 @@ export const SiteContextProvider = ({
 		shouldSkip ? "skip" : { school: subdomain },
 	);
 
+
 	const contextValue = useMemo(
 		() => ({
-			siteConfig: siteConfig ?? null,
+			siteConfig: siteConfig,
 			subdomain: subdomain ?? "",
 			user: user ? { isSiteAdmin: user.role === "admin" } : undefined,
 		}),

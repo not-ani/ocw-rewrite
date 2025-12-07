@@ -9,7 +9,7 @@ export function HeroSection() {
 		<section className="relative h-[38vh]">
 			<div className="container relative z-auto mx-auto flex flex-col gap-5 px-4 text-center">
 				<h2 className="mb-8 font-extrabold text-4xl text-foreground sm:text-5xl lg:text-6xl">
-					{siteConfig?.schoolName} OpenCourseWare
+					{siteConfig?.schoolName ?? "OpenCourseWare"} OpenCourseWare
 				</h2>
 				<div className="flex flex-col items-center justify-center space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
 					<Button size="lg" className="" asChild>

@@ -3,7 +3,7 @@ import { NuqsAdapter } from "nuqs/adapters/next/app";
 import "../index.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { api } from "@ocw/backend/convex/_generated/api";
-import { fetchQuery } from "convex/nextjs";
+import { fetchQuery, preloadQuery} from "convex/nextjs";
 import type { Metadata } from "next";
 // Add headers import
 import { headers } from "next/headers";
@@ -81,6 +81,9 @@ export default async function RootLayout({
 }>) {
 	const subdomain = await extractSubdomain();
 
+	const siteDataPrefetched = await preloadQuery(api.site.getSiteConfig, {
+		school: subdomain ?? "www",
+	});
 	return (
 		<html lang="en" suppressHydrationWarning>
 			<body
@@ -90,7 +93,10 @@ export default async function RootLayout({
 					<Providers>
 						<div className="grid h-screen grid-rows-[auto_1fr] bg-background">
 							<NuqsAdapter>
-								<SiteContextProvider subdomain={subdomain}>
+								<SiteContextProvider
+									initialSiteConfig={siteDataPrefetched}
+									subdomain={subdomain}
+								>
 									{children}
 									<PostHogIdentify />
 								</SiteContextProvider>

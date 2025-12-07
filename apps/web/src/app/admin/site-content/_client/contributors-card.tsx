@@ -2,7 +2,8 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { api } from "@ocw/backend/convex/_generated/api";
-import { useMutation } from "convex/react";
+import type { Id } from "@ocw/backend/convex/_generated/dataModel";
+import { useMutation, useQuery } from "convex/react";
 import { Check, Pencil, Plus, Trash2, X } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
@@ -26,7 +27,16 @@ import {
 	TableRow,
 } from "@/components/ui/table";
 import { Textarea } from "@/components/ui/textarea";
-import type { Contributor } from "./types";
+
+type Contributor = {
+	_id: Id<"contributors">;
+	school: string;
+	name: string;
+	role: string;
+	avatar: string;
+	description: string;
+	order: number;
+};
 
 const contributorSchema = z.object({
 	name: z.string().min(1, "Name is required"),
@@ -46,12 +56,14 @@ export function ContributorsCard({
 	school,
 	contributors,
 }: ContributorsCardProps) {
-	const [editingIndex, setEditingIndex] = useState<number | null>(null);
+	const [editingId, setEditingId] = useState<Id<"contributors"> | null>(null);
 	const [editingContributor, setEditingContributor] =
 		useState<Contributor | null>(null);
 	const [isAddingNew, setIsAddingNew] = useState(false);
 
-	const updateContributors = useMutation(api.site.updateContributors);
+	const createContributor = useMutation(api.site.createContributor);
+	const updateContributor = useMutation(api.site.updateContributor);
+	const deleteContributor = useMutation(api.site.deleteContributor);
 
 	const newContributorForm = useForm<ContributorFormValues>({
 		resolver: zodResolver(contributorSchema),
@@ -63,25 +75,29 @@ export function ContributorsCard({
 		},
 	});
 
-	const handleStartEdit = (index: number) => {
-		setEditingIndex(index);
-		setEditingContributor({ ...contributors[index] });
+	const handleStartEdit = (contributor: Contributor) => {
+		setEditingId(contributor._id);
+		setEditingContributor({ ...contributor });
 	};
 
 	const handleCancelEdit = () => {
-		setEditingIndex(null);
+		setEditingId(null);
 		setEditingContributor(null);
 	};
 
 	const handleSaveEdit = async () => {
-		if (editingIndex === null || !editingContributor) return;
+		if (editingId === null || !editingContributor) return;
 
 		try {
-			const updated = [...contributors];
-			updated[editingIndex] = editingContributor;
-			await updateContributors({ school, contributors: updated });
+			await updateContributor({
+				contributorId: editingId,
+				name: editingContributor.name,
+				role: editingContributor.role,
+				avatar: editingContributor.avatar,
+				description: editingContributor.description,
+			});
 			toast.success("Contributor updated successfully");
-			setEditingIndex(null);
+			setEditingId(null);
 			setEditingContributor(null);
 		} catch (error) {
 			toast.error("Failed to update contributor");
@@ -90,7 +106,7 @@ export function ContributorsCard({
 	};
 
 	const handleUpdateEditingContributor = (
-		field: keyof Contributor,
+		field: keyof Pick<Contributor, "name" | "role" | "avatar" | "description">,
 		value: string,
 	) => {
 		if (!editingContributor) return;
@@ -104,17 +120,12 @@ export function ContributorsCard({
 
 	const handleSaveNewContributor = async (values: ContributorFormValues) => {
 		try {
-			await updateContributors({
+			await createContributor({
 				school,
-				contributors: [
-					...contributors,
-					{
-						name: values.name,
-						role: values.role,
-						avatar: values.avatar || "",
-						description: values.description || "",
-					},
-				],
+				name: values.name,
+				role: values.role,
+				avatar: values.avatar || "",
+				description: values.description || "",
 			});
 			toast.success("Contributor added successfully");
 			setIsAddingNew(false);
@@ -130,10 +141,9 @@ export function ContributorsCard({
 		newContributorForm.reset();
 	};
 
-	const handleDeleteContributor = async (index: number) => {
+	const handleDeleteContributor = async (contributorId: Id<"contributors">) => {
 		try {
-			const updated = contributors.filter((_, i) => i !== index);
-			await updateContributors({ school, contributors: updated });
+			await deleteContributor({ contributorId });
 			toast.success("Contributor deleted successfully");
 		} catch (error) {
 			toast.error("Failed to delete contributor");
@@ -169,10 +179,10 @@ export function ContributorsCard({
 						</TableRow>
 					</TableHeader>
 					<TableBody>
-						{contributors.map((contributor, index) => (
-							<TableRow key={index}>
+						{contributors.map((contributor) => (
+							<TableRow key={contributor._id}>
 								<TableCell>
-									{editingIndex === index && editingContributor ? (
+									{editingId === contributor._id && editingContributor ? (
 										<Input
 											value={editingContributor.name}
 											onChange={(e) =>
@@ -184,7 +194,7 @@ export function ContributorsCard({
 									)}
 								</TableCell>
 								<TableCell>
-									{editingIndex === index && editingContributor ? (
+									{editingId === contributor._id && editingContributor ? (
 										<Input
 											value={editingContributor.role}
 											onChange={(e) =>
@@ -196,7 +206,7 @@ export function ContributorsCard({
 									)}
 								</TableCell>
 								<TableCell>
-									{editingIndex === index && editingContributor ? (
+									{editingId === contributor._id && editingContributor ? (
 										<Input
 											value={editingContributor.avatar}
 											onChange={(e) =>
@@ -210,7 +220,7 @@ export function ContributorsCard({
 									)}
 								</TableCell>
 								<TableCell>
-									{editingIndex === index && editingContributor ? (
+									{editingId === contributor._id && editingContributor ? (
 										<Textarea
 											value={editingContributor.description}
 											onChange={(e) =>
@@ -227,7 +237,7 @@ export function ContributorsCard({
 								</TableCell>
 								<TableCell>
 									<div className="flex gap-2">
-										{editingIndex === index ? (
+										{editingId === contributor._id ? (
 											<>
 												<Button
 													size="icon"
@@ -249,14 +259,14 @@ export function ContributorsCard({
 												<Button
 													size="icon"
 													variant="ghost"
-													onClick={() => handleStartEdit(index)}
+													onClick={() => handleStartEdit(contributor)}
 												>
 													<Pencil className="h-4 w-4" />
 												</Button>
 												<Button
 													size="icon"
 													variant="ghost"
-													onClick={() => handleDeleteContributor(index)}
+													onClick={() => handleDeleteContributor(contributor._id)}
 												>
 													<Trash2 className="h-4 w-4" />
 												</Button>

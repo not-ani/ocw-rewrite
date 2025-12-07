@@ -34,6 +34,9 @@ export default async function WritersTable() {
 	const siteConfig = await fetchQuery(api.site.getSiteConfig, {
 		school: subdomain,
 	});
+	const contributors = await fetchQuery(api.site.getContributors, {
+		school: subdomain,
+	});
 
-	return <WritersTableClient siteConfig={siteConfig} />;
+	return <WritersTableClient siteConfig={siteConfig} contributors={contributors} />;
 }

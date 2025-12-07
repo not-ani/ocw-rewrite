@@ -193,11 +193,29 @@ const creekContributors = [
 export const siteConfigMigration = migrations.define({
 	table: "siteConfig",
 	migrateOne: async (ctx, doc) => {
-		if (doc.contributors !== undefined) return;
+		// Check if contributors already exist in the new table
+		const existingContributors = await ctx.db
+			.query("contributors")
+			.withIndex("by_school", (q) => q.eq("school", doc.school))
+			.first();
+
+		// Skip if contributors already exist in the new table
+		if (existingContributors !== undefined) return;
 
 		if (doc.school === "creek") {
+			// Insert contributors into the new table
+			for (let i = 0; i < creekContributors.length; i++) {
+				await ctx.db.insert("contributors", {
+					school: doc.school,
+					name: creekContributors[i].name,
+					role: creekContributors[i].role,
+					avatar: creekContributors[i].avatar,
+					description: creekContributors[i].description,
+					order: i,
+				});
+			}
+
 			await ctx.db.patch(doc._id, {
-				contributors: creekContributors,
 				personsContact: [
 					{
 						name: "Aniketh Chenjeri",
@@ -220,16 +238,18 @@ export const siteConfigMigration = migrations.define({
 			});
 		}
 		if (doc.school === "grandview") {
+			// Insert contributors into the new table
+			await ctx.db.insert("contributors", {
+				school: doc.school,
+				name: "Kaushik Vukanti",
+				role: "Director of Content",
+				avatar: defaultPhoto,
+				description:
+					"Kaushik is the Director of Content and leads our content efforts at Grandview High School",
+				order: 0,
+			});
+
 			await ctx.db.patch(doc._id, {
-				contributors: [
-					{
-						name: "Kaushik Vukanti",
-						role: "Director of Content",
-						avatar: defaultPhoto,
-						description:
-							"Kaushik is the Director of Content and leads our content efforts at Grandview High School",
-					},
-				],
 				siteContributeLink: "https://forms.gle/ee99ZcrpxHN3FDpF9",
 				club: {
 					name: "CS4CO Grandview",
@@ -246,16 +266,18 @@ export const siteConfigMigration = migrations.define({
 			});
 		}
 		if (doc.school === "ct") {
+			// Insert contributors into the new table
+			await ctx.db.insert("contributors", {
+				school: doc.school,
+				name: "Girish Verma",
+				role: "Director of Content",
+				avatar: defaultPhoto,
+				description:
+					"Girish is the Director of Content and leads our content efforts at CT High School",
+				order: 0,
+			});
+
 			await ctx.db.patch(doc._id, {
-				contributors: [
-					{
-						name: "Girish Verma",
-						role: "Director of Content",
-						avatar: defaultPhoto,
-						description:
-							"Girish is the Director of Content and leads our content efforts at CT High School",
-					},
-				],
 				siteContributeLink: "https://forms.gle/1553NJdhy8CGeXNcA",
 				personsContact: [
 					{
@@ -298,4 +320,45 @@ export const setCorrectEmbedType = migrations.define({
 
 export const runSetCorrectEmbedType = migrations.runner(
 	internal.migrations.setCorrectEmbedType,
+);
+
+export const migrateContributorsToSeparateTable = migrations.define({
+	table: "siteConfig",
+	migrateOne: async (ctx, doc) => {
+		// Type assertion to access old contributors field that may exist in old data
+		const docWithContributors = doc
+
+		if (docWithContributors?.contributors === undefined) return;
+		// Get existing contributors for this school to determine next order value
+		const existingContributors = await ctx.db
+			.query("contributors")
+			.withIndex("by_school", (q) => q.eq("school", doc.school))
+			.collect();
+
+		const maxOrder =
+			existingContributors.length > 0
+				? Math.max(...existingContributors.map((c) => c.order))
+				: -1;
+
+		// Create contributor records
+		for (let i = 0; i < docWithContributors?.contributors?.length; i++) {
+			const contributor = docWithContributors?.contributors?.[i];
+			await ctx.db.insert("contributors", {
+				school: doc.school,
+				name: contributor.name,
+				role: contributor.role,
+				avatar: contributor.avatar,
+				description: contributor.description,
+				order: maxOrder + 1 + i,
+			});
+		}
+
+		// Note: We don't need to remove contributors from siteConfig here
+		// as it's already been removed from the schema. The migration will
+		// just move the data to the new table.
+	},
+});
+
+export const runMigrateContributorsToSeparateTable = migrations.runner(
+	internal.migrations.migrateContributorsToSeparateTable,
 );

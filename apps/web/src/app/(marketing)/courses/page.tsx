@@ -1,8 +1,9 @@
 import { api } from "@ocw/backend/convex/_generated/api";
-import { fetchQuery } from "convex/nextjs";
+import { fetchQuery, preloadQuery } from "convex/nextjs";
 import type { Metadata } from "next";
 import { Suspense } from "react";
 import { extractSubdomain } from "@/lib/multi-tenant/server";
+import { COURSES_PER_PAGE } from "./constants";
 import { CoursesPage } from "./client";
 
 export async function generateMetadata(): Promise<Metadata> {
@@ -32,9 +33,16 @@ export default async function Page() {
 		return <div>No subdomain found</div>;
 	}
 
-	return (
-		<Suspense>
-			<CoursesPage subdomain={subdomain} />
-		</Suspense>
+	// Preload initial courses data (page 1, no search)
+	const preloadedCourses = await preloadQuery(
+		api.courses.getPaginatedCourses,
+		{
+			page: 1,
+			search: "",
+			limit: COURSES_PER_PAGE,
+			school: subdomain,
+		},
 	);
+
+	return <CoursesPage subdomain={subdomain} preloadedCourses={preloadedCourses} />;
 }

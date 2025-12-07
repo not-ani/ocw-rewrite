@@ -1,7 +1,7 @@
 import { ConvexError, v } from "convex/values";
 import { internal } from "./_generated/api";
 import { internalMutation, mutation, query } from "./_generated/server";
-import { assertEditorOrAdmin, getRequesterRole } from "./permissions";
+import { courseMutation } from "./auth";
 
 // Internal mutation for logging - called via scheduler to ensure it runs after the main mutation
 export const logLessonAction = internalMutation({
@@ -248,27 +248,23 @@ export const searchByCourse = query({
 	},
 });
 
-export const create = mutation({
+export const create = courseMutation("editor")({
 	args: {
-		courseId: v.id("courses"),
 		unitId: v.id("units"),
 		name: v.string(),
 		embedRaw: v.optional(v.string()),
 		pdfUrl: v.optional(v.string()),
 		pureLink: v.optional(v.boolean()),
+		courseId: v.id("courses"),
 		school: v.string(),
 		isPublished: v.optional(v.boolean()),
 	},
 	handler: async (ctx, args) => {
-		const role = await getRequesterRole({
-			ctx,
-			courseId: args.courseId,
-			school: args.school,
-		});
-		assertEditorOrAdmin(role);
-
-		const identity = await ctx.auth.getUserIdentity();
-		const userId = identity?.tokenIdentifier ?? "unknown";
+		// Verify unit belongs to the course
+		const unit = await ctx.db.get(args.unitId);
+		if (!unit || unit.courseId !== ctx.courseId) {
+			throw new ConvexError("Unit not found or does not belong to course");
+		}
 
 		const existing = await ctx.db
 			.query("lessons")
@@ -299,55 +295,10 @@ export const create = mutation({
 				school: args.school,
 			});
 
-			// Schedule log after mutation completes
-			await ctx.scheduler.runAfter(0, internal.lesson.logLessonAction, {
-				userId,
-				courseId: args.courseId,
-				unitId: args.unitId,
-				lessonId,
-				action: "CREATE_LESSON",
-				school: args.school,
-			});
-
-			return lessonId;
-		}
-
-		// Handle embed-based content
-		const detected = args.embedRaw ? detectEmbed(args.embedRaw) : null;
-
-		const lessonId = await ctx.db.insert("lessons", {
-			order,
-			isPublished: false,
-			pureLink: args.pureLink ?? true,
-			contentType: detected?.contentType ?? "other",
-			courseId: args.courseId,
-			unitId: args.unitId,
-			name: args.name,
-			content: undefined,
-			school: args.school,
-		});
-
-		if (detected?.embedUrl) {
-			await ctx.db.insert("lessonEmbeds", {
-				lessonId,
-				embedUrl: detected.embedUrl,
-				password: undefined,
-				school: args.school,
-			});
-		} else {
-			// Create empty embed entry for consistency
-			await ctx.db.insert("lessonEmbeds", {
-				lessonId,
-				embedUrl: "",
-				password: undefined,
-				school: args.school,
-			});
-		}
-
 		// Schedule log after mutation completes
 		await ctx.scheduler.runAfter(0, internal.lesson.logLessonAction, {
-			userId,
-			courseId: args.courseId,
+			userId: ctx.user.userId,
+			courseId: ctx.courseId,
 			unitId: args.unitId,
 			lessonId,
 			action: "CREATE_LESSON",
@@ -355,12 +306,56 @@ export const create = mutation({
 		});
 
 		return lessonId;
+	}
+
+	// Handle embed-based content
+	const detected = args.embedRaw ? detectEmbed(args.embedRaw) : null;
+
+	const lessonId = await ctx.db.insert("lessons", {
+		order,
+		isPublished: false,
+		pureLink: args.pureLink ?? true,
+		contentType: detected?.contentType ?? "other",
+		courseId: ctx.courseId,
+		unitId: args.unitId,
+		name: args.name,
+		content: undefined,
+		school: args.school,
+	});
+
+	if (detected?.embedUrl) {
+		await ctx.db.insert("lessonEmbeds", {
+			lessonId,
+			embedUrl: detected.embedUrl,
+			password: undefined,
+			school: args.school,
+		});
+	} else {
+		// Create empty embed entry for consistency
+		await ctx.db.insert("lessonEmbeds", {
+			lessonId,
+			embedUrl: "",
+			password: undefined,
+			school: args.school,
+		});
+	}
+
+	// Schedule log after mutation completes
+	await ctx.scheduler.runAfter(0, internal.lesson.logLessonAction, {
+		userId: ctx.user.userId,
+		courseId: ctx.courseId,
+		unitId: args.unitId,
+		lessonId,
+		action: "CREATE_LESSON",
+		school: args.school,
+	});
+
+		return lessonId;
 	},
 });
 
-export const update = mutation({
+export const update = courseMutation("editor")({
 	args: {
-		courseId: v.id("courses"),
 		data: v.object({
 			id: v.id("lessons"),
 			name: v.optional(v.string()),
@@ -381,23 +376,19 @@ export const update = mutation({
 			pdfUrl: v.optional(v.union(v.string(), v.null())),
 			pureLink: v.optional(v.boolean()),
 		}),
+		courseId: v.id("courses"),
 		school: v.string(),
 	},
 	handler: async (ctx, args) => {
-		const role = await getRequesterRole({
-			ctx,
-			courseId: args.courseId,
-			school: args.school,
-		});
-		assertEditorOrAdmin(role);
-
-		const identity = await ctx.auth.getUserIdentity();
-		const userId = identity?.tokenIdentifier ?? "unknown";
-
 		const lesson = await ctx.db.get(args.data.id);
 
 		if (!lesson) {
-			throw new Error("Lesson not found");
+			throw new ConvexError("Lesson not found");
+		}
+
+		// Verify lesson belongs to the course
+		if (lesson.courseId !== ctx.courseId) {
+			throw new ConvexError("Lesson does not belong to this course");
 		}
 
 		await ctx.db.patch(args.data.id, {
@@ -419,8 +410,8 @@ export const update = mutation({
 
 		// Schedule log after mutation completes
 		await ctx.scheduler.runAfter(0, internal.lesson.logLessonAction, {
-			userId,
-			courseId: lesson.courseId,
+			userId: ctx.user.userId,
+			courseId: ctx.courseId,
 			unitId: lesson.unitId,
 			lessonId: args.data.id,
 			action: "UPDATE_LESSON",
@@ -429,23 +420,19 @@ export const update = mutation({
 	},
 });
 
-export const reorder = mutation({
+export const reorder = courseMutation("editor")({
 	args: {
-		courseId: v.id("courses"),
 		unitId: v.id("units"),
 		data: v.array(v.object({ id: v.id("lessons"), position: v.number() })),
+		courseId: v.id("courses"),
 		school: v.string(),
 	},
 	handler: async (ctx, args) => {
-		const role = await getRequesterRole({
-			ctx,
-			courseId: args.courseId,
-			school: args.school,
-		});
-		assertEditorOrAdmin(role);
-
-		const identity = await ctx.auth.getUserIdentity();
-		const userId = identity?.tokenIdentifier ?? "unknown";
+		// Verify unit belongs to the course
+		const unit = await ctx.db.get(args.unitId);
+		if (!unit || unit.courseId !== ctx.courseId) {
+			throw new ConvexError("Unit not found or does not belong to course");
+		}
 
 		for (const item of args.data) {
 			const lesson = await ctx.db.get(item.id);
@@ -460,8 +447,8 @@ export const reorder = mutation({
 
 		// Schedule log after mutation completes
 		await ctx.scheduler.runAfter(0, internal.lesson.logLessonAction, {
-			userId,
-			courseId: args.courseId,
+			userId: ctx.user.userId,
+			courseId: ctx.courseId,
 			unitId: args.unitId,
 			action: "REORDER_LESSON",
 			school: args.school,
@@ -469,26 +456,26 @@ export const reorder = mutation({
 	},
 });
 
-export const remove = mutation({
-	args: { courseId: v.id("courses"), id: v.id("lessons"), school: v.string() },
+export const remove = courseMutation("editor")({
+	args: { 
+		id: v.id("lessons"),
+		courseId: v.id("courses"), 
+		school: v.string() 
+	},
 	handler: async (ctx, args) => {
-		const role = await getRequesterRole({
-			ctx,
-			courseId: args.courseId,
-			school: args.school,
-		});
-		assertEditorOrAdmin(role);
-
-		const identity = await ctx.auth.getUserIdentity();
-		const userId = identity?.tokenIdentifier ?? "unknown";
 
 		const lesson = await ctx.db.get(args.id);
 		if (!lesson) {
-			throw new Error("Lesson not found");
+			throw new ConvexError("Lesson not found");
+		}
+
+		// Verify lesson belongs to the course
+		if (lesson.courseId !== ctx.courseId) {
+			throw new ConvexError("Lesson does not belong to this course");
 		}
 
 		// Store lesson info before deletion for logging
-		const { courseId, unitId } = lesson;
+		const { unitId } = lesson;
 
 		await ctx.db.delete(args.id);
 
@@ -506,8 +493,8 @@ export const remove = mutation({
 
 		// Schedule log after mutation completes
 		await ctx.scheduler.runAfter(0, internal.lesson.logLessonAction, {
-			userId,
-			courseId,
+			userId: ctx.user.userId,
+			courseId: ctx.courseId,
 			unitId,
 			lessonId: args.id,
 			action: "DELETE_LESSON",

@@ -1,37 +1,14 @@
-import { v } from "convex/values";
-import { mutation, type QueryCtx, query } from "./_generated/server";
-
-/**
- * Check if the current user is a site admin
- */
-async function assertSiteAdmin(ctx: QueryCtx, args: { school: string }) {
-	const identity = await ctx.auth.getUserIdentity();
-
-	if (!identity) {
-		throw new Error("Not authenticated");
-	}
-
-	const siteUser = await ctx.db
-		.query("siteUser")
-		.withIndex("by_user_id_and_school", (q) =>
-			q.eq("userId", identity.tokenIdentifier).eq("school", args.school),
-		)
-		.unique();
-
-	if (!siteUser || siteUser.role !== "admin") {
-		throw new Error("Not authorized - site admin access required");
-	}
-
-	return identity;
-}
+import { ConvexError, v } from "convex/values";
+import { siteAdminMutation, siteAdminQuery } from "./auth";
+import { query } from "./_generated/server";
 
 /**
  * Get all courses for site admin dashboard
+ * Requires site admin access.
  */
-export const getAllCourses = query({
+export const getAllCourses = siteAdminQuery({
 	args: { school: v.string() },
 	handler: async (ctx, args) => {
-		await assertSiteAdmin(ctx, args);
 
 		const courses = await ctx.db
 			.query("courses")
@@ -44,15 +21,15 @@ export const getAllCourses = query({
 
 /**
  * Update course publish status
+ * Requires site admin access.
  */
-export const updateCourseStatus = mutation({
+export const updateCourseStatus = siteAdminMutation({
 	args: {
 		courseId: v.id("courses"),
 		isPublic: v.boolean(),
 		school: v.string(),
 	},
 	handler: async (ctx, args) => {
-		await assertSiteAdmin(ctx, args);
 
 		await ctx.db.patch(args.courseId, {
 			isPublic: args.isPublic,
@@ -64,11 +41,11 @@ export const updateCourseStatus = mutation({
 
 /**
  * Get all site admins
+ * Requires site admin access.
  */
-export const getAllSiteAdmins = query({
+export const getAllSiteAdmins = siteAdminQuery({
 	args: { school: v.string() },
 	handler: async (ctx, args) => {
-		await assertSiteAdmin(ctx, args);
 
 		const admins = await ctx.db
 			.query("siteUser")
@@ -81,14 +58,14 @@ export const getAllSiteAdmins = query({
 
 /**
  * Add a site admin
+ * Requires site admin access.
  */
-export const addSiteAdmin = mutation({
+export const addSiteAdmin = siteAdminMutation({
 	args: {
 		userId: v.string(),
 		school: v.string(),
 	},
 	handler: async (ctx, args) => {
-		await assertSiteAdmin(ctx, args);
 
 		// Check if user is already an admin
 		const existing = await ctx.db
@@ -114,18 +91,19 @@ export const addSiteAdmin = mutation({
 
 /**
  * Remove a site admin
+ * Requires site admin access.
+ * 
+ * Bespoke authorization: Users cannot remove themselves as admins.
  */
-export const removeSiteAdmin = mutation({
+export const removeSiteAdmin = siteAdminMutation({
 	args: {
 		userId: v.string(),
 		school: v.string(),
 	},
 	handler: async (ctx, args) => {
-		const identity = await assertSiteAdmin(ctx, args);
-
-		// Prevent removing yourself
-		if (identity.tokenIdentifier === args.userId) {
-			throw new Error("Cannot remove yourself as an admin");
+		// Prevent removing yourself - endpoint-specific authorization
+		if (ctx.user.userId === args.userId) {
+			throw new ConvexError("Cannot remove yourself as an admin");
 		}
 
 		const siteUser = await ctx.db
@@ -170,8 +148,9 @@ export const isSiteAdmin = query({
 
 /**
  * Create a new course
+ * Requires site admin access.
  */
-export const createCourse = mutation({
+export const createCourse = siteAdminMutation({
 	args: {
 		name: v.string(),
 		description: v.string(),
@@ -181,7 +160,6 @@ export const createCourse = mutation({
 		school: v.string(),
 	},
 	handler: async (ctx, args) => {
-		await assertSiteAdmin(ctx, args);
 
 		const courseId = await ctx.db.insert("courses", {
 			name: args.name,

@@ -3,7 +3,7 @@ import { api } from "@ocw/backend/convex/_generated/api";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { useParams } from "next/navigation";
-import { cache } from "react";
+import { cache, useMemo } from "react";
 import {
 	Breadcrumb,
 	BreadcrumbItem,
@@ -35,6 +35,11 @@ export const BreadcrumbCourse = ({
 		school: subdomain,
 	});
 
+	const currentLesson = useMemo(
+		() => (data && data.length > 0 ? getCurrentLesson(data, lessonId) : null),
+		[data, lessonId],
+	);
+
 	if (!data || data.length === 0) {
 		return (
 			<div className="flex items-center gap-2">
@@ -44,8 +49,6 @@ export const BreadcrumbCourse = ({
 			</div>
 		);
 	}
-
-	const currentLesson = getCurrentLesson(data, lessonId);
 
 	return (
 		<div>

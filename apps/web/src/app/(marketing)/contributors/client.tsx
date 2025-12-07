@@ -5,15 +5,25 @@ import { useState } from "react";
 
 type SiteConfig = {
 	schoolName: string;
-	contributors?: {
-		name: string;
-		role: string;
-		avatar: string;
-		description: string;
-	}[];
 } | null;
 
-export function WritersTableClient({ siteConfig }: { siteConfig: SiteConfig }) {
+type Contributor = {
+	_id: string;
+	school: string;
+	name: string;
+	role: string;
+	avatar: string;
+	description: string;
+	order: number;
+};
+
+export function WritersTableClient({
+	siteConfig,
+	contributors,
+}: {
+	siteConfig: SiteConfig;
+	contributors?: Contributor[];
+}) {
 	const [expandedId, setExpandedId] = useState<string | null>(null);
 
 	const handleRowClick = (id: string) => {
@@ -42,8 +52,8 @@ export function WritersTableClient({ siteConfig }: { siteConfig: SiteConfig }) {
 					</div>
 
 					<div className="divide-y divide-gray-100">
-						{siteConfig?.contributors?.map((writer) => (
-							<div className="group relative" key={writer.name}>
+						{contributors?.map((writer) => (
+							<div className="group relative" key={writer._id}>
 								<button
 									aria-expanded={expandedId === writer.name}
 									type="button"

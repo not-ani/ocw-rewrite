@@ -1,8 +1,8 @@
-import { v } from "convex/values";
+import { ConvexError, v } from "convex/values";
 import type { Doc, Id } from "./_generated/dataModel";
 import type { QueryCtx } from "./_generated/server";
-import { mutation, query } from "./_generated/server";
-import { assertEditorOrAdmin, getRequesterRole } from "./permissions";
+import { query } from "./_generated/server";
+import { courseQuery, siteAdminMutation } from "./auth";
 
 export const getPaginatedCourses = query({
 	args: {
@@ -339,34 +339,27 @@ export const getCourseWithUnitsAndLessons = query({
 	},
 });
 
-export const getDashboardSummary = query({
+export const getDashboardSummary = courseQuery("editor")({
 	args: {
 		courseId: v.id("courses"),
 		userRole: v.optional(v.string()),
 		school: v.string(),
 	},
 	handler: async (ctx, args) => {
-		const course = await ctx.db.get(args.courseId);
+		const course = await ctx.db.get(ctx.courseId);
 
 		if (!course) {
-			throw new Error("Course not found");
+			throw new ConvexError("Course not found");
 		}
-
-		const role = await getRequesterRole({
-			ctx,
-			courseId: args.courseId,
-			school: args.school,
-		});
-		assertEditorOrAdmin(role);
 
 		const units = await ctx.db
 			.query("units")
-			.withIndex("by_course_id", (q) => q.eq("courseId", course._id))
+			.withIndex("by_course_id", (q) => q.eq("courseId", ctx.courseId))
 			.collect();
 
 		const lessons = await ctx.db
 			.query("lessons")
-			.withIndex("by_course_id", (q) => q.eq("courseId", course._id))
+			.withIndex("by_course_id", (q) => q.eq("courseId", ctx.courseId))
 			.collect();
 
 		const publishedUnits = units.filter((u) => u.isPublished).length;
@@ -375,7 +368,7 @@ export const getDashboardSummary = query({
 		const last10Logs = await ctx.db
 			.query("logs")
 			.withIndex("by_course_id_and_school", (q) =>
-				q.eq("courseId", course._id).eq("school", args.school),
+				q.eq("courseId", ctx.courseId).eq("school", args.school),
 			)
 			.order("desc")
 			.take(10);
@@ -402,26 +395,28 @@ export const getDashboardSummary = query({
 	},
 });
 
-export const getSidebarData = query({
+export const getSidebarData = courseQuery("user")({
 	args: { courseId: v.id("courses"), school: v.string() },
-	handler: async (ctx, args) => {
-		const course = await ctx.db.get(args.courseId);
+	handler: async (ctx) => {
+		const course = await ctx.db.get(ctx.courseId);
 		if (!course) {
 			return [];
 		}
 
 		const units = await ctx.db
 			.query("units")
-			.withIndex("by_course_id", (q) => q.eq("courseId", args.courseId))
-			.filter((q) => q.eq(q.field("isPublished"), true))
+			.withIndex("by_course_id_and_is_published", (q) =>
+				q.eq("courseId", ctx.courseId).eq("isPublished", true),
+			)
 			.collect();
 
 		const result = await Promise.all(
 			units.map(async (unit) => {
 				const lessons = await ctx.db
 					.query("lessons")
-					.withIndex("by_unit_id", (q) => q.eq("unitId", unit._id))
-					.filter((q) => q.eq(q.field("isPublished"), true))
+					.withIndex("by_unit_id_and_is_published", (q) =>
+						q.eq("unitId", unit._id).eq("isPublished", true),
+					)
 					.collect();
 
 				const lessonsWithEmbeds = await Promise.all(
@@ -519,13 +514,14 @@ export const getBreadcrumbData = query({
 	},
 });
 
-export const normalizeUnitLengths = mutation({
+export const normalizeUnitLengths = siteAdminMutation({
 	args: { school: v.string() },
 	handler: async (ctx, args) => {
-		const allCourses = await ctx.db.query("courses").collect();
-		const courses = allCourses.filter(
-			(course) => course.school === args.school,
-		);
+		// Use index to filter by school instead of full table scan
+		const courses = await ctx.db
+			.query("courses")
+			.withIndex("by_school", (q) => q.eq("school", args.school))
+			.collect();
 
 		const updates = await Promise.all(
 			courses.map(async (course) => {

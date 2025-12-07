@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { memo } from "react";
 
 export type Course = {
 	_id: string;
@@ -15,7 +16,7 @@ type Props = {
 	course: Course;
 };
 
-export function CourseCard({ course }: Props) {
+export const CourseCard = memo(function CourseCard({ course }: Props) {
 	return (
 		<div className="overflow-hidden rounded-lg bg-card shadow-md transition-shadow duration-200 hover:shadow-lg">
 			{course.imageUrl ? (
@@ -52,4 +53,4 @@ export function CourseCard({ course }: Props) {
 			</Link>
 		</div>
 	);
-}
+});

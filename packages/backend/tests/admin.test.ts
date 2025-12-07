@@ -495,36 +495,87 @@ describe("Site Configuration", () => {
 		});
 	});
 
-	describe("updateContributors", () => {
-		it("updates contributors list", async () => {
+	describe("contributors", () => {
+		it("creates and retrieves contributors", async () => {
 			const t = createConvexTest();
 
 			await setupSiteConfig(t, TEST_SCHOOLS.PRIMARY);
 
-			await t.mutation(api.site.updateContributors, {
+			const contributorId1 = await t.mutation(api.site.createContributor, {
 				school: TEST_SCHOOLS.PRIMARY,
-				contributors: [
-					{
-						name: "John Doe",
-						role: "Developer",
-						avatar: "https://example.com/avatar.png",
-						description: "Backend developer",
-					},
-					{
-						name: "Jane Smith",
-						role: "Designer",
-						avatar: "https://example.com/avatar2.png",
-						description: "UI/UX designer",
-					},
-				],
+				name: "John Doe",
+				role: "Developer",
+				avatar: "https://example.com/avatar.png",
+				description: "Backend developer",
 			});
 
-			const config = await t.query(api.site.getSiteConfig, {
+			const contributorId2 = await t.mutation(api.site.createContributor, {
+				school: TEST_SCHOOLS.PRIMARY,
+				name: "Jane Smith",
+				role: "Designer",
+				avatar: "https://example.com/avatar2.png",
+				description: "UI/UX designer",
+			});
+
+			const contributors = await t.query(api.site.getContributors, {
 				school: TEST_SCHOOLS.PRIMARY,
 			});
 
-			expect(config?.contributors).toHaveLength(2);
-			expect(config?.contributors?.[0]?.name).toBe("John Doe");
+			expect(contributors).toHaveLength(2);
+			expect(contributors?.[0]?.name).toBe("John Doe");
+			expect(contributors?.[1]?.name).toBe("Jane Smith");
+		});
+
+		it("updates a contributor", async () => {
+			const t = createConvexTest();
+
+			await setupSiteConfig(t, TEST_SCHOOLS.PRIMARY);
+
+			const contributorId = await t.mutation(api.site.createContributor, {
+				school: TEST_SCHOOLS.PRIMARY,
+				name: "John Doe",
+				role: "Developer",
+				avatar: "https://example.com/avatar.png",
+				description: "Backend developer",
+			});
+
+			await t.mutation(api.site.updateContributor, {
+				contributorId,
+				name: "John Updated",
+				role: "Senior Developer",
+			});
+
+			const contributors = await t.query(api.site.getContributors, {
+				school: TEST_SCHOOLS.PRIMARY,
+			});
+
+			expect(contributors).toHaveLength(1);
+			expect(contributors?.[0]?.name).toBe("John Updated");
+			expect(contributors?.[0]?.role).toBe("Senior Developer");
+		});
+
+		it("deletes a contributor", async () => {
+			const t = createConvexTest();
+
+			await setupSiteConfig(t, TEST_SCHOOLS.PRIMARY);
+
+			const contributorId = await t.mutation(api.site.createContributor, {
+				school: TEST_SCHOOLS.PRIMARY,
+				name: "John Doe",
+				role: "Developer",
+				avatar: "https://example.com/avatar.png",
+				description: "Backend developer",
+			});
+
+			await t.mutation(api.site.deleteContributor, {
+				contributorId,
+			});
+
+			const contributors = await t.query(api.site.getContributors, {
+				school: TEST_SCHOOLS.PRIMARY,
+			});
+
+			expect(contributors).toHaveLength(0);
 		});
 	});
 

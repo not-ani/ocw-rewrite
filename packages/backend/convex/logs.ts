@@ -1,5 +1,6 @@
 import { v } from "convex/values";
-import { type QueryCtx, query } from "./_generated/server";
+import { siteAdminQuery } from "./auth";
+import { query } from "./_generated/server";
 
 const LOG_ACTION_TYPES = [
 	"CREATE_LESSON",
@@ -36,33 +37,10 @@ const actionValidator = v.union(
 );
 
 /**
- * Check if the current user is a site admin
- */
-async function assertSiteAdmin(ctx: QueryCtx, args: { school: string }) {
-	const identity = await ctx.auth.getUserIdentity();
-
-	if (!identity) {
-		throw new Error("Not authenticated");
-	}
-
-	const siteUser = await ctx.db
-		.query("siteUser")
-		.withIndex("by_user_id_and_school", (q) =>
-			q.eq("userId", identity.tokenIdentifier).eq("school", args.school),
-		)
-		.unique();
-
-	if (!siteUser || siteUser.role !== "admin") {
-		throw new Error("Not authorized - site admin access required");
-	}
-
-	return identity;
-}
-
-/**
  * Get logs with filtering options
+ * Requires site admin access.
  */
-export const getLogs = query({
+export const getLogs = siteAdminQuery({
 	args: {
 		school: v.string(),
 		action: v.optional(actionValidator),
@@ -90,8 +68,6 @@ export const getLogs = query({
 		}),
 	),
 	handler: async (ctx, args) => {
-		await assertSiteAdmin(ctx, args);
-
 		const limit = args.limit ?? 100;
 
 		// Choose the right index based on filters
@@ -130,21 +106,18 @@ export const getLogs = query({
 					q.eq("courseId", args.courseId).eq("school", args.school),
 				);
 		} else {
-			// No specific filter - need to scan and filter by school
-			// Unfortunately there's no index for just school, so we'll need to collect and filter
-			logsQuery = ctx.db.query("logs");
+			// Filter by school only - use the by_school index
+			logsQuery = ctx.db
+				.query("logs")
+				.withIndex("by_school", (q) => q.eq("school", args.school));
 		}
 
 		// Get logs in descending order (most recent first)
 		const logs = await logsQuery.order("desc").take(limit * 2);
 
-		// Apply date filters and school filter in memory if needed
+		// Apply date filters in memory if needed
+		// Note: school filter is already applied via index, so we don't need to check it
 		const filteredLogs = logs.filter((log) => {
-			// Filter by school if we didn't use an index that includes school
-			if (log.school !== args.school) {
-				return false;
-			}
-
 			// Filter by course if specified and not already filtered by index
 			if (args.courseId && !args.action && !args.userId) {
 				// Already filtered by index
@@ -204,21 +177,23 @@ export const getLogs = query({
 
 /**
  * Get unique users who have logs for filtering dropdown
+ * Requires site admin access.
  */
-export const getLogUsers = query({
+export const getLogUsers = siteAdminQuery({
 	args: {
 		school: v.string(),
 	},
 	returns: v.array(v.string()),
 	handler: async (ctx, args) => {
-		await assertSiteAdmin(ctx, args);
 
-		// Get a sample of logs to extract unique users
-		const logs = await ctx.db.query("logs").order("desc").take(500);
+		// Get a sample of logs to extract unique users - use index to filter by school
+		const logs = await ctx.db
+			.query("logs")
+			.withIndex("by_school", (q) => q.eq("school", args.school))
+			.order("desc")
+			.take(500);
 
-		const filteredLogs = logs.filter((log) => log.school === args.school);
-
-		const uniqueUsers = [...new Set(filteredLogs.map((log) => log.userId))];
+		const uniqueUsers = [...new Set(logs.map((log) => log.userId))];
 
 		return uniqueUsers;
 	},

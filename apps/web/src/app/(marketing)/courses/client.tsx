@@ -1,10 +1,11 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: ts mpo icl */
 "use client";
 import { api } from "@ocw/backend/convex/_generated/api";
-import { useQuery } from "convex/react";
+import type { Preloaded } from "convex/react";
+import { usePreloadedQuery, useQuery } from "convex/react";
 import Link from "next/link";
 import { useQueryStates } from "nuqs";
-import { useCallback, useMemo } from "react";
+import { Suspense, useCallback, useMemo } from "react";
 import { Pagination } from "@/components/courses/pagination";
 import { SearchBar } from "@/components/courses/search-bar";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -67,19 +68,40 @@ function CoursesPageSkeleton() {
 	);
 }
 
-export function CoursesPage({ subdomain }: { subdomain: string }) {
+function CoursesData({
+	subdomain,
+	preloadedCourses,
+}: {
+	subdomain: string;
+	preloadedCourses: Preloaded<typeof api.courses.getPaginatedCourses>;
+}) {
 	const [queryState, setQueryState] = useQueryStates(coursesSearchParams);
 	const { page: currentPage, search: searchInput } = queryState;
 	const debouncedSearch = useDebouncedValue(searchInput, SEARCH_DEBOUNCE_MS);
 
-	const coursesData = useQuery(api.courses.getPaginatedCourses, {
-		page: currentPage,
-		search: debouncedSearch,
-		limit: COURSES_PER_PAGE,
-		school: subdomain,
-	});
+	// Use preloaded query for initial render, then useQuery for reactivity when params change
+	const preloadedData = usePreloadedQuery(preloadedCourses);
+	const isInitialLoad =
+		currentPage === 1 && !debouncedSearch && !searchInput;
 
-	const courses = coursesData?.courses ?? [];
+	const dynamicData = useQuery(
+		api.courses.getPaginatedCourses,
+		isInitialLoad
+			? "skip"
+			: {
+					page: currentPage,
+					search: debouncedSearch,
+					limit: COURSES_PER_PAGE,
+					school: subdomain,
+				},
+	);
+
+	// Use preloaded data for initial load, otherwise use dynamic data (fallback to preloaded if dynamic is loading)
+	const coursesData = isInitialLoad
+		? preloadedData
+		: dynamicData ?? preloadedData;
+
+	const courses = coursesData.courses ?? [];
 	const totalPages = coursesData?.totalPages ?? 1;
 	const totalCourses = coursesData?.totalCourses ?? 0;
 
@@ -176,5 +198,19 @@ export function CoursesPage({ subdomain }: { subdomain: string }) {
 				)}
 			</div>
 		</div>
+	);
+}
+
+export function CoursesPage({
+	subdomain,
+	preloadedCourses,
+}: {
+	subdomain: string;
+	preloadedCourses: Preloaded<typeof api.courses.getPaginatedCourses>;
+}) {
+	return (
+		<Suspense fallback={<CoursesPageSkeleton />}>
+			<CoursesData subdomain={subdomain} preloadedCourses={preloadedCourses} />
+		</Suspense>
 	);
 }

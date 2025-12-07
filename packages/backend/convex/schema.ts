@@ -36,6 +36,16 @@ export default defineSchema({
 			),
 		),
 	}).index("by_school", ["school"]),
+	contributors: defineTable({
+		school: v.string(),
+		name: v.string(),
+		role: v.string(),
+		avatar: v.string(),
+		description: v.string(),
+		order: v.number(),
+	})
+		.index("by_school", ["school"])
+		.index("by_school_and_order", ["school", "order"]),
 	siteUser: defineTable({
 		userId: v.string(),
 		role: v.union(v.literal("admin")),
@@ -107,6 +117,7 @@ export default defineSchema({
 		.index("by_course_id", ["courseId"])
 		.index("by_course_id_and_school", ["courseId", "school"])
 		.index("by_course_id_and_is_published", ["courseId", "isPublished"])
+		.index("by_course_id_and_order", ["courseId", "order"])
 		.index("by_course_and_order_and_school", ["courseId", "school", "order"])
 		.index("by_is_published_and_school", ["isPublished", "school"])
 		.searchIndex("search_name", {
@@ -187,6 +198,7 @@ export default defineSchema({
 		),
 		timestamp: v.optional(v.number()), // Will use _creationTime if not provided
 	})
+		.index("by_school", ["school"])
 		.index("by_user_id_and_school", ["userId", "school"])
 		.index("by_lesson_id_and_school", ["lessonId", "school"])
 		.index("by_unit_id_and_school", ["unitId", "school"])

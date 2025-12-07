@@ -110,7 +110,7 @@ function Header() {
 				<div className="flex lg:justify-center">
 					<Link href="/">
 						<p className="font-semibold">
-							{siteConfig?.school?.toUpperCase()} OCW
+							{siteConfig?.school?.toUpperCase() ?? "OCW"}
 						</p>
 					</Link>
 				</div>

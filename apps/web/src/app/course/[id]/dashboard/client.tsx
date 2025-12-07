@@ -1,6 +1,6 @@
 "use client";
 
-import { SignInButton, useUser } from "@clerk/nextjs";
+import { SignInButton } from "@clerk/nextjs";
 import { api } from "@ocw/backend/convex/_generated/api";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import {
@@ -8,17 +8,16 @@ import {
 	AuthLoading,
 	Unauthenticated,
 	useMutation,
-	useQuery,
+	usePreloadedQuery,
 } from "convex/react";
+import type { Preloaded } from "convex/react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { CreateUnitDialog } from "@/components/dashboard/units/create-unit";
 import { ForkUnitDialog } from "@/components/dashboard/units/fork-unit-dialog";
 import { UnitsTable } from "@/components/dashboard/units/units-table";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
-import { useSite } from "@/lib/multi-tenant/context";
 
 function DashboardHeaderSkeleton() {
 	return (
@@ -64,22 +63,58 @@ function UnitsTableSkeleton() {
 	);
 }
 
-function DashboardContent({
+function DashboardHeader({
+	courseId,
+	courseName,
+}: {
+	courseId: Id<"courses">;
+	courseName: string;
+}) {
+	return (
+		<div className="flex flex-wrap items-center justify-between gap-3">
+			<div>
+				<h1 className="font-bold text-2xl">{courseName}</h1>
+				<p className="text-muted-foreground text-sm">Manage units</p>
+			</div>
+			<div className="flex items-center justify-evenly gap-3">
+				<Link className="inline-flex" href={`/course/${courseId}`}>
+					<Button type="button" variant="secondary">
+						View course
+					</Button>
+				</Link>
+				<ForkUnitDialog courseId={courseId} />
+				<CreateUnitDialog />
+			</div>
+		</div>
+	);
+}
+
+function DashboardHeaderData({
+	courseId,
+	preloadedDashboard,
+}: {
+	courseId: Id<"courses">;
+	preloadedDashboard: Preloaded<typeof api.courses.getDashboardSummary>;
+}) {
+	const dashboard = usePreloadedQuery(preloadedDashboard);
+
+	if (!dashboard) {
+		return <DashboardHeaderSkeleton />;
+	}
+
+	return <DashboardHeader courseId={courseId} courseName={dashboard.course.name} />;
+}
+
+function UnitsTableData({
 	courseId,
 	subdomain,
+	preloadedUnits,
 }: {
 	courseId: Id<"courses">;
 	subdomain: string;
+	preloadedUnits: Preloaded<typeof api.units.getTableData>;
 }) {
-	const dashboard = useQuery(api.courses.getDashboardSummary, {
-		courseId,
-		school: subdomain,
-		userRole: undefined,
-	});
-	const units = useQuery(api.units.getTableData, {
-		courseId,
-		school: subdomain,
-	});
+	const units = usePreloadedQuery(preloadedUnits);
 
 	const updateUnit = useMutation(api.units.update);
 	const reorderUnits = useMutation(api.units.reorder);
@@ -126,42 +161,46 @@ function DashboardContent({
 		[reorderUnits, courseId, subdomain],
 	);
 
-	if (!dashboard || dashboard === undefined) {
-		return (
-			<div className="mx-auto max-w-xl text-center">
-				<h1 className="mb-2 font-semibold text-2xl">No data</h1>
-				<p className="text-muted-foreground">Dashboard could not be loaded.</p>
-			</div>
-		);
+	if (!units) {
+		return <UnitsTableSkeleton />;
 	}
 
 	return (
+		<UnitsTable
+			courseId={courseId}
+			onRemoveUnit={handleRemoveUnit}
+			onReorder={handleReorderUnits}
+			onUpdateUnit={handleUpdateUnit}
+			units={unitList}
+		/>
+	);
+}
+
+function DashboardContent({
+	courseId,
+	subdomain,
+	preloadedDashboard,
+	preloadedUnits,
+}: {
+	courseId: Id<"courses">;
+	subdomain: string;
+	preloadedDashboard: Preloaded<typeof api.courses.getDashboardSummary>;
+	preloadedUnits: Preloaded<typeof api.units.getTableData>;
+}) {
+	return (
 		<div className="space-y-6">
 			<Suspense fallback={<DashboardHeaderSkeleton />}>
-				<div className="flex flex-wrap items-center justify-between gap-3">
-					<div>
-						<h1 className="font-bold text-2xl">{dashboard.course.name}</h1>
-						<p className="text-muted-foreground text-sm">Manage units</p>
-					</div>
-					<div className="flex items-center justify-evenly gap-3">
-						<Link className="inline-flex" href={`/course/${courseId}`}>
-							<Button type="button" variant="secondary">
-								View course
-							</Button>
-						</Link>
-						<ForkUnitDialog courseId={courseId} />
-						<CreateUnitDialog />
-					</div>
-				</div>
+				<DashboardHeaderData
+					courseId={courseId}
+					preloadedDashboard={preloadedDashboard}
+				/>
 			</Suspense>
 
 			<Suspense fallback={<UnitsTableSkeleton />}>
-				<UnitsTable
+				<UnitsTableData
 					courseId={courseId}
-					onRemoveUnit={handleRemoveUnit}
-					onReorder={handleReorderUnits}
-					onUpdateUnit={handleUpdateUnit}
-					units={unitList}
+					subdomain={subdomain}
+					preloadedUnits={preloadedUnits}
 				/>
 			</Suspense>
 		</div>
@@ -171,14 +210,23 @@ function DashboardContent({
 export function DashboardPageClient({
 	courseId,
 	subdomain,
+	preloadedDashboard,
+	preloadedUnits,
 }: {
 	courseId: Id<"courses">;
 	subdomain: string;
+	preloadedDashboard: Preloaded<typeof api.courses.getDashboardSummary>;
+	preloadedUnits: Preloaded<typeof api.units.getTableData>;
 }) {
 	return (
 		<div className="mx-auto w-full max-w-7xl p-4 sm:p-6">
 			<Authenticated>
-				<DashboardContent courseId={courseId} subdomain={subdomain} />
+				<DashboardContent
+					courseId={courseId}
+					subdomain={subdomain}
+					preloadedDashboard={preloadedDashboard}
+					preloadedUnits={preloadedUnits}
+				/>
 			</Authenticated>
 
 			<Unauthenticated>
