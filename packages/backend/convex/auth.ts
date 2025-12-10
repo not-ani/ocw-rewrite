@@ -306,6 +306,12 @@ export function courseQuery(requiredRole: UserRole) {
 			school: v.string(),
 		},
 		input: async (ctx, args) => {
+			if (!args.courseId) {
+				throw new ConvexError({
+					kind: "validation",
+					message: "Course ID is required",
+				});
+			}
 			const user = await ensureAuthenticated(ctx, args.school);
 			const membership = await getCourseMembership(
 				ctx,

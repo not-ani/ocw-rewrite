@@ -7,7 +7,7 @@ import {
 	ZoomIn,
 	ZoomOut,
 } from "lucide-react";
-import { memo, useCallback, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { Button, buttonVariants } from "../ui/button";
 
@@ -36,6 +36,48 @@ export const PdfViewer = memo(function PdfViewer({
 	const [pageNumber, setPageNumber] = useState(1);
 	const [scale, setScale] = useState(1.0);
 	const [error, setError] = useState<string | null>(null);
+	const [errorDetail, setErrorDetail] = useState<string | null>(null);
+	const [resolvedUrl, setResolvedUrl] = useState<string | null>(null);
+	const [isResolvingUrl, setIsResolvingUrl] = useState(false);
+
+	useEffect(() => {
+		// reset errors when the source URL changes
+		setError(null);
+		setErrorDetail(null);
+		setNumPages(null);
+		setPageNumber(1);
+		setResolvedUrl(null);
+	}, [url]);
+
+	const deriveErrorMessage = useMemo(
+		() => (incoming: Error) => {
+			const message = incoming.message || "Unknown error";
+			const normalized = message.toLowerCase();
+
+			if (
+				message.includes("Unexpected server response (403)") ||
+				normalized.includes("403") ||
+				normalized.includes("access denied") ||
+				normalized.includes("forbidden")
+			) {
+				return "Access denied when loading this PDF. The link may have expired or isn't publicly accessible. Try the direct link below or ask an admin to re-upload.";
+			}
+
+			if (
+				message.includes("Unexpected server response (404)") ||
+				normalized.includes("404")
+			) {
+				return "We couldn't find this PDF (404). If it was recently uploaded, please re-upload to refresh the link.";
+			}
+
+			if (normalized.includes("failed to fetch")) {
+				return "Unable to fetch this PDF. It may require a signed URL or public access.";
+			}
+
+			return `Failed to load PDF: ${message}`;
+		},
+		[],
+	);
 
 	const onDocumentLoadSuccess = useCallback(
 		({ numPages }: { numPages: number }) => {
@@ -44,10 +86,72 @@ export const PdfViewer = memo(function PdfViewer({
 		[],
 	);
 
-	const onDocumentLoadError = useCallback((error: Error) => {
-		console.error("Error loading PDF:", error);
-		setError(error.message);
-	}, []);
+	const onDocumentLoadError = useCallback(
+		(error: Error) => {
+			console.error("Error loading PDF:", error);
+			setError(deriveErrorMessage(error));
+			setErrorDetail(error.message);
+		},
+		[deriveErrorMessage],
+	);
+
+	const onSourceError = useCallback(
+		(error: Error) => {
+			console.error("Source error loading PDF:", error);
+			setError(deriveErrorMessage(error));
+			setErrorDetail(error.message);
+		},
+		[deriveErrorMessage],
+	);
+
+	useEffect(() => {
+		let cancelled = false;
+
+		async function resolveUrl() {
+			if (!url) {
+				setResolvedUrl(null);
+				return;
+			}
+
+			setIsResolvingUrl(true);
+
+			try {
+				const response = await fetch(
+					`/api/file-url?fileUrl=${encodeURIComponent(url)}`,
+				);
+
+				if (!response.ok) {
+					const payload = await response
+						.json()
+						.catch(() => ({ error: "Failed to generate access URL" }));
+					throw new Error(payload.error || response.statusText);
+				}
+
+				const data = await response.json();
+				if (!cancelled) {
+					setResolvedUrl(data.signedUrl ?? url);
+				}
+			} catch (err) {
+				if (!cancelled) {
+					const errorObj = err instanceof Error ? err : new Error("Unknown error");
+					setError(deriveErrorMessage(errorObj));
+					setErrorDetail(errorObj.message);
+					// Fallback to original URL in case it is somehow accessible
+					setResolvedUrl(url);
+				}
+			} finally {
+				if (!cancelled) {
+					setIsResolvingUrl(false);
+				}
+			}
+		}
+
+		void resolveUrl();
+
+		return () => {
+			cancelled = true;
+		};
+	}, [url, deriveErrorMessage]);
 
 	const goToPrevPage = useCallback(() => {
 		setPageNumber((prev) => Math.max(prev - 1, 1));
@@ -146,13 +250,22 @@ export const PdfViewer = memo(function PdfViewer({
 			{/* PDF Content */}
 			<div className="flex-1 overflow-auto bg-muted/30">
 				<div className="flex min-h-full items-start justify-center p-4">
-					{error ? (
+					{isResolvingUrl ? (
 						<div className="flex h-[60vh] items-center justify-center">
 							<div className="text-center">
-								<p className="font-medium text-destructive">
-									Failed to load PDF
-								</p>
-								<p className="mt-2 text-muted-foreground text-sm">{error}</p>
+								<div className="mx-auto mb-4 h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+								<p className="text-muted-foreground">Requesting access to PDF...</p>
+							</div>
+						</div>
+					) : error ? (
+						<div className="flex h-[60vh] items-center justify-center">
+							<div className="text-center">
+								<p className="font-medium text-destructive">{error}</p>
+								{errorDetail && errorDetail !== error ? (
+									<p className="mt-2 text-muted-foreground text-xs">
+										Details: {errorDetail}
+									</p>
+								) : null}
 								<a
 									className={buttonVariants({
 										variant: "outline",
@@ -168,9 +281,10 @@ export const PdfViewer = memo(function PdfViewer({
 						</div>
 					) : (
 						<Document
-							file={url}
+							file={resolvedUrl ?? url}
 							onLoadSuccess={onDocumentLoadSuccess}
 							onLoadError={onDocumentLoadError}
+							onSourceError={onSourceError}
 							options={options}
 							loading={
 								<div className="flex h-[60vh] items-center justify-center">

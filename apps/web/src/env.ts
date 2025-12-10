@@ -11,7 +11,6 @@ NEXT_PUBLIC_POSTHOG_KEY=""
 NEXT_PUBLIC_POSTHOG_HOST=""
 PROJECT_ID=""
 PERSONAL_ACCESS_API_KEY=""
-UPLOADTHING_TOKEN=""
 **/
 
 export const env = createEnv({
@@ -29,7 +28,10 @@ export const env = createEnv({
 		CLERK_SECRET_KEY: z.string(),
 		PROJECT_ID: z.string(),
 		PERSONAL_ACCESS_API_KEY: z.string(),
-		UPLOADTHING_TOKEN: z.string(),
+		RAILWAY_ACCESS_KEY: z.string(),
+		RAILWAY_BUCKET: z.string(),
+		RAILWAY_ENDPOINT: z.string(),
+		RAILWAY_SECRET_KEY: z.string(),
 	},
 
 	/**

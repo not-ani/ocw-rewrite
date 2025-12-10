@@ -27,7 +27,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { UploadButton } from "@/lib/uploadthing";
+import { FileUploadButton } from "@/components/ui/file-upload";
 
 const basicInfoSchema = z.object({
 	schoolName: z.string().min(1, "School name is required"),
@@ -172,21 +172,20 @@ export function BasicInformationCard({
 											)}
 
 											{/* Upload Button */}
-											<UploadButton
-												endpoint="imageUploader"
-												onClientUploadComplete={(res) => {
-													// Do something with the response
-													if (res?.[0]) {
-														const url = res[0].url;
-														setUploadedLogoUrl(url);
-														field.onChange(url);
-														toast.success("Logo uploaded successfully!");
-													}
+											<FileUploadButton
+												fileType="image"
+												onUploadComplete={(result) => {
+													setUploadedLogoUrl(result.publicUrl);
+													field.onChange(result.publicUrl);
+													toast.success("Logo uploaded successfully!");
 												}}
 												onUploadError={(error: Error) => {
 													toast.error(`Upload failed: ${error.message}`);
 												}}
-											/>
+												maxSize={4 * 1024 * 1024}
+											>
+												Upload Logo
+											</FileUploadButton>
 										</div>
 									</FormControl>
 									<FormMessage />

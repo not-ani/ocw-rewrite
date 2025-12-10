@@ -260,10 +260,16 @@ export const create = courseMutation("editor")({
 		isPublished: v.optional(v.boolean()),
 	},
 	handler: async (ctx, args) => {
-		// Verify unit belongs to the course
 		const unit = await ctx.db.get(args.unitId);
+
 		if (!unit || unit.courseId !== ctx.courseId) {
 			throw new ConvexError("Unit not found or does not belong to course");
+		}
+
+		// Source courseId defensively from unit (authoritative) with args/course fallback
+		const courseId = unit.courseId ?? args.courseId ?? ctx.courseId;
+		if (!courseId) {
+			throw new ConvexError("Course ID missing for lesson creation");
 		}
 
 		const existing = await ctx.db
@@ -279,7 +285,7 @@ export const create = courseMutation("editor")({
 				isPublished: false,
 				pureLink: args.pureLink ?? false,
 				contentType: "pdf",
-				courseId: args.courseId,
+				courseId,
 				unitId: args.unitId,
 				name: args.name,
 				content: undefined,
@@ -298,7 +304,7 @@ export const create = courseMutation("editor")({
 		// Schedule log after mutation completes
 		await ctx.scheduler.runAfter(0, internal.lesson.logLessonAction, {
 			userId: ctx.user.userId,
-			courseId: ctx.courseId,
+			courseId,
 			unitId: args.unitId,
 			lessonId,
 			action: "CREATE_LESSON",
@@ -343,7 +349,7 @@ export const create = courseMutation("editor")({
 	// Schedule log after mutation completes
 	await ctx.scheduler.runAfter(0, internal.lesson.logLessonAction, {
 		userId: ctx.user.userId,
-		courseId: ctx.courseId,
+		courseId,
 		unitId: args.unitId,
 		lessonId,
 		action: "CREATE_LESSON",

@@ -32,7 +32,7 @@ import {
 } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
-import { UploadDropzone } from "@/lib/uploadthing";
+import { FileUploadDropzone } from "@/components/ui/file-upload";
 import { cn } from "@/lib/utils";
 import LessonPageLoading from "./loading";
 
@@ -266,15 +266,15 @@ function LessonEditForm({
 										</Button>
 									</div>
 								) : (
-									<UploadDropzone
-										endpoint="pdfUploader"
+									<FileUploadDropzone
+										courseId={courseId}
+										lessonId={lessonId}
+										fileType="pdf"
 										onUploadBegin={() => setIsUploading(true)}
-										onClientUploadComplete={(res) => {
+										onUploadComplete={(result) => {
 											setIsUploading(false);
-											if (res?.[0]) {
-												form.setValue("pdfUrl", res[0].ufsUrl);
-												toast.success("PDF uploaded successfully");
-											}
+											form.setValue("pdfUrl", result.publicUrl);
+											toast.success("PDF uploaded successfully");
 										}}
 										onUploadError={(error: Error) => {
 											setIsUploading(false);
@@ -283,16 +283,15 @@ function LessonEditForm({
 										className={cn(
 											"cursor-pointer rounded-lg border-2 border-dashed p-6 transition-colors",
 											"hover:border-primary/50 hover:bg-muted/50",
-											"ut-uploading:border-primary ut-uploading:bg-primary/5",
 										)}
 										content={{
 											label: "Drop PDF here or click to browse",
-											allowedContent: "PDF up to 16MB",
+											allowedContent: "PDF up to 50MB",
 										}}
 									/>
 								)}
 								<FormDescription>
-									Upload a PDF file for this lesson (max 16MB)
+									Upload a PDF file for this lesson (max 50MB)
 								</FormDescription>
 							</FormItem>
 						) : (

@@ -2,6 +2,6 @@ packages:
   - apps/*
   - packages/*
 catalog:
-  convex: ^1.27.0
+  convex: ^1.30.0
   "@types/node": ^20
   typescript: ^5

@@ -35,7 +35,7 @@ import {
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { useSite } from "@/lib/multi-tenant/context";
-import { UploadDropzone } from "@/lib/uploadthing";
+import { FileUploadDropzone } from "@/components/ui/file-upload";
 import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
@@ -99,6 +99,10 @@ export function CreateLessonInlineForm({
 	async function onSubmit(values: FormValues) {
 		setIsSubmitting(true);
 		try {
+			if (!courseId) {
+				toast.error("Course ID is missing. Please refresh and try again.");
+				return;
+			}
 			if (contentType === "pdf" && values.pdfUrl) {
 				await createLesson({
 					courseId,
@@ -279,14 +283,13 @@ export function CreateLessonInlineForm({
 											</Button>
 										</div>
 									) : (
-										<UploadDropzone
-											endpoint="pdfUploader"
-											onClientUploadComplete={(res) => {
-												if (res?.[0]) {
-													form.setValue("pdfUrl", res[0].ufsUrl);
-													form.setValue("pdfName", res[0].name);
-													toast.success("PDF uploaded");
-												}
+										<FileUploadDropzone
+											courseId={courseId}
+											fileType="pdf"
+											onUploadComplete={(result) => {
+												form.setValue("pdfUrl", result.publicUrl);
+												form.setValue("pdfName", result.filePath.split("/").pop() || "lesson.pdf");
+												toast.success("PDF uploaded");
 											}}
 											onUploadError={(error: Error) => {
 												toast.error(`Upload failed: ${error.message}`);
@@ -294,16 +297,15 @@ export function CreateLessonInlineForm({
 											className={cn(
 												"cursor-pointer rounded-lg border-2 border-dashed p-4 transition-colors",
 												"hover:border-primary/50 hover:bg-muted/50",
-												"ut-uploading:border-primary ut-uploading:bg-primary/5",
 											)}
 											content={{
 												label: "Drop PDF or click",
-												allowedContent: "PDF up to 16MB",
+												allowedContent: "PDF up to 50MB",
 											}}
 										/>
 									)}
 									<FormDescription>
-										Upload a PDF file (max 16MB)
+										Upload a PDF file (max 50MB)
 									</FormDescription>
 								</FormItem>
 							</TabsContent>
