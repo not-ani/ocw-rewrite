@@ -1,12 +1,6 @@
 "use client";
 
-import {
-	ChevronLeft,
-	ChevronRight,
-	Download,
-	ZoomIn,
-	ZoomOut,
-} from "lucide-react";
+import { Download, ZoomIn, ZoomOut } from "lucide-react";
 import { memo, useCallback, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
 import { Button, buttonVariants } from "../ui/button";
@@ -33,7 +27,6 @@ export const PdfViewer = memo(function PdfViewer({
 	title,
 }: PdfViewerProps) {
 	const [numPages, setNumPages] = useState<number | null>(null);
-	const [pageNumber, setPageNumber] = useState(1);
 	const [scale, setScale] = useState(1.0);
 	const [error, setError] = useState<string | null>(null);
 
@@ -48,14 +41,6 @@ export const PdfViewer = memo(function PdfViewer({
 		console.error("Error loading PDF:", error);
 		setError(error.message);
 	}, []);
-
-	const goToPrevPage = useCallback(() => {
-		setPageNumber((prev) => Math.max(prev - 1, 1));
-	}, []);
-
-	const goToNextPage = useCallback(() => {
-		setPageNumber((prev) => Math.min(prev + 1, numPages ?? prev));
-	}, [numPages]);
 
 	const zoomIn = useCallback(() => {
 		setScale((prev) => Math.min(prev + 0.25, 3));
@@ -102,31 +87,9 @@ export const PdfViewer = memo(function PdfViewer({
 					>
 						<ZoomIn className="h-4 w-4" />
 					</Button>
-
-					{/* Page navigation */}
-					<div className="ml-4 flex items-center gap-2">
-						<Button
-							variant="outline"
-							size="icon"
-							onClick={goToPrevPage}
-							disabled={pageNumber <= 1}
-							aria-label="Previous page"
-						>
-							<ChevronLeft className="h-4 w-4" />
-						</Button>
-						<span className="min-w-[5rem] text-center text-sm tabular-nums">
-							{numPages ? `${pageNumber} / ${numPages}` : "Loading..."}
-						</span>
-						<Button
-							variant="outline"
-							size="icon"
-							onClick={goToNextPage}
-							disabled={pageNumber >= (numPages ?? 1)}
-							aria-label="Next page"
-						>
-							<ChevronRight className="h-4 w-4" />
-						</Button>
-					</div>
+					<span className="ml-2 min-w-[5rem] text-center text-sm tabular-nums">
+						{numPages ? `${numPages} pages` : "Loading..."}
+					</span>
 				</div>
 
 				<a
@@ -182,18 +145,29 @@ export const PdfViewer = memo(function PdfViewer({
 							}
 							className="flex justify-center"
 						>
-							<Page
-								pageNumber={pageNumber}
-								scale={scale}
-								renderTextLayer
-								renderAnnotationLayer
-								loading={
+							<div className="flex w-full max-w-5xl flex-col items-center gap-6">
+								{numPages === null ? (
 									<div className="flex h-[60vh] items-center justify-center">
 										<div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
 									</div>
-								}
-								className="shadow-lg"
-							/>
+								) : (
+									Array.from({ length: numPages }, (_, idx) => (
+										<Page
+											key={`page_${idx + 1}`}
+											pageNumber={idx + 1}
+											scale={scale}
+											renderTextLayer
+											renderAnnotationLayer
+											loading={
+												<div className="flex h-[60vh] items-center justify-center">
+													<div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent" />
+												</div>
+											}
+											className="shadow-lg"
+										/>
+									))
+								)}
+							</div>
 						</Document>
 					)}
 				</div>
