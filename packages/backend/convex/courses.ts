@@ -395,10 +395,10 @@ export const getDashboardSummary = courseQuery("editor")({
 	},
 });
 
-export const getSidebarData = courseQuery("user")({
+export const getSidebarData = query({
 	args: { courseId: v.id("courses"), school: v.string() },
-	handler: async (ctx) => {
-		const course = await ctx.db.get(ctx.courseId);
+	handler: async (ctx, args) => {
+		const course = await ctx.db.get(args.courseId);
 		if (!course) {
 			return [];
 		}
@@ -406,7 +406,7 @@ export const getSidebarData = courseQuery("user")({
 		const units = await ctx.db
 			.query("units")
 			.withIndex("by_course_id_and_is_published", (q) =>
-				q.eq("courseId", ctx.courseId).eq("isPublished", true),
+				q.eq("courseId", args.courseId).eq("isPublished", true),
 			)
 			.collect();
 
