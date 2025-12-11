@@ -260,9 +260,10 @@ export const create = courseMutation("editor")({
 		isPublished: v.optional(v.boolean()),
 	},
 	handler: async (ctx, args) => {
+		const courseId = ctx.courseId ?? args.courseId;
 		// Verify unit belongs to the course
 		const unit = await ctx.db.get(args.unitId);
-		if (!unit || unit.courseId !== ctx.courseId) {
+		if (!unit || unit.courseId !== courseId) {
 			throw new ConvexError("Unit not found or does not belong to course");
 		}
 
@@ -279,7 +280,7 @@ export const create = courseMutation("editor")({
 				isPublished: false,
 				pureLink: args.pureLink ?? false,
 				contentType: "pdf",
-				courseId: args.courseId,
+				courseId: courseId,
 				unitId: args.unitId,
 				name: args.name,
 				content: undefined,
@@ -295,60 +296,60 @@ export const create = courseMutation("editor")({
 				school: args.school,
 			});
 
+			// Schedule log after mutation completes
+			await ctx.scheduler.runAfter(0, internal.lesson.logLessonAction, {
+				userId: ctx.user.userId,
+				courseId: courseId,
+				unitId: args.unitId,
+				lessonId,
+				action: "CREATE_LESSON",
+				school: args.school,
+			});
+
+			return lessonId;
+		}
+
+		// Handle embed-based content
+		const detected = args.embedRaw ? detectEmbed(args.embedRaw) : null;
+
+		const lessonId = await ctx.db.insert("lessons", {
+			order,
+			isPublished: false,
+			pureLink: args.pureLink ?? true,
+			contentType: detected?.contentType ?? "other",
+			courseId: courseId,
+			unitId: args.unitId,
+			name: args.name,
+			content: undefined,
+			school: args.school,
+		});
+
+		if (detected?.embedUrl) {
+			await ctx.db.insert("lessonEmbeds", {
+				lessonId,
+				embedUrl: detected.embedUrl,
+				password: undefined,
+				school: args.school,
+			});
+		} else {
+			// Create empty embed entry for consistency
+			await ctx.db.insert("lessonEmbeds", {
+				lessonId,
+				embedUrl: "",
+				password: undefined,
+				school: args.school,
+			});
+		}
+
 		// Schedule log after mutation completes
 		await ctx.scheduler.runAfter(0, internal.lesson.logLessonAction, {
 			userId: ctx.user.userId,
-			courseId: ctx.courseId,
+			courseId: courseId,
 			unitId: args.unitId,
 			lessonId,
 			action: "CREATE_LESSON",
 			school: args.school,
 		});
-
-		return lessonId;
-	}
-
-	// Handle embed-based content
-	const detected = args.embedRaw ? detectEmbed(args.embedRaw) : null;
-
-	const lessonId = await ctx.db.insert("lessons", {
-		order,
-		isPublished: false,
-		pureLink: args.pureLink ?? true,
-		contentType: detected?.contentType ?? "other",
-		courseId: ctx.courseId,
-		unitId: args.unitId,
-		name: args.name,
-		content: undefined,
-		school: args.school,
-	});
-
-	if (detected?.embedUrl) {
-		await ctx.db.insert("lessonEmbeds", {
-			lessonId,
-			embedUrl: detected.embedUrl,
-			password: undefined,
-			school: args.school,
-		});
-	} else {
-		// Create empty embed entry for consistency
-		await ctx.db.insert("lessonEmbeds", {
-			lessonId,
-			embedUrl: "",
-			password: undefined,
-			school: args.school,
-		});
-	}
-
-	// Schedule log after mutation completes
-	await ctx.scheduler.runAfter(0, internal.lesson.logLessonAction, {
-		userId: ctx.user.userId,
-		courseId: ctx.courseId,
-		unitId: args.unitId,
-		lessonId,
-		action: "CREATE_LESSON",
-		school: args.school,
-	});
 
 		return lessonId;
 	},
@@ -380,6 +381,7 @@ export const update = courseMutation("editor")({
 		school: v.string(),
 	},
 	handler: async (ctx, args) => {
+		const courseId = ctx.courseId ?? args.courseId;
 		const lesson = await ctx.db.get(args.data.id);
 
 		if (!lesson) {
@@ -387,7 +389,7 @@ export const update = courseMutation("editor")({
 		}
 
 		// Verify lesson belongs to the course
-		if (lesson.courseId !== ctx.courseId) {
+		if (lesson.courseId !== courseId) {
 			throw new ConvexError("Lesson does not belong to this course");
 		}
 
@@ -411,7 +413,7 @@ export const update = courseMutation("editor")({
 		// Schedule log after mutation completes
 		await ctx.scheduler.runAfter(0, internal.lesson.logLessonAction, {
 			userId: ctx.user.userId,
-			courseId: ctx.courseId,
+			courseId: courseId,
 			unitId: lesson.unitId,
 			lessonId: args.data.id,
 			action: "UPDATE_LESSON",
@@ -428,9 +430,10 @@ export const reorder = courseMutation("editor")({
 		school: v.string(),
 	},
 	handler: async (ctx, args) => {
-		// Verify unit belongs to the course
+		const courseId = ctx.courseId ?? args.courseId;
+
 		const unit = await ctx.db.get(args.unitId);
-		if (!unit || unit.courseId !== ctx.courseId) {
+		if (!unit || unit.courseId !== courseId) {
 			throw new ConvexError("Unit not found or does not belong to course");
 		}
 
@@ -448,7 +451,7 @@ export const reorder = courseMutation("editor")({
 		// Schedule log after mutation completes
 		await ctx.scheduler.runAfter(0, internal.lesson.logLessonAction, {
 			userId: ctx.user.userId,
-			courseId: ctx.courseId,
+			courseId: courseId,
 			unitId: args.unitId,
 			action: "REORDER_LESSON",
 			school: args.school,
@@ -457,20 +460,20 @@ export const reorder = courseMutation("editor")({
 });
 
 export const remove = courseMutation("editor")({
-	args: { 
+	args: {
 		id: v.id("lessons"),
-		courseId: v.id("courses"), 
-		school: v.string() 
+		courseId: v.id("courses"),
+		school: v.string(),
 	},
 	handler: async (ctx, args) => {
-
+		const courseId = ctx.courseId ?? args.courseId;
 		const lesson = await ctx.db.get(args.id);
 		if (!lesson) {
 			throw new ConvexError("Lesson not found");
 		}
 
 		// Verify lesson belongs to the course
-		if (lesson.courseId !== ctx.courseId) {
+		if (lesson.courseId !== courseId) {
 			throw new ConvexError("Lesson does not belong to this course");
 		}
 
@@ -494,7 +497,7 @@ export const remove = courseMutation("editor")({
 		// Schedule log after mutation completes
 		await ctx.scheduler.runAfter(0, internal.lesson.logLessonAction, {
 			userId: ctx.user.userId,
-			courseId: ctx.courseId,
+			courseId: courseId,
 			unitId,
 			lessonId: args.id,
 			action: "DELETE_LESSON",
