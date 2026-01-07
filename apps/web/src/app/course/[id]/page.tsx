@@ -50,6 +50,15 @@ export async function generateMetadata({
 	const siteConfig = await fetchQuery(api.site.getSiteConfig, {
 		school: subdomain,
 	});
+	const [course, siteConfig] = await Promise.all([
+		fetchQuery(api.courses.getCourseById, {
+			courseId: id as Id<"courses">,
+			school: subdomain,
+		}),
+		fetchQuery(api.site.getSiteConfig, {
+			school: subdomain,
+		}),
+	]);
 
 	if (!course) {
 		const ogImageUrl = await getAbsoluteUrl("/opengraph-image");
