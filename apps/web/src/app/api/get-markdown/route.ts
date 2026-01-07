@@ -94,6 +94,7 @@ async function ensureHostnameSafe(urlObj: URL) {
 
 export async function GET(request: Request) {
 	try {
+		/*
 		// Rate limiting by client IP (or anonymous)
 		const ip =
 			request.headers.get("x-forwarded-for")?.split(",")[0].trim() ||
@@ -114,6 +115,7 @@ export async function GET(request: Request) {
 			);
 		}
 
+    */
 		const { searchParams } = new URL(request.url);
 		const url = searchParams.get("url");
 

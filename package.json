@@ -2,10 +2,17 @@
 	"name": "ocw-rewrite",
 	"private": true,
 	"type": "module",
-	"workspaces": [
-		"apps/*",
-		"packages/*"
-	],
+	"workspaces": {
+		"packages": [
+			"apps/*",
+			"packages/*"
+		],
+		"catalog": {
+			"convex": "^1.27.0",
+			"@types/node": "^20",
+			"typescript": "^5"
+		}
+	},
 	"scripts": {
 		"check": "biome check --write .",
 		"dev": "turbo dev",
@@ -32,10 +39,6 @@
 	},
 	"packageManager": "pnpm@10.11.0",
 	"pnpm": {
-		"overrides": {
-			"@types/react": "19.2.2",
-			"@types/react-dom": "19.2.2"
-		},
 		"peerDependencyRules": {
 			"ignoreMissing": [
 				"react",
@@ -46,5 +49,9 @@
 				"react-dom": "19"
 			}
 		}
+	},
+	"overrides": {
+		"@types/react": "19.2.2",
+		"@types/react-dom": "19.2.2"
 	}
 }

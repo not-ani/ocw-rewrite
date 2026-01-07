@@ -16,7 +16,7 @@ export const GoogleDocsEmbed = memo(function GoogleDocsEmbed({
 		setLoading(true);
 		try {
 			const response = await fetch(
-				`/api/get-markdown?url=${encodeURIComponent(embedId ?? "")}`,
+				`/api/get-md?url=${encodeURIComponent(embedId ?? "")}`,
 				{ cache: "no-store" },
 			);
 			const data = await response.json();
