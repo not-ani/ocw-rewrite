@@ -1,10 +1,6 @@
-/**
- * Type definitions for the markdown parsing service
- */
 
-/**
- * Cached content structure stored in Redis
- */
+
+
 export interface CachedContent {
 	markdown: string;
 	fetchedAt: number;
@@ -13,9 +9,7 @@ export interface CachedContent {
 	contentHash: string;
 }
 
-/**
- * Result from fetch operation with conditional request support
- */
+
 export interface FetchResult {
 	html: string;
 	etag?: string;
@@ -23,9 +17,7 @@ export interface FetchResult {
 	notModified: boolean;
 }
 
-/**
- * Response data returned from the handler
- */
+
 export interface ResponseData {
 	markdown: string;
 	cached: boolean;

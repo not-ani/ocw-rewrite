@@ -4,36 +4,30 @@ import net from "node:net";
 import { BlockedHostError, InvalidUrlError } from "./errors";
 import { ALLOWED_HOSTS } from "./config";
 
-/**
- * Convert IPv4 address to integer for CIDR matching
- */
+
 const ipv4ToInt = (ip: string): number => {
 	const p = ip.split(".");
 	return ((+p[0] << 24) | (+p[1] << 16) | (+p[2] << 8) | +p[3]) >>> 0;
 };
 
-/**
- * Private IPv4 CIDR ranges (value, mask)
- */
+
 const PRIVATE_IPV4_CIDRS: [number, number][] = [
-	[0x0a000000, 0xff000000], // 10.0.0.0/8
-	[0x7f000000, 0xff000000], // 127.0.0.0/8
-	[0xa9fe0000, 0xffff0000], // 169.254.0.0/16
-	[0xac100000, 0xfff00000], // 172.16.0.0/12
-	[0xc0a80000, 0xffff0000], // 192.168.0.0/16
-	[0x64400000, 0xffc00000], // 100.64.0.0/10
-	[0xc6120000, 0xfffe0000], // 198.18.0.0/15
-	[0x00000000, 0xff000000], // 0.0.0.0/8
+	[0x0a000000, 0xff000000], 
+	[0x7f000000, 0xff000000], 
+	[0xa9fe0000, 0xffff0000], 
+	[0xac100000, 0xfff00000], 
+	[0xc0a80000, 0xffff0000], 
+	[0x64400000, 0xffc00000], 
+	[0xc6120000, 0xfffe0000], 
+	[0x00000000, 0xff000000], 
 ];
 
-/**
- * Check if an IP address is private/local
- */
+
 const isPrivateIp = (ip: string): boolean => {
 	const version = net.isIP(ip);
 	if (version === 4) {
 		const ipInt = ipv4ToInt(ip);
-		if (ipInt >>> 24 >= 224) return true; // Multicast
+		if (ipInt >>> 24 >= 224) return true; 
 		for (const [value, mask] of PRIVATE_IPV4_CIDRS) {
 			if ((ipInt & mask) === value) return true;
 		}
@@ -49,12 +43,10 @@ const isPrivateIp = (ip: string): boolean => {
 			l.startsWith("fd")
 		);
 	}
-	return true; // Unknown IP version, treat as private for safety
+	return true; 
 };
 
-/**
- * Check if hostname is in the allowlist
- */
+
 const isHostAllowlisted = (hostname: string): boolean => {
 	if (ALLOWED_HOSTS.size === 0) return false;
 	const h = hostname.toLowerCase();
@@ -65,9 +57,7 @@ const isHostAllowlisted = (hostname: string): boolean => {
 	return false;
 };
 
-/**
- * Parse and validate URL from request
- */
+
 export const parseAndValidateUrl = (
 	requestUrl: string,
 ): Effect.Effect<URL, InvalidUrlError> =>
@@ -88,9 +78,7 @@ export const parseAndValidateUrl = (
 			}),
 	});
 
-/**
- * Validate host security (allowlist and private IP checks)
- */
+
 export const validateHostSecurity = (
 	urlObj: URL,
 ): Effect.Effect<void, BlockedHostError> =>

@@ -1,32 +1,33 @@
 import { Effect } from "effect";
-import { parseHTML } from "linkedom";
-import TurndownService from "turndown";
-// @ts-expect-error - no types
-import { gfm } from "turndown-plugin-gfm";
 import { ParseError } from "./errors";
 import { CONTENT_SELECTORS, REMOVE_SELECTORS } from "./config";
 
-/**
- * Pre-configured TurndownService singleton
- */
-const turndownService = new TurndownService({
-	headingStyle: "atx",
-	codeBlockStyle: "fenced",
-});
-turndownService.use(gfm);
+let turndownService: import("turndown").default | null = null;
 
-/**
- * Parse HTML to Markdown
- * Extracts main content, removes unwanted elements, and converts to markdown
- */
+const getTurndownService = async () => {
+	if (!turndownService) {
+		const [{ default: TurndownService }, { gfm }] = await Promise.all([
+			import("turndown"),
+			import("turndown-plugin-gfm"),
+		]);
+		turndownService = new TurndownService({
+			headingStyle: "atx",
+			codeBlockStyle: "fenced",
+		});
+		turndownService.use(gfm);
+	}
+	return turndownService;
+};
+
 export const parseHtmlToMarkdown = (
 	html: string,
 ): Effect.Effect<string, ParseError> =>
-	Effect.try({
-		try: () => {
+	Effect.tryPromise({
+		try: async () => {
+			const { parseHTML } = await import("linkedom");
 			const { document } = parseHTML(html);
 
-			// Replace math images with LaTeX
+			
 			document.querySelectorAll("img[alt]").forEach((img) => {
 				const alt = img.getAttribute("alt");
 				if (alt && /[a-zA-Z0-9\\^_=+]/.test(alt)) {
@@ -34,10 +35,10 @@ export const parseHtmlToMarkdown = (
 				}
 			});
 
-			// Remove unwanted elements
+			
 			document.querySelectorAll(REMOVE_SELECTORS).forEach((el) => el.remove());
 
-			// Find best content container
+			
 			let content: string | null = null;
 			for (const selector of CONTENT_SELECTORS) {
 				const el = document.querySelector(selector);
@@ -49,7 +50,8 @@ export const parseHtmlToMarkdown = (
 
 			if (!content) throw new Error("No content found");
 
-			return turndownService.turndown(content);
+			const td = await getTurndownService();
+			return td.turndown(content);
 		},
 		catch: (e) =>
 			new ParseError({

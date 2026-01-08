@@ -4,10 +4,7 @@ import { CACHE_TTL, STALE_TTL } from "@/lib/parse/config";
 import { handleRequest } from "@/lib/parse/handler";
 import { errorToResponse } from "@/lib/parse/response";
 
-/**
- * GET handler for markdown parsing API
- * Fetches HTML from a URL, parses it, and returns markdown
- */
+
 export async function GET(request: Request) {
 	const result = await Effect.runPromiseExit(handleRequest(request));
 

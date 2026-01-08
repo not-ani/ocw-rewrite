@@ -3,10 +3,7 @@ import { FetchError } from "./errors";
 import { FetchResult } from "./types";
 import { FETCH_TIMEOUT_MS, MAX_RESPONSE_SIZE } from "./config";
 
-/**
- * Fetch URL with conditional request support (ETag, Last-Modified)
- * Includes timeout and size limits
- */
+
 export const fetchWithConditional = (
 	url: string,
 	cachedEtag?: string,
@@ -23,7 +20,7 @@ export const fetchWithConditional = (
 					Accept: "text/html,application/xhtml+xml",
 				};
 
-				// Conditional request headers for cache validation
+				
 				if (cachedEtag) headers["If-None-Match"] = cachedEtag;
 				if (cachedLastModified)
 					headers["If-Modified-Since"] = cachedLastModified;
@@ -33,7 +30,7 @@ export const fetchWithConditional = (
 					headers,
 				});
 
-				// 304 Not Modified - content hasn't changed
+				
 				if (response.status === 304) {
 					return { html: "", notModified: true };
 				}

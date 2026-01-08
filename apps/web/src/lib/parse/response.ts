@@ -8,9 +8,7 @@ import {
 	AppError,
 } from "./errors";
 
-/**
- * Convert Effect error to Next.js response
- */
+
 export const errorToResponse = (error: AppError): NextResponse => {
 	switch (error._tag) {
 		case "RateLimitedError":

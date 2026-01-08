@@ -1,5 +1,4 @@
 import { Effect, Option } from "effect";
-import { ratelimit } from "@/lib/redis/rate-limit";
 import {
 	acquireRevalidationLock,
 	getCached,
@@ -13,12 +12,17 @@ import type { ResponseData } from "./types";
 import { getClientIp, hashContent, hashUrl, isExpired, isStale } from "./utils";
 import { parseAndValidateUrl, validateHostSecurity } from "./validation";
 
-/**
- * Check rate limit for client IP
- */
+const getRatelimit = async () => {
+	const { ratelimit } = await import("@/lib/redis/rate-limit");
+	return ratelimit;
+};
+
 const checkRateLimit = (ip: string): Effect.Effect<void, RateLimitedError> =>
 	Effect.tryPromise({
-		try: () => ratelimit.limit(ip),
+		try: async () => {
+			const ratelimit = await getRatelimit();
+			return ratelimit.limit(ip);
+		},
 		catch: () => new RateLimitedError({ remaining: 0, reset: Date.now() }),
 	}).pipe(
 		Effect.flatMap((r) =>
@@ -30,9 +34,7 @@ const checkRateLimit = (ip: string): Effect.Effect<void, RateLimitedError> =>
 		),
 	);
 
-/**
- * Main request handler with stale-while-revalidate caching strategy
- */
+
 export const handleRequest = (
 	request: Request,
 ): Effect.Effect<ResponseData, AppError> =>
@@ -45,7 +47,7 @@ export const handleRequest = (
 		const urlHash = hashUrl(urlObj.href);
 		const cached = yield* getCached(urlHash);
 
-		// CASE 1: Fresh cache hit - return immediately
+		
 		if (Option.isSome(cached) && !isStale(cached.value.fetchedAt)) {
 			return {
 				markdown: cached.value.markdown,
@@ -60,7 +62,7 @@ export const handleRequest = (
 			const gotLock = yield* acquireRevalidationLock(urlHash);
 
 			if (gotLock) {
-				// Fire-and-forget background revalidation
+				
 				Effect.runPromise(
 					Effect.gen(function* () {
 						const result = yield* fetchWithConditional(
@@ -75,20 +77,20 @@ export const handleRequest = (
 						}
 
 						if (result.notModified) {
-							// Content unchanged - just update timestamp
+							
 							yield* setCache(urlHash, {
 								...cachedData,
 								fetchedAt: Date.now(),
 							});
 						} else {
-							// Content changed - parse and cache new content
+							
 							const markdown = yield* parseHtmlToMarkdown(result.html).pipe(
 								Effect.catchAll(() => Effect.succeed(cachedData.markdown)),
 							);
 
 							const newHash = hashContent(markdown);
 
-							// Only update if content actually changed
+							
 							if (newHash !== cachedData.contentHash) {
 								yield* setCache(urlHash, {
 									markdown,
@@ -110,7 +112,7 @@ export const handleRequest = (
 				).catch(() => {});
 			}
 
-			// Return stale content immediately
+			
 			return {
 				markdown: cachedData.markdown,
 				cached: true,
@@ -118,11 +120,11 @@ export const handleRequest = (
 			};
 		}
 
-		// CASE 3: No cache or expired - must fetch fresh
+		
 		const result = yield* fetchWithConditional(urlObj.href);
 		const markdown = yield* parseHtmlToMarkdown(result.html);
 
-		// Cache the result
+		
 		yield* setCache(urlHash, {
 			markdown,
 			fetchedAt: Date.now(),
