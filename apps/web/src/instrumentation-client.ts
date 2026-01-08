@@ -1,5 +1,5 @@
 import posthog from "posthog-js";
-import { env } from "./env";
+import { env } from "@ocw/env/web";
 
 posthog.init(env.NEXT_PUBLIC_POSTHOG_KEY, {
 	api_host: "/ocw-path-for-real",

@@ -1,5 +1,7 @@
+import { env } from "@ocw/env/web";
+
 export const protocol =
-	process.env.NODE_ENV === "production" ? "https" : "http";
+	env.NODE_ENV === "production" ? "https" : "http";
 
 export const rootDomain =
-	process.env.NEXT_PUBLIC_ROOT_DOMAIN || "localhost:3001";
+	env.NEXT_PUBLIC_ROOT_DOMAIN || "localhost:3001";

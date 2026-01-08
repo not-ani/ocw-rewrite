@@ -7,6 +7,7 @@ import { fetchQuery, preloadQuery} from "convex/nextjs";
 import type { Metadata } from "next";
 // Add headers import
 import { headers } from "next/headers";
+import { env } from "@ocw/env/web";
 import Providers from "@/components/providers";
 import { PostHogIdentify } from "@/components/providers/posthog";
 import { SiteContextProvider } from "@/lib/multi-tenant/context";
@@ -28,7 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
 	// FIX: Resolve the current host dynamically to prevent Next.js from defaulting to 'localhost'
 	const headersList = await headers();
 	const host = headersList.get("host") || "localhost:3000";
-	const protocol = process.env.NODE_ENV === "development" ? "http" : "https";
+	const protocol = env.NODE_ENV === "development" ? "http" : "https";
 
 	const baseConfig = {
 		metadataBase: new URL(`${protocol}://${host}`),

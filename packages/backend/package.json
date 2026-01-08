@@ -19,6 +19,7 @@
 	},
 	"dependencies": {
 		"@convex-dev/migrations": "^0.2.9",
+		"@ocw/env": "workspace:*",
 		"convex": "catalog:",
 		"convex-helpers": "^0.1.106"
 	}

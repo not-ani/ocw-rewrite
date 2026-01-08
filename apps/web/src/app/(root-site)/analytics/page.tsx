@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { type MonthlyTraffic, TrafficChart } from "@/components/linear-chart";
-import { env } from "@/env";
+import { env } from "@ocw/env/web";
 import { tryCatch } from "@/lib/try-catch";
 import { Statis } from "./stats";
 

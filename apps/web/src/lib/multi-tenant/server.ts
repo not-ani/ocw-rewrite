@@ -1,5 +1,6 @@
 import "server-only";
 import { headers } from "next/headers";
+import { env } from "@ocw/env/web";
 import { protocol } from "../site";
 
 export async function extractSubdomain(): Promise<string | null> {
@@ -45,7 +46,7 @@ export async function getBaseUrl(): Promise<string> {
 	const host =
 		headersList.get("x-forwarded-host") ||
 		headersList.get("host") ||
-		process.env.NEXT_PUBLIC_ROOT_DOMAIN ||
+		env.NEXT_PUBLIC_ROOT_DOMAIN ||
 		"localhost:3001";
 	const protocolToUse = host.includes("localhost") ? "http" : protocol;
 	return `${protocolToUse}://${host}`;

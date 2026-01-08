@@ -1,5 +1,7 @@
+import { env } from "@ocw/env/server";
+
 export const ALLOWED_HOSTS = new Set(
-	(process.env.ALLOWED_HOSTS || "")
+	(env.ALLOWED_HOSTS || "")
 		.split(",")
 		.map((h) => h.trim().toLowerCase())
 		.filter(Boolean),

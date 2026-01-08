@@ -9,6 +9,7 @@
 		".": "./src/index.ts"
 	},
 	"dependencies": {
+		"@ocw/env": "workspace:*",
 		"@ocw/redis": "workspace:*",
 		"convex": "catalog:",
 		"effect": "^3.19.14",
