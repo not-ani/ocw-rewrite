@@ -1,32 +1,51 @@
 import { Effect } from "effect";
 import { NextResponse } from "next/server";
-import { CACHE_TTL, STALE_TTL } from "@/lib/parse/config";
-import { handleRequest } from "@/lib/parse/handler";
-import { errorToResponse } from "@/lib/parse/response";
-
-
+import { CACHE_TTL, STALE_TTL, errorToResponse } from "@ocw/parse";
+import { handleRequest, HtmlParserLayer } from "@ocw/parse";
+import { getPostHogServer } from "@/lib/posthog-server";
+const NOISE_ERRORS = [
+  "RateLimitedError",
+  "InvalidUrlError",
+  "BlockedHostError",
+  "IPFormatError",
+];
 export async function GET(request: Request) {
-	const result = await Effect.runPromiseExit(handleRequest(request));
+  const posthog = getPostHogServer();
+  const { pathname, searchParams } = new URL(request.url);
 
-	if (result._tag === "Success") {
-		const { markdown, cached, age } = result.value;
-
-		return NextResponse.json(
-			{ markdown },
-			{
-				headers: {
-					"X-Cache": cached ? "HIT" : "MISS",
-					...(age !== undefined && { "X-Cache-Age": String(age) }),
-					"Cache-Control": `public, max-age=${CACHE_TTL}, stale-while-revalidate=${STALE_TTL - CACHE_TTL}`,
-				},
-			},
-		);
-	}
-
-	if (result.cause._tag === "Fail") {
-		return errorToResponse(result.cause.error);
-	}
-
-	console.error("Unexpected error:", result.cause);
-	return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+  const program = handleRequest(request).pipe(
+    Effect.tapError((error) =>
+      Effect.sync(() => {
+        if (!NOISE_ERRORS.includes(error._tag)) {
+          posthog.capture({
+            distinctId: "system",
+            event: "api_failure",
+            properties: {
+              type: error._tag,
+              route: pathname,
+              params: Object.fromEntries(searchParams),
+              method: request.method,
+              ...error,
+            },
+          });
+        }
+      }),
+    ),
+    Effect.match({
+      onSuccess: ({ markdown, cached, age }) =>
+        NextResponse.json(
+          { markdown },
+          {
+            headers: {
+              "X-Cache": cached ? "HIT" : "MISS",
+              ...(age !== undefined && { "X-Cache-Age": String(age) }),
+              "Cache-Control": `public, max-age=${CACHE_TTL}, stale-while-revalidate=${STALE_TTL - CACHE_TTL}`,
+            },
+          },
+        ),
+      onFailure: (error) => errorToResponse(error),
+    }),
+    Effect.provide(HtmlParserLayer),
+  );
+  return await Effect.runPromise(program);
 }

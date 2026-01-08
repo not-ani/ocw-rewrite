@@ -1,8 +1,7 @@
 import { Effect } from "effect";
-import { FetchError } from "./errors";
-import { FetchResult } from "./types";
 import { FETCH_TIMEOUT_MS, MAX_RESPONSE_SIZE } from "./config";
-
+import { FetchError } from "./errors";
+import type { FetchResult } from "./types";
 
 export const fetchWithConditional = (
 	url: string,
@@ -20,7 +19,6 @@ export const fetchWithConditional = (
 					Accept: "text/html,application/xhtml+xml",
 				};
 
-				
 				if (cachedEtag) headers["If-None-Match"] = cachedEtag;
 				if (cachedLastModified)
 					headers["If-Modified-Since"] = cachedLastModified;
@@ -30,7 +28,6 @@ export const fetchWithConditional = (
 					headers,
 				});
 
-				
 				if (response.status === 304) {
 					return { html: "", notModified: true };
 				}

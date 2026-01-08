@@ -1,0 +1,23 @@
+{
+  "name": "@ocw/redis",
+  "version": "1.0.0",
+  "scripts": {},
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "exports": {
+    ".": "./src/index.ts",
+    "./redis": "./src/redis/index.ts",
+    "./rate-limit": "./src/rate-limit/index.ts"
+  },
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "effect": "catalog:",
+    "@ocw/config": "workspace:*"
+  },
+  "dependencies": {
+    "@upstash/ratelimit": "^2.0.7",
+    "@upstash/redis": "^1.36.0"
+  }
+}

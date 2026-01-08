@@ -12,9 +12,18 @@ catalogs:
     convex:
       specifier: ^1.27.0
       version: 1.27.3
+    dotenv:
+      specifier: ^17.2.2
+      version: 17.2.2
+    effect:
+      specifier: ^3.19.14
+      version: 3.19.14
     typescript:
       specifier: ^5
       version: 5.9.3
+    zod:
+      specifier: ^4.1.13
+      version: 4.3.5
 
 importers:
 
@@ -23,6 +32,9 @@ importers:
       '@biomejs/biome':
         specifier: ^2.2.0
         version: 2.3.11
+      '@ocw/config':
+        specifier: workspace:*
+        version: link:packages/config
       turbo:
         specifier: ^2.5.4
         version: 2.7.3
@@ -56,6 +68,15 @@ importers:
       '@ocw/backend':
         specifier: workspace:*
         version: link:../../packages/backend
+      '@ocw/env':
+        specifier: workspace:*
+        version: link:../../packages/env
+      '@ocw/parse':
+        specifier: workspace:*
+        version: link:../../packages/parse
+      '@ocw/redis':
+        specifier: workspace:*
+        version: link:../../packages/redis
       '@posthog/react':
         specifier: ^1.5.2
         version: 1.5.2(@types/react@19.2.2)(posthog-js@1.315.1)(react@19.2.1)
@@ -107,9 +128,6 @@ importers:
       '@tanstack/react-table':
         specifier: ^8.21.3
         version: 8.21.3(react-dom@19.2.0(react@19.2.1))(react@19.2.1)
-      '@types/turndown':
-        specifier: ^5.0.5
-        version: 5.0.6
       '@uploadthing/react':
         specifier: ^7.3.3
         version: 7.3.3(next@16.1.1(@babel/core@7.28.5)(@playwright/test@1.57.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.1))(react@19.2.1))(react@19.2.1)(uploadthing@7.7.4(express@5.2.1)(next@16.1.1(@babel/core@7.28.5)(@playwright/test@1.57.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.2.0(react@19.2.1))(react@19.2.1))(tailwindcss@4.1.18))
@@ -138,7 +156,7 @@ importers:
         specifier: ^4.0.2
         version: 4.0.2
       effect:
-        specifier: ^3.19.14
+        specifier: 'catalog:'
         version: 3.19.14
       jotai:
         specifier: ^2.15.0
@@ -164,6 +182,9 @@ importers:
       posthog-js:
         specifier: ^1.268.9
         version: 1.315.1
+      posthog-node:
+        specifier: ^5.19.0
+        version: 5.19.0
       qrcode:
         specifier: ^1.5.4
         version: 1.5.4
@@ -194,12 +215,6 @@ importers:
       tailwind-merge:
         specifier: ^3.3.1
         version: 3.4.0
-      turndown:
-        specifier: ^7.2.1
-        version: 7.2.2
-      turndown-plugin-gfm:
-        specifier: ^1.0.2
-        version: 1.0.2
       tw-animate-css:
         specifier: ^1.4.0
         version: 1.4.0
@@ -263,7 +278,85 @@ importers:
         specifier: ^2.1.8
         version: 2.1.9(@types/node@20.19.19)(jsdom@27.4.0)(lightningcss@1.30.2)
 
-  packages/html-parser-wasm: {}
+  packages/config: {}
+
+  packages/env:
+    dependencies:
+      '@t3-oss/env-core':
+        specifier: ^0.13.10
+        version: 0.13.10(arktype@2.1.27)(typescript@5.9.3)(zod@4.3.5)
+      '@t3-oss/env-nextjs':
+        specifier: ^0.13.1
+        version: 0.13.10(arktype@2.1.27)(typescript@5.9.3)(zod@4.3.5)
+      dotenv:
+        specifier: 'catalog:'
+        version: 17.2.2
+      zod:
+        specifier: 'catalog:'
+        version: 4.3.5
+    devDependencies:
+      '@ocw/config':
+        specifier: workspace:*
+        version: link:../config
+      '@types/node':
+        specifier: 'catalog:'
+        version: 20.19.19
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+
+  packages/parse:
+    dependencies:
+      '@ocw/redis':
+        specifier: workspace:*
+        version: link:../redis
+      '@types/turndown':
+        specifier: ^5.0.5
+        version: 5.0.6
+      convex:
+        specifier: 'catalog:'
+        version: 1.27.3(@clerk/clerk-react@5.59.3(react-dom@19.2.0(react@19.2.3))(react@19.2.3))(react@19.2.3)
+      effect:
+        specifier: ^3.19.14
+        version: 3.19.14
+      turndown:
+        specifier: ^7.2.1
+        version: 7.2.2
+      turndown-plugin-gfm:
+        specifier: ^1.0.2
+        version: 1.0.2
+    devDependencies:
+      '@ocw/config':
+        specifier: workspace:*
+        version: link:../config
+      '@types/node':
+        specifier: 'catalog:'
+        version: 20.19.19
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+
+  packages/redis:
+    dependencies:
+      '@upstash/ratelimit':
+        specifier: ^2.0.7
+        version: 2.0.7(@upstash/redis@1.36.0)
+      '@upstash/redis':
+        specifier: ^1.36.0
+        version: 1.36.0
+    devDependencies:
+      '@ocw/config':
+        specifier: workspace:*
+        version: link:../config
+      '@types/node':
+        specifier: 'catalog:'
+        version: 20.19.19
+      effect:
+        specifier: 'catalog:'
+        version: 3.19.14
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
 
 packages:
 
@@ -2854,9 +2947,6 @@ packages:
 
   '@types/node@20.19.19':
     resolution: {integrity: sha512-pb1Uqj5WJP7wrcbLU7Ru4QtA0+3kAXrkutGiD26wUKzSMgNNaPARTUDQmElUXp64kh3cWdou3Q0C7qwwxqSFmg==}
-
-  '@types/node@24.6.1':
-    resolution: {integrity: sha512-ljvjjs3DNXummeIaooB4cLBKg2U6SPI6Hjra/9rRIy7CpM0HpLtG9HptkMKAb4HYWy5S7HUvJEuWgr/y0U8SHw==}
 
   '@types/node@25.0.3':
     resolution: {integrity: sha512-W609buLVRVmeW693xKfzHeIV6nJGGz98uCPfeXI1ELMLXVeKYZ9m15fAMSaUPBHYLGFsVRcMmSCksQOrZV9BYA==}
@@ -5794,6 +5884,10 @@ packages:
   posthog-js@1.315.1:
     resolution: {integrity: sha512-ambT1azidu4hKhSmB95KdLY6yHfj9vvz1XNn68syh8DtkQ0uSdjpRY6tjMp96EQtPqCrDKr+8QpcusT1KQEZSA==}
 
+  posthog-node@5.19.0:
+    resolution: {integrity: sha512-5Nx+/b1JbAy6TaCENuO+mLFfZIXyYavae+D6FABd52gzkGryRkRTsKi+WLlILI5shSCAMWs5gxzGAZ3nOC0gFA==}
+    engines: {node: '>=20'}
+
   preact@10.27.2:
     resolution: {integrity: sha512-5SYSgFKSyhCbk6SrXyMpqjb5+MQBgfvEKE/OC+PujcY34sOpqtr+0AZQtPYx5IA6VxynQ7rUPCtKzyovpj9Bpg==}
 
@@ -6728,9 +6822,6 @@ packages:
 
   undici-types@6.21.0:
     resolution: {integrity: sha512-iwDZqg0QAGrg9Rav5H4n0M64c3mkR59cJ6wQp+7C4nI0gsmExaedaYLNO44eT4AtBBwjbTiGPMlt2Md0T9H9JQ==}
-
-  undici-types@7.13.0:
-    resolution: {integrity: sha512-Ov2Rr9Sx+fRgagJ5AX0qvItZG/JKKoBRAVITs1zk7IqZGTJUwgUr7qoYBpWwakpWilTZFM98rG/AFRocu10iIQ==}
 
   undici-types@7.16.0:
     resolution: {integrity: sha512-Zz+aZWSj8LE6zoxD+xrjh4VfkIG8Ya6LvYkZqtUQGJPZjYl53ypCaUwWqo7eI0x66KBGeRo+mlBEkMSeSZ38Nw==}
@@ -10118,17 +10209,13 @@ snapshots:
     dependencies:
       undici-types: 6.21.0
 
-  '@types/node@24.6.1':
-    dependencies:
-      undici-types: 7.13.0
-
   '@types/node@25.0.3':
     dependencies:
       undici-types: 7.16.0
 
   '@types/qrcode@1.5.6':
     dependencies:
-      '@types/node': 24.6.1
+      '@types/node': 25.0.3
 
   '@types/react-dom@19.2.2(@types/react@19.2.2)':
     dependencies:
@@ -13764,6 +13851,10 @@ snapshots:
       preact: 10.27.2
       web-vitals: 4.2.4
 
+  posthog-node@5.19.0:
+    dependencies:
+      '@posthog/core': 1.9.0
+
   preact@10.27.2: {}
 
   prettier@3.7.4: {}
@@ -15184,8 +15275,6 @@ snapshots:
   uncrypto@0.1.3: {}
 
   undici-types@6.21.0: {}
-
-  undici-types@7.13.0: {}
 
   undici-types@7.16.0: {}
 
