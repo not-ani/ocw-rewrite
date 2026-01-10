@@ -10,7 +10,6 @@ import { useRouter } from "next/navigation";
 import { memo, Suspense, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
 import { Button } from "@ocw/ui/button";
 import { Checkbox } from "@ocw/ui/checkbox";
 import {
@@ -34,26 +33,11 @@ import { Skeleton } from "@ocw/ui/skeleton";
 import { Textarea } from "@ocw/ui/textarea";
 import { UploadDropzone } from "@/lib/uploadthing";
 import { cn } from "@/lib/utils";
+import {
+	type LessonEditFormValues,
+	lessonEditFormSchema,
+} from "@ocw/validators";
 import LessonPageLoading from "./loading";
-
-const lessonFormSchema = z.object({
-	name: z.string().min(1, "Lesson name is required").max(200),
-	isPublished: z.boolean(),
-	contentType: z.enum([
-		"google_docs",
-		"notion",
-		"quizlet",
-		"google_drive",
-		"youtube",
-		"pdf",
-		"other",
-	]),
-	embedUrl: z.string(),
-	pdfUrl: z.string().optional(),
-	pureLink: z.boolean(),
-});
-
-type LessonFormValues = z.infer<typeof lessonFormSchema>;
 
 function LessonFormSkeleton() {
 	return (
@@ -97,8 +81,8 @@ function LessonEditForm({
 	const createOrUpdateEmbed = useMutation(api.lesson.createOrUpdateEmbed);
 	const [isUploading, setIsUploading] = useState(false);
 
-	const form = useForm<LessonFormValues>({
-		resolver: zodResolver(lessonFormSchema),
+	const form = useForm<LessonEditFormValues>({
+		resolver: zodResolver(lessonEditFormSchema),
 		defaultValues: {
 			name: lesson.name,
 			isPublished: lesson.isPublished,
@@ -121,7 +105,7 @@ function LessonEditForm({
 		);
 	}
 
-	const onSubmit = async (values: LessonFormValues) => {
+	const onSubmit = async (values: LessonEditFormValues) => {
 		try {
 			await updateLesson({
 				courseId,

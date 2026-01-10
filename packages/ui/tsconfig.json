@@ -1,9 +1,10 @@
 {
-  "extends": "@ocw/config/tsconfig.base.json",
+  "extends": "@ocw/tsconfig/base.json",
   "compilerOptions": {
-    "outDir": "./dist",
-    "rootDir": "./src",
+    "lib": ["ES2022", "dom", "dom.iterable"],
+    "jsx": "preserve",
+    "rootDir": "."
   },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules", "dist"],
+  "include": ["src"],
+  "exclude": ["node_modules"]
 }

@@ -8,7 +8,6 @@ import { FileText, Link2, Loader2Icon, XIcon } from "lucide-react";
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
 
 import { Button } from "@ocw/ui/button";
 import { Checkbox } from "@ocw/ui/checkbox";
@@ -34,20 +33,13 @@ import {
 } from "@ocw/ui/kibo-ui/combobox";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ocw/ui/tabs";
 import { Textarea } from "@ocw/ui/textarea";
+import {
+	createLessonInlineFormSchema,
+	type CreateLessonInlineFormValues,
+} from "@ocw/validators";
 import { useSite } from "@/lib/multi-tenant/context";
 import { UploadDropzone } from "@/lib/uploadthing";
 import { cn } from "@/lib/utils";
-
-const formSchema = z.object({
-	name: z.string().min(3, "Lesson name must be at least 3 characters").max(200),
-	unitId: z.string().min(1, "Please select a unit"),
-	embedRaw: z.string().optional(),
-	pdfUrl: z.string().optional(),
-	pdfName: z.string().optional(),
-	pureLink: z.boolean().optional(),
-});
-
-type FormValues = z.infer<typeof formSchema>;
 
 interface CreateLessonInlineFormProps {
 	courseId: Id<"courses">;
@@ -68,8 +60,8 @@ export function CreateLessonInlineForm({
 		school: subdomain,
 	});
 
-	const form = useForm<FormValues>({
-		resolver: zodResolver(formSchema),
+	const form = useForm<CreateLessonInlineFormValues>({
+		resolver: zodResolver(createLessonInlineFormSchema),
 		defaultValues: {
 			name: "",
 			unitId: "",
@@ -96,7 +88,7 @@ export function CreateLessonInlineForm({
 		}));
 	}, [units]);
 
-	async function onSubmit(values: FormValues) {
+	async function onSubmit(values: CreateLessonInlineFormValues) {
 		setIsSubmitting(true);
 		try {
 			if (contentType === "pdf" && values.pdfUrl) {

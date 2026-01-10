@@ -8,7 +8,6 @@ import Image from "next/image";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
 import { Button } from "@ocw/ui/button";
 import {
 	Card,
@@ -27,25 +26,11 @@ import {
 } from "@ocw/ui/form";
 import { Input } from "@ocw/ui/input";
 import { Textarea } from "@ocw/ui/textarea";
+import {
+	basicInformationFormSchema,
+	type BasicInformationFormValues,
+} from "@ocw/validators";
 import { UploadButton } from "@/lib/uploadthing";
-
-const basicInfoSchema = z.object({
-	schoolName: z.string().min(1, "School name is required"),
-	siteHero: z.string().optional(),
-	siteLogo: z.string().url("Must be a valid URL").optional().or(z.literal("")),
-	siteContributeLink: z
-		.string()
-		.url("Must be a valid URL")
-		.optional()
-		.or(z.literal("")),
-	instagramUrl: z
-		.string()
-		.url("Must be a valid URL")
-		.optional()
-		.or(z.literal("")),
-});
-
-type BasicInfoFormValues = z.infer<typeof basicInfoSchema>;
 
 type BasicInformationCardProps = {
 	school: string;
@@ -69,8 +54,8 @@ export function BasicInformationCard({
 		siteLogo || "",
 	);
 
-	const form = useForm<BasicInfoFormValues>({
-		resolver: zodResolver(basicInfoSchema),
+	const form = useForm<BasicInformationFormValues>({
+		resolver: zodResolver(basicInformationFormSchema),
 		defaultValues: {
 			schoolName: schoolName || "",
 			siteHero: siteHero || "",
@@ -80,7 +65,7 @@ export function BasicInformationCard({
 		},
 	});
 
-	const onSubmit = async (values: BasicInfoFormValues) => {
+	const onSubmit = async (values: BasicInformationFormValues) => {
 		try {
 			await updateBasicFields({
 				school,
@@ -164,7 +149,7 @@ export function BasicInformationCard({
 															setUploadedLogoUrl("");
 															field.onChange("");
 														}}
-														className="-top-2 -right-2 absolute rounded-full bg-red-500 p-1 text-white transition-colors hover:bg-red-600"
+														className="absolute -right-2 -top-2 rounded-full bg-red-500 p-1 text-white transition-colors hover:bg-red-600"
 													>
 														<X className="h-4 w-4" />
 													</button>

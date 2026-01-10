@@ -7,7 +7,6 @@ import { Loader2Icon, Plus } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
 
 import { Button } from "@ocw/ui/button";
 import { Checkbox } from "@ocw/ui/checkbox";
@@ -31,30 +30,19 @@ import {
 } from "@ocw/ui/form";
 import { Input } from "@ocw/ui/input";
 import { Textarea } from "@ocw/ui/textarea";
+import {
+	addCourseFormSchema,
+	type AddCourseFormValues,
+} from "@ocw/validators";
 import { useSite } from "@/lib/multi-tenant/context";
-
-const formSchema = z.object({
-	name: z
-		.string()
-		.min(3, "Course name must be at least 3 characters")
-		.max(100, "Course name must be less than 100 characters"),
-	description: z
-		.string()
-		.min(10, "Description must be at least 10 characters")
-		.max(500, "Description must be less than 500 characters"),
-	subjectId: z.string().min(1, "Subject ID is required"),
-	isPublic: z.boolean().default(false),
-});
-
-type FormValues = z.infer<typeof formSchema>;
 
 export function AddCourseDialog() {
 	const [open, setOpen] = useState(false);
 	const { subdomain } = useSite();
 	const createCourse = useMutation(api.admin.createCourse);
 
-	const form = useForm<FormValues>({
-		resolver: zodResolver(formSchema),
+	const form = useForm<AddCourseFormValues>({
+		resolver: zodResolver(addCourseFormSchema),
 		defaultValues: {
 			name: "",
 			description: "",
@@ -65,7 +53,7 @@ export function AddCourseDialog() {
 
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
-	async function onSubmit(values: FormValues) {
+	async function onSubmit(values: AddCourseFormValues) {
 		setIsSubmitting(true);
 		try {
 			await createCourse({

@@ -6,7 +6,6 @@ import { useMutation } from "convex/react";
 import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
 import { Button } from "@ocw/ui/button";
 import {
 	Card,
@@ -24,13 +23,10 @@ import {
 	FormMessage,
 } from "@ocw/ui/form";
 import { Input } from "@ocw/ui/input";
-
-const clubInfoSchema = z.object({
-	clubName: z.string().min(1, "Club name is required"),
-	clubEmail: z.email("Must be a valid email address"),
-});
-
-type ClubInfoFormValues = z.infer<typeof clubInfoSchema>;
+import {
+	clubInformationFormSchema,
+	type ClubInformationFormValues,
+} from "@ocw/validators";
 
 type ClubInformationCardProps = {
 	school: string;
@@ -45,15 +41,15 @@ export function ClubInformationCard({
 }: ClubInformationCardProps) {
 	const updateClubInfo = useMutation(api.site.updateClubInfo);
 
-	const form = useForm<ClubInfoFormValues>({
-		resolver: zodResolver(clubInfoSchema),
+	const form = useForm<ClubInformationFormValues>({
+		resolver: zodResolver(clubInformationFormSchema),
 		defaultValues: {
 			clubName: clubName || "",
 			clubEmail: clubEmail || "",
 		},
 	});
 
-	const onSubmit = async (values: ClubInfoFormValues) => {
+	const onSubmit = async (values: ClubInformationFormValues) => {
 		try {
 			await updateClubInfo({
 				school,

@@ -7,7 +7,6 @@ import { Check, Pencil, Plus, Trash2, X } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
 import { Button } from "@ocw/ui/button";
 import {
 	Card,
@@ -26,15 +25,11 @@ import {
 	TableRow,
 } from "@ocw/ui/table";
 import { Textarea } from "@ocw/ui/textarea";
+import {
+	contactPersonFormSchema,
+	type ContactPersonFormValues,
+} from "@ocw/validators";
 import type { PersonContact } from "./types";
-
-const contactSchema = z.object({
-	name: z.string().min(1, "Name is required"),
-	email: z.email("Must be a valid email address"),
-	description: z.string().optional(),
-});
-
-type ContactFormValues = z.infer<typeof contactSchema>;
 
 type ContactPersonsCardProps = {
 	school: string;
@@ -53,8 +48,8 @@ export function ContactPersonsCard({
 
 	const updatePersonsContact = useMutation(api.site.updatePersonsContact);
 
-	const newContactForm = useForm<ContactFormValues>({
-		resolver: zodResolver(contactSchema),
+	const newContactForm = useForm<ContactPersonFormValues>({
+		resolver: zodResolver(contactPersonFormSchema),
 		defaultValues: {
 			name: "",
 			email: "",
@@ -101,7 +96,7 @@ export function ContactPersonsCard({
 		newContactForm.reset();
 	};
 
-	const handleSaveNewContact = async (values: ContactFormValues) => {
+	const handleSaveNewContact = async (values: ContactPersonFormValues) => {
 		try {
 			await updatePersonsContact({
 				school,

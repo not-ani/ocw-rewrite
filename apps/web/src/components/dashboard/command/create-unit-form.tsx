@@ -8,7 +8,6 @@ import { Loader2Icon, XIcon } from "lucide-react";
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
 
 import { Button } from "@ocw/ui/button";
 import { Checkbox } from "@ocw/ui/checkbox";
@@ -22,18 +21,11 @@ import {
 } from "@ocw/ui/form";
 import { Input } from "@ocw/ui/input";
 import { Textarea } from "@ocw/ui/textarea";
+import {
+	createUnitInlineFormSchema,
+	type CreateUnitInlineFormValues,
+} from "@ocw/validators";
 import { useSite } from "@/lib/multi-tenant/context";
-
-const formSchema = z.object({
-	unitName: z
-		.string()
-		.min(3, "Unit name must be at least 3 characters")
-		.max(50),
-	description: z.string().optional(),
-	isPublished: z.boolean().default(false).optional(),
-});
-
-type FormValues = z.infer<typeof formSchema>;
 
 interface CreateUnitInlineFormProps {
 	courseId: Id<"courses">;
@@ -49,8 +41,8 @@ export function CreateUnitInlineForm({
 	const createUnit = useMutation(api.units.create);
 	const { subdomain } = useSite();
 
-	const form = useForm<FormValues>({
-		resolver: zodResolver(formSchema),
+	const form = useForm<CreateUnitInlineFormValues>({
+		resolver: zodResolver(createUnitInlineFormSchema),
 		defaultValues: {
 			unitName: "",
 			description: "",
@@ -60,7 +52,7 @@ export function CreateUnitInlineForm({
 
 	const [isSubmitting, setIsSubmitting] = React.useState(false);
 
-	async function onSubmit(values: FormValues) {
+	async function onSubmit(values: CreateUnitInlineFormValues) {
 		setIsSubmitting(true);
 		try {
 			await createUnit({

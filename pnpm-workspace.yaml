@@ -1,7 +1,9 @@
 packages:
   - apps/*
   - packages/*
+  - tooling/*
 catalog:
+  "@eslint/js": ^9.38.0
   convex: ^1.27.0
   "@types/node": ^20
   typescript: ^5
@@ -9,3 +11,16 @@ catalog:
   zod: "^4.1.13"
   next-themes: "^0.4.6"
   effect: "^3.19.14"
+  eslint: ^9.38.0
+  prettier: ^3.6.2
+
+catalogs:
+  react19:
+    "@types/react": ~19.1.0
+    "@types/react-dom": ~19.1.0
+    react: 19.1.4
+    react-dom: 19.1.4
+
+publicHoistPattern:
+  - "@ianvs/prettier-plugin-sort-imports"
+  - prettier-plugin-tailwindcss

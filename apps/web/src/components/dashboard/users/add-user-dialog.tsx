@@ -8,7 +8,6 @@ import { Loader2, UserPlus } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
 import { Button } from "@ocw/ui/button";
 import {
 	Dialog,
@@ -34,14 +33,11 @@ import {
 	SelectTrigger,
 	SelectValue,
 } from "@ocw/ui/select";
+import {
+	addUserToCourseFormSchema,
+	type AddUserToCourseFormValues,
+} from "@ocw/validators";
 import { useSite } from "@/lib/multi-tenant/context";
-
-const addUserSchema = z.object({
-	userId: z.string().min(1, "User ID is required"),
-	role: z.enum(["admin", "editor", "user"]),
-});
-
-type AddUserFormValues = z.infer<typeof addUserSchema>;
 
 type ClerkUser = {
 	id: string;
@@ -66,15 +62,15 @@ export function AddUserDialog({
 	const addOrUpdateMember = useMutation(api.courseUsers.addOrUpdateMember);
 	const { subdomain } = useSite();
 
-	const form = useForm<AddUserFormValues>({
-		resolver: zodResolver(addUserSchema),
+	const form = useForm<AddUserToCourseFormValues>({
+		resolver: zodResolver(addUserToCourseFormSchema),
 		defaultValues: {
 			userId: "",
 			role: "user",
 		},
 	});
 
-	const onSubmit = async (values: AddUserFormValues) => {
+	const onSubmit = async (values: AddUserToCourseFormValues) => {
 		try {
 			const result = await addOrUpdateMember({
 				courseId,
@@ -132,7 +128,7 @@ export function AddUserDialog({
 										defaultValue={field.value}
 									>
 										<FormControl>
-											<SelectTrigger className="w-[100%]">
+											<SelectTrigger className="w-full">
 												<SelectValue placeholder="Select a user" />
 											</SelectTrigger>
 										</FormControl>
@@ -176,7 +172,7 @@ export function AddUserDialog({
 										defaultValue={field.value}
 									>
 										<FormControl>
-											<SelectTrigger className="w-[100%]">
+											<SelectTrigger className="w-full">
 												<SelectValue placeholder="Select a role" />
 											</SelectTrigger>
 										</FormControl>

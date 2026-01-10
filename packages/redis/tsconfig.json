@@ -1,6 +1,6 @@
 {
-	"extends": "@ocw/config/tsconfig.base.json",
-	"compilerOptions": {
-		"strictNullChecks": true
-	}
+  "extends": "@ocw/config/tsconfig.base.json",
+  "compilerOptions": {
+    "strictNullChecks": true
+  }
 }

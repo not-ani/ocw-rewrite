@@ -7,7 +7,6 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
 import { Button } from "@ocw/ui/button";
 import { Checkbox } from "@ocw/ui/checkbox";
 import { Dialog, DialogContent, DialogTrigger } from "@ocw/ui/dialog";
@@ -22,13 +21,11 @@ import {
 } from "@ocw/ui/form";
 import { Input } from "@ocw/ui/input";
 import { Textarea } from "@ocw/ui/textarea";
+import {
+	createUnitDialogFormSchema,
+	type CreateUnitDialogFormValues,
+} from "@ocw/validators";
 import { useSite } from "@/lib/multi-tenant/context";
-
-const formSchema = z.object({
-	unitName: z.string().min(1).min(3).max(50),
-	description: z.string().optional(),
-	isPublished: z.boolean().default(true).optional(),
-});
 
 type CreateUnitFormProps = {
 	callback: () => void;
@@ -37,13 +34,13 @@ type CreateUnitFormProps = {
 
 export function CreateUnitForm({ callback, courseId }: CreateUnitFormProps) {
 	const { subdomain } = useSite();
-	const form = useForm<z.infer<typeof formSchema>>({
-		resolver: zodResolver(formSchema),
+	const form = useForm<CreateUnitDialogFormValues>({
+		resolver: zodResolver(createUnitDialogFormSchema),
 	});
 
 	const mutate = useMutation(api.units.create);
 
-	function onSubmit(values: z.infer<typeof formSchema>) {
+	function onSubmit(values: CreateUnitDialogFormValues) {
 		try {
 			callback();
 			mutate({

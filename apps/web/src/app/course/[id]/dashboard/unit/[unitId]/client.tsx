@@ -9,7 +9,6 @@ import { useRouter } from "next/navigation";
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
 import { CreateLessonDialog } from "@/components/dashboard/lessons/create-lesson";
 import { ForkLessonDialog } from "@/components/dashboard/lessons/fork-lesson-dialog";
 import { Button } from "@ocw/ui/button";
@@ -25,16 +24,9 @@ import {
 import { Input } from "@ocw/ui/input";
 import { Skeleton } from "@ocw/ui/skeleton";
 import { Textarea } from "@ocw/ui/textarea";
+import { type UnitEditFormValues, unitEditFormSchema } from "@ocw/validators";
 import { LessonsTable } from "./lessons-table";
 import UnitPageLoading from "./loading";
-
-const unitFormSchema = z.object({
-	name: z.string().min(1, "Unit name is required").max(200),
-	description: z.string().max(1000).optional(),
-	isPublished: z.boolean(),
-});
-
-type UnitFormValues = z.infer<typeof unitFormSchema>;
 
 function UnitFormSkeleton() {
 	return (
@@ -107,8 +99,8 @@ function UnitEditForm({
 	const updateUnit = useMutation(api.units.update);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
-	const form = useForm<UnitFormValues>({
-		resolver: zodResolver(unitFormSchema),
+	const form = useForm<UnitEditFormValues>({
+		resolver: zodResolver(unitEditFormSchema),
 		defaultValues: {
 			name: unit?.name ?? "",
 			description: unit?.description ?? "",
@@ -127,7 +119,7 @@ function UnitEditForm({
 		}
 	}, [unit, form]);
 
-	const onSubmit = async (values: UnitFormValues) => {
+	const onSubmit = async (values: UnitEditFormValues) => {
 		setIsSubmitting(true);
 		try {
 			await updateUnit({
