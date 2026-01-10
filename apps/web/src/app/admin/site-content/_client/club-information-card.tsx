@@ -7,14 +7,14 @@ import { Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { Button } from "@/components/ui/button";
+import { Button } from "@ocw/ui/button";
 import {
 	Card,
 	CardContent,
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "@/components/ui/card";
+} from "@ocw/ui/card";
 import {
 	Form,
 	FormControl,
@@ -22,8 +22,8 @@ import {
 	FormItem,
 	FormLabel,
 	FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from "@ocw/ui/form";
+import { Input } from "@ocw/ui/input";
 
 const clubInfoSchema = z.object({
 	clubName: z.string().min(1, "Club name is required"),

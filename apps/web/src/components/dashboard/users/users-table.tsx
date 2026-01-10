@@ -15,10 +15,10 @@ import {
 	AlertDialogFooter,
 	AlertDialogHeader,
 	AlertDialogTitle,
-} from "@/components/ui/alert-dialog";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+} from "@ocw/ui/alert-dialog";
+import { Avatar, AvatarFallback, AvatarImage } from "@ocw/ui/avatar";
+import { Badge } from "@ocw/ui/badge";
+import { Button } from "@ocw/ui/button";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
@@ -26,7 +26,7 @@ import {
 	DropdownMenuLabel,
 	DropdownMenuSeparator,
 	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+} from "@ocw/ui/dropdown-menu";
 import {
 	type ColumnDef,
 	TableBody,
@@ -37,14 +37,14 @@ import {
 	TableHeaderGroup,
 	TableProvider,
 	TableRow,
-} from "@/components/ui/kibo-ui/table";
+} from "@ocw/ui/kibo-ui/table";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@/components/ui/select";
+} from "@ocw/ui/select";
 import { useSite } from "@/lib/multi-tenant/context";
 
 type ClerkUser = {

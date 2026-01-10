@@ -9,8 +9,8 @@ import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
 
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@ocw/ui/button";
+import { Checkbox } from "@ocw/ui/checkbox";
 import {
 	Dialog,
 	DialogContent,
@@ -19,7 +19,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@ocw/ui/dialog";
 import {
 	Form,
 	FormControl,
@@ -28,9 +28,9 @@ import {
 	FormItem,
 	FormLabel,
 	FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+} from "@ocw/ui/form";
+import { Input } from "@ocw/ui/input";
+import { Textarea } from "@ocw/ui/textarea";
 import { useSite } from "@/lib/multi-tenant/context";
 
 const formSchema = z.object({

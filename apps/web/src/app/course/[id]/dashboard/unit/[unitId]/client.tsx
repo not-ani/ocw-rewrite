@@ -12,7 +12,7 @@ import { toast } from "sonner";
 import { z } from "zod";
 import { CreateLessonDialog } from "@/components/dashboard/lessons/create-lesson";
 import { ForkLessonDialog } from "@/components/dashboard/lessons/fork-lesson-dialog";
-import { Button } from "@/components/ui/button";
+import { Button } from "@ocw/ui/button";
 import {
 	Form,
 	FormControl,
@@ -21,10 +21,10 @@ import {
 	FormItem,
 	FormLabel,
 	FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Textarea } from "@/components/ui/textarea";
+} from "@ocw/ui/form";
+import { Input } from "@ocw/ui/input";
+import { Skeleton } from "@ocw/ui/skeleton";
+import { Textarea } from "@ocw/ui/textarea";
 import { LessonsTable } from "./lessons-table";
 import UnitPageLoading from "./loading";
 

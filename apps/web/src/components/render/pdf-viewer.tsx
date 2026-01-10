@@ -3,7 +3,7 @@
 import { Download, ZoomIn, ZoomOut } from "lucide-react";
 import { memo, useCallback, useState } from "react";
 import { Document, Page, pdfjs } from "react-pdf";
-import { Button, buttonVariants } from "../ui/button";
+import { Button, buttonVariants } from "@ocw/ui/button";
 
 import "react-pdf/dist/Page/AnnotationLayer.css";
 import "react-pdf/dist/Page/TextLayer.css";

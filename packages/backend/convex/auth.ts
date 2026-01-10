@@ -1,12 +1,11 @@
 import { ConvexError, v } from "convex/values";
-import { customMutation, customQuery } from "convex-helpers/server/customFunctions";
+import {
+	customMutation,
+	customQuery,
+} from "convex-helpers/server/customFunctions";
 import type { CustomCtx } from "convex-helpers/server/customFunctions";
 import { mutation, query, type QueryCtx } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
-
-// ============================================================================
-// Types
-// ============================================================================
 
 export type UserRole = "admin" | "editor" | "user";
 export type SiteRole = "admin" | null;
@@ -250,7 +249,7 @@ export const siteAdminQuery = customQuery(query, {
 /**
  * Create a course mutation that requires a specific role.
  * Site admins automatically have all permissions.
- * 
+ *
  * Usage:
  * ```ts
  * export const myMutation = courseMutation("editor")({
@@ -290,7 +289,7 @@ export function courseMutation(requiredRole: UserRole) {
 /**
  * Create a course query that requires a specific role.
  * Site admins automatically have all permissions.
- * 
+ *
  * Usage:
  * ```ts
  * export const myQuery = courseQuery("user")({
@@ -337,4 +336,3 @@ export type SiteAdminMutationCtx = CustomCtx<typeof siteAdminMutation>;
 export type SiteAdminQueryCtx = CustomCtx<typeof siteAdminQuery>;
 export type CourseMutationCtx = CustomCtx<ReturnType<typeof courseMutation>>;
 export type CourseQueryCtx = CustomCtx<ReturnType<typeof courseQuery>>;
-

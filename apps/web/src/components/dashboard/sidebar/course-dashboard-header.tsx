@@ -14,10 +14,10 @@ import {
 	BreadcrumbList,
 	BreadcrumbPage,
 	BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Button, buttonVariants } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
-import { useSidebar } from "@/components/ui/sidebar";
+} from "@ocw/ui/breadcrumb";
+import { Button, buttonVariants } from "@ocw/ui/button";
+import { Separator } from "@ocw/ui/separator";
+import { useSidebar } from "@ocw/ui/sidebar";
 import { useSite } from "@/lib/multi-tenant/context";
 import { cn } from "@/lib/utils";
 

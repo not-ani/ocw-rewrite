@@ -9,15 +9,15 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { Button } from "@/components/ui/button";
+import { Button } from "@ocw/ui/button";
 import {
 	Card,
 	CardContent,
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+} from "@ocw/ui/card";
+import { Input } from "@ocw/ui/input";
 import {
 	Table,
 	TableBody,
@@ -25,8 +25,8 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "@/components/ui/table";
-import { Textarea } from "@/components/ui/textarea";
+} from "@ocw/ui/table";
+import { Textarea } from "@ocw/ui/textarea";
 
 type Contributor = {
 	_id: Id<"contributors">;

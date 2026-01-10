@@ -1,6 +1,6 @@
 "use client";
 import { FileEdit } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@ocw/ui/button";
 import {
 	Card,
 	CardContent,
@@ -8,8 +8,8 @@ import {
 	CardFooter,
 	CardHeader,
 	CardTitle,
-} from "@/components/ui/card";
-import { QRCode } from "@/components/ui/kibo-ui/qr-code";
+} from "@ocw/ui/card";
+import { QRCode } from "@ocw/ui/kibo-ui/qr-code";
 
 type SiteConfig = {
 	schoolName: string;

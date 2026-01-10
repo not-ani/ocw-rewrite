@@ -5,14 +5,14 @@ import { AnimatePresence, motion } from "motion/react";
 import type { Route } from "next";
 import Link from "next/link";
 import { memo, useCallback, useMemo, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@ocw/ui/button";
 import {
 	SidebarGroup,
 	SidebarGroupContent,
 	SidebarMenu,
 	SidebarMenuButton,
 	SidebarMenuItem,
-} from "@/components/ui/sidebar";
+} from "@ocw/ui/sidebar";
 import { GetIcon } from "./icons";
 import type { SidebarData } from "./types";
 

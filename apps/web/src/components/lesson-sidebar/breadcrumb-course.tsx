@@ -11,8 +11,8 @@ import {
 	BreadcrumbList,
 	BreadcrumbPage,
 	BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb";
-import { Skeleton } from "@/components/ui/skeleton";
+} from "@ocw/ui/breadcrumb";
+import { Skeleton } from "@ocw/ui/skeleton";
 import type { SidebarData } from "./types";
 
 const getCurrentLesson = cache((data: SidebarData, lessonId: string) => {

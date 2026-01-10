@@ -7,8 +7,8 @@ import { MoreHorizontal } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useCallback, useState } from "react";
 import { toast } from "sonner";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Badge } from "@ocw/ui/badge";
+import { Button } from "@ocw/ui/button";
 import {
 	Dialog,
 	DialogContent,
@@ -16,14 +16,14 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-} from "@/components/ui/dialog";
+} from "@ocw/ui/dialog";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import type { ColumnDef } from "@/components/ui/kibo-ui/table";
+} from "@ocw/ui/dropdown-menu";
+import type { ColumnDef } from "@ocw/ui/kibo-ui/table";
 import {
 	TableBody,
 	TableCell,
@@ -33,7 +33,7 @@ import {
 	TableHeaderGroup,
 	TableProvider,
 	TableRow,
-} from "@/components/ui/kibo-ui/table";
+} from "@ocw/ui/kibo-ui/table";
 import { useSite } from "@/lib/multi-tenant/context";
 
 type Course = Doc<"courses">;

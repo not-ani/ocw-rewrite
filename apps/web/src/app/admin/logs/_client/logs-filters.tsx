@@ -5,14 +5,14 @@ import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { CalendarIcon, FilterIcon, FilterXIcon, UserIcon } from "lucide-react";
 import { useCallback, useMemo } from "react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Avatar, AvatarFallback, AvatarImage } from "@ocw/ui/avatar";
+import { Button } from "@ocw/ui/button";
+import { Input } from "@ocw/ui/input";
 import {
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@ocw/ui/popover";
 import {
 	Select,
 	SelectContent,
@@ -22,7 +22,7 @@ import {
 	SelectSeparator,
 	SelectTrigger,
 	SelectValue,
-} from "@/components/ui/select";
+} from "@ocw/ui/select";
 import { cn } from "@/lib/utils";
 import {
 	type ClerkUser,

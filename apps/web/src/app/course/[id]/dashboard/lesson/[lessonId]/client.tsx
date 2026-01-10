@@ -11,8 +11,8 @@ import { memo, Suspense, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@ocw/ui/button";
+import { Checkbox } from "@ocw/ui/checkbox";
 import {
 	Form,
 	FormControl,
@@ -21,17 +21,17 @@ import {
 	FormItem,
 	FormLabel,
 	FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from "@ocw/ui/form";
+import { Input } from "@ocw/ui/input";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Textarea } from "@/components/ui/textarea";
+} from "@ocw/ui/select";
+import { Skeleton } from "@ocw/ui/skeleton";
+import { Textarea } from "@ocw/ui/textarea";
 import { UploadDropzone } from "@/lib/uploadthing";
 import { cn } from "@/lib/utils";
 import LessonPageLoading from "./loading";

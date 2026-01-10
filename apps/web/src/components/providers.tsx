@@ -5,7 +5,7 @@ import { ConvexReactClient } from "convex/react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 import { env } from "@ocw/env/web";
 import { ThemeProvider } from "./theme-provider";
-import { Toaster } from "./ui/sonner";
+import { Toaster } from "@ocw/ui/sonner";
 
 const convex = new ConvexReactClient(env.NEXT_PUBLIC_CONVEX_URL ?? "");
 

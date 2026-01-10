@@ -24,7 +24,7 @@ import {
 	CommandItem,
 	CommandList,
 	CommandSeparator,
-} from "@/components/ui/command";
+} from "@ocw/ui/command";
 import { useDebouncedValue } from "@/hooks/use-debounce";
 
 type CommandMode = "search" | "create-unit" | "create-lesson";

@@ -1,6 +1,6 @@
 "use client";
 import Image from "next/image";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent, CardHeader } from "@ocw/ui/card";
 
 type SiteConfig = {
 	schoolName: string;

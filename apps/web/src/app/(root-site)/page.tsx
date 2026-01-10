@@ -3,9 +3,9 @@ import { fetchQuery } from "convex/nextjs";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Hero } from "@/components/home-page/hero";
-import { Card, CardContent } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Card, CardContent } from "@ocw/ui/card";
+import { Separator } from "@ocw/ui/separator";
+import { Skeleton } from "@ocw/ui/skeleton";
 
 export const metadata: Metadata = {
 	title: "The OpenCourseWare Project",

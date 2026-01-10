@@ -9,7 +9,7 @@ import {
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "@/components/ui/card";
+} from "@ocw/ui/card";
 import { useSite } from "@/lib/multi-tenant/context";
 import { BasicInformationCard } from "./basic-information-card";
 import { ClubInformationCard } from "./club-information-card";

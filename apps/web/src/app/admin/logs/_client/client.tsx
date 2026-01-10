@@ -5,7 +5,7 @@ import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { Authenticated, useQuery } from "convex/react";
 import { FileTextIcon, Loader2, RefreshCwIcon } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@ocw/ui/button";
 import { LogsFilters } from "./logs-filters";
 import { LogsTable } from "./logs-table";
 import type { ClerkUser, EnrichedLog, LogAction, LogFilters } from "./types";

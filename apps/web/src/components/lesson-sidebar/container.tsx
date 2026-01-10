@@ -6,8 +6,8 @@ import {
 	Sidebar,
 	SidebarContent,
 	SidebarFooter,
-} from "@/components/ui/sidebar";
-import { Skeleton } from "@/components/ui/skeleton";
+} from "@ocw/ui/sidebar";
+import { Skeleton } from "@ocw/ui/skeleton";
 import { LessonSidebarContent } from "./content";
 
 // Sidebar skeleton for smooth loading

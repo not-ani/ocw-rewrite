@@ -8,7 +8,7 @@ import { useQueryStates } from "nuqs";
 import { Suspense, useCallback, useMemo } from "react";
 import { Pagination } from "@/components/courses/pagination";
 import { SearchBar } from "@/components/courses/search-bar";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@ocw/ui/skeleton";
 import { useDebouncedValue } from "@/hooks/use-debounce";
 import { COURSES_PER_PAGE, SEARCH_DEBOUNCE_MS } from "./constants";
 import { coursesSearchParams } from "./parser";

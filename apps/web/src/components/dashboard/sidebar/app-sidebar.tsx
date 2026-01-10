@@ -6,7 +6,7 @@ import {
 	Sidebar,
 	SidebarContent,
 	SidebarFooter,
-} from "@/components/ui/sidebar";
+} from "@ocw/ui/sidebar";
 import { NavProjects } from "./nav-projects";
 
 function getUrls(path: string) {

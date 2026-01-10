@@ -2,7 +2,7 @@
 import { memo, useCallback, useEffect, useState } from "react";
 import { Streamdown } from "streamdown";
 
-import { buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@ocw/ui/button";
 
 export const GoogleDocsEmbed = memo(function GoogleDocsEmbed({
 	embedId,

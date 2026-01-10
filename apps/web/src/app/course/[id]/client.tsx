@@ -9,8 +9,8 @@ import {
 	AccordionContent,
 	AccordionItem,
 	AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Skeleton } from "@/components/ui/skeleton";
+} from "@ocw/ui/accordion";
+import { Skeleton } from "@ocw/ui/skeleton";
 
 export function CoursePageSkeleton() {
 	return (

@@ -1,6 +1,6 @@
 "use client";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
+import { Button } from "@ocw/ui/button";
 import { useSite } from "@/lib/multi-tenant/context";
 
 export function HeroSection() {

@@ -5,8 +5,8 @@ import { useMutation } from "convex/react";
 import { Check, ChevronsUpDown, UserPlus } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@ocw/ui/avatar";
+import { Button } from "@ocw/ui/button";
 import {
 	Command,
 	CommandEmpty,
@@ -14,7 +14,7 @@ import {
 	CommandInput,
 	CommandItem,
 	CommandList,
-} from "@/components/ui/command";
+} from "@ocw/ui/command";
 import {
 	Dialog,
 	DialogContent,
@@ -23,12 +23,12 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@ocw/ui/dialog";
 import {
 	Popover,
 	PopoverContent,
 	PopoverTrigger,
-} from "@/components/ui/popover";
+} from "@ocw/ui/popover";
 import { useSite } from "@/lib/multi-tenant/context";
 import { cn } from "@/lib/utils";
 

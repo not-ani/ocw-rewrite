@@ -1,6 +1,6 @@
-import { Separator } from "@/components/ui/separator";
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Separator } from "@ocw/ui/separator";
+import { SidebarInset, SidebarProvider } from "@ocw/ui/sidebar";
+import { Skeleton } from "@ocw/ui/skeleton";
 
 function BreadcrumbSkeleton() {
 	return (
