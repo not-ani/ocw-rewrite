@@ -3,14 +3,15 @@
 import { useControllableState } from "@radix-ui/react-use-controllable-state";
 import { ChevronsUpDownIcon, PlusIcon } from "lucide-react";
 import {
-	type ComponentProps,
+	
 	createContext,
-	type ReactNode,
+	
 	useContext,
 	useEffect,
 	useRef,
-	useState,
+	useState
 } from "react";
+import type {ComponentProps, ReactNode} from "react";
 import { Button } from "../../button";
 import {
 	Command,
@@ -28,12 +29,12 @@ import {
 } from "../../popover";
 import { cn } from "../../utils";
 
-type ComboboxData = {
+interface ComboboxData {
 	label: string;
 	value: string;
-};
+}
 
-type ComboboxContextType = {
+interface ComboboxContextType {
 	data: ComboboxData[];
 	type: string;
 	value: string;
@@ -44,7 +45,7 @@ type ComboboxContextType = {
 	setWidth: (width: number) => void;
 	inputValue: string;
 	setInputValue: (value: string) => void;
-};
+}
 
 const ComboboxContext = createContext<ComboboxContextType>({
 	data: [],
@@ -263,11 +264,11 @@ export const ComboboxSeparator = (props: ComboboxSeparatorProps) => (
 	<CommandSeparator {...props} />
 );
 
-export type ComboboxCreateNewProps = {
+export interface ComboboxCreateNewProps {
 	onCreateNew: (value: string) => void;
 	children?: (inputValue: string) => ReactNode;
 	className?: string;
-};
+}
 
 export const ComboboxCreateNew = ({
 	onCreateNew,

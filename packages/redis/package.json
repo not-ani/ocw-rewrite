@@ -1,6 +1,7 @@
 {
   "name": "@ocw/redis",
   "version": "1.0.0",
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "clean": "git clean -xdf .cache .turbo dist node_modules",

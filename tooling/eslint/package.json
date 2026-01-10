@@ -13,6 +13,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@effect/eslint-plugin": "^0.3.2",
     "@eslint/compat": "^1.4.0",
     "@eslint/js": "catalog:",
     "@next/eslint-plugin-next": "^16.0.0",

@@ -1,5 +1,4 @@
 import { Effect } from "effect";
-import dns from "node:dns";
 import { BlockedHostError, InvalidUrlError } from "./errors";
 import { ALLOWED_HOSTS } from "./config";
 

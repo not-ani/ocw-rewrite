@@ -1,10 +1,10 @@
 import { env } from "@ocw/env/server";
 
 export const ALLOWED_HOSTS = new Set(
-	(env.ALLOWED_HOSTS || "")
-		.split(",")
-		.map((h) => h.trim().toLowerCase())
-		.filter(Boolean),
+  (env.ALLOWED_HOSTS ?? "")
+    .split(",")
+    .map((h) => h.trim().toLowerCase())
+    .filter(Boolean),
 );
 
 export const FETCH_TIMEOUT_MS = 8_000;
@@ -18,14 +18,14 @@ export const CACHE_PREFIX = "scrape:v1:";
 export const LOCK_PREFIX = "scrape:lock:";
 
 export const CONTENT_SELECTORS = [
-	"main",
-	"article",
-	".doc-content",
-	"[role=main]",
-	".content",
-	"#content",
-	"body",
+  "main",
+  "article",
+  ".doc-content",
+  "[role=main]",
+  ".content",
+  "#content",
+  "body",
 ] as const;
 
 export const REMOVE_SELECTORS =
-	"script, style, noscript, nav, footer, aside, header, .nav, .footer, .sidebar, [role=navigation], [aria-hidden=true]";
+  "script, style, noscript, nav, footer, aside, header, .nav, .footer, .sidebar, [role=navigation], [aria-hidden=true]";

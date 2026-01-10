@@ -1,6 +1,7 @@
 {
   "name": "@ocw/parse",
   "version": "1.0.0",
+  "type": "module",
   "scripts": {
     "build": "tsc",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
@@ -17,6 +18,7 @@
   },
   "dependencies": {
     "@ocw/env": "workspace:*",
+    "next": "catalog:",
     "@ocw/redis": "workspace:*",
     "@types/turndown": "^5.0.5",
     "convex": "catalog:",

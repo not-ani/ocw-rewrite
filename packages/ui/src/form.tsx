@@ -5,24 +5,25 @@ import { Slot } from "@radix-ui/react-slot";
 import * as React from "react";
 import {
 	Controller,
-	type ControllerProps,
-	type FieldPath,
-	type FieldValues,
+	
+	
+	
 	FormProvider,
 	useFormContext,
-	useFormState,
+	useFormState
 } from "react-hook-form";
+import type {ControllerProps, FieldPath, FieldValues} from "react-hook-form";
 import { Label } from "./label";
 import { cn } from "./utils";
 
 const Form = FormProvider;
 
-type FormFieldContextValue<
+interface FormFieldContextValue<
 	TFieldValues extends FieldValues = FieldValues,
 	TName extends FieldPath<TFieldValues> = FieldPath<TFieldValues>,
-> = {
+> {
 	name: TName;
-};
+}
 
 const FormFieldContext = React.createContext<FormFieldContextValue>(
 	{} as FormFieldContextValue,
@@ -64,9 +65,9 @@ const useFormField = () => {
 	};
 };
 
-type FormItemContextValue = {
+interface FormItemContextValue {
 	id: string;
-};
+}
 
 const FormItemContext = React.createContext<FormItemContextValue>(
 	{} as FormItemContextValue,

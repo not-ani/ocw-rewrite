@@ -49,12 +49,12 @@ export const TableContext = createContext<{
 	table: null,
 });
 
-export type TableProviderProps<TData, TValue> = {
+export interface TableProviderProps<TData, TValue> {
 	columns: ColumnDef<TData, TValue>[];
 	data: TData[];
 	children: ReactNode;
 	className?: string;
-};
+}
 
 export function TableProvider<TData, TValue>({
 	columns,
@@ -91,10 +91,10 @@ export function TableProvider<TData, TValue>({
 	);
 }
 
-export type TableHeadProps = {
+export interface TableHeadProps {
 	header: Header<unknown, unknown>;
 	className?: string;
-};
+}
 
 export const TableHead = memo(({ header, className }: TableHeadProps) => (
 	<TableHeadRaw className={className} key={header.id}>
@@ -106,10 +106,10 @@ export const TableHead = memo(({ header, className }: TableHeadProps) => (
 
 TableHead.displayName = "TableHead";
 
-export type TableHeaderGroupProps = {
+export interface TableHeaderGroupProps {
 	headerGroup: HeaderGroup<unknown>;
 	children: (props: { header: Header<unknown, unknown> }) => ReactNode;
-};
+}
 
 export const TableHeaderGroup = ({
 	headerGroup,
@@ -120,10 +120,10 @@ export const TableHeaderGroup = ({
 	</TableRowRaw>
 );
 
-export type TableHeaderProps = {
+export interface TableHeaderProps {
 	className?: string;
 	children: (props: { headerGroup: HeaderGroup<unknown> }) => ReactNode;
-};
+}
 
 export const TableHeader = ({ className, children }: TableHeaderProps) => {
 	const { table } = useContext(TableContext);
@@ -193,10 +193,10 @@ export function TableColumnHeader<TData, TValue>({
 	);
 }
 
-export type TableCellProps = {
+export interface TableCellProps {
 	cell: Cell<unknown, unknown>;
 	className?: string;
-};
+}
 
 export const TableCell = ({ cell, className }: TableCellProps) => (
 	<TableCellRaw className={className}>
@@ -204,11 +204,11 @@ export const TableCell = ({ cell, className }: TableCellProps) => (
 	</TableCellRaw>
 );
 
-export type TableRowProps = {
+export interface TableRowProps {
 	row: Row<unknown>;
 	children: (props: { cell: Cell<unknown, unknown> }) => ReactNode;
 	className?: string;
-};
+}
 
 export const TableRow = ({ row, children, className }: TableRowProps) => (
 	<TableRowRaw
@@ -220,10 +220,10 @@ export const TableRow = ({ row, children, className }: TableRowProps) => (
 	</TableRowRaw>
 );
 
-export type TableBodyProps = {
+export interface TableBodyProps {
 	children: (props: { row: Row<unknown> }) => ReactNode;
 	className?: string;
-};
+}
 
 export const TableBody = ({ children, className }: TableBodyProps) => {
 	const { columns, table } = useContext(TableContext);

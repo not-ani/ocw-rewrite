@@ -1,4 +1,5 @@
 import * as path from "node:path";
+import effectPlugin from "@effect/eslint-plugin";
 import { includeIgnoreFile } from "@eslint/compat";
 import eslint from "@eslint/js";
 import importPlugin from "eslint-plugin-import";
@@ -43,6 +44,9 @@ export const baseConfig = defineConfig(
   {
     files: ["**/*.js", "**/*.ts", "**/*.tsx"],
     plugins: {
+      // @effect/eslint-plugin ships types that don't match ESLint v9's Plugin typing.
+      // Runtime is compatible; this cast is only to satisfy TypeScript.
+      "@effect": effectPlugin as unknown as never,
       import: importPlugin,
       turbo: turboPlugin,
     },

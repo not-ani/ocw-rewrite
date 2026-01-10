@@ -4,7 +4,7 @@
  * Run with: npx tsx packages/parse/src/benchmark.ts
  */
 
-import { Effect, Layer } from "effect";
+import { Effect } from "effect";
 import { ParserService, ParserServiceLive } from "./parser/service";
 
 const ITERATIONS = 50;
@@ -109,7 +109,9 @@ async function runBenchmark(): Promise<void> {
   } else if (avg < 50) {
     console.log("\nOK: Parser is reasonably fast");
   } else {
-    console.log("\nWARNING: Parser is slow - check if dynamic imports are still happening");
+    console.log(
+      "\nWARNING: Parser is slow - check if dynamic imports are still happening",
+    );
   }
 }
 

@@ -15,3 +15,6 @@ test-results/
 # Rust
 target/
 **/Cargo.lock
+.pnpm-store/
+
+**/.cache
