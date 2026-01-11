@@ -12,9 +12,12 @@
  * @see https://clerk.com/docs/guides/development/testing/playwright/test-authenticated-flows
  */
 
-import path from "node:path";
+import path, { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 import { clerk, clerkSetup } from "@clerk/testing/playwright";
 import { test as setup } from "@playwright/test";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // Setup must be run serially - required if Playwright is configured to run fully parallel
 // @see https://playwright.dev/docs/test-parallel

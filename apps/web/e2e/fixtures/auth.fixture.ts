@@ -13,9 +13,12 @@
  * @see https://clerk.com/docs/guides/development/testing/playwright/test-authenticated-flows
  */
 
-import path from "node:path";
+import path, { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
 import { clerk } from "@clerk/testing/playwright";
 import { test as base, expect, type Page } from "@playwright/test";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 /**
  * Auth state paths for different user types.
