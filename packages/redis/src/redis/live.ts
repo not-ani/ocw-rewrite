@@ -9,7 +9,7 @@ export const RedisServiceLive = Layer.succeed(RedisService, {
     ),
   set: (key, value, options) =>
     Effect.promise<string | null>(async () => {
-      if (options?.ex !== undefined && options?.nx === true) {
+      if (options?.ex !== undefined && options.nx === true) {
         return (await redisClient.set(key, value, {
           ex: options.ex,
           nx: true,

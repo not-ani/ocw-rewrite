@@ -1,8 +1,8 @@
 "use client";
 
 import { formatHex, oklch } from "culori";
-import QR from "qrcode";
-import {  useEffect, useState } from "react";
+import { toString as qrToString } from "qrcode";
+import { useEffect, useState } from "react";
 import type {HTMLAttributes} from "react";
 import { cn } from "../../utils";
 
@@ -23,9 +23,9 @@ const getOklch = (color: string, fallback: [number, number, number]) => {
 	}
 
 	return {
-		l: Number.parseFloat(oklchMatch[1]),
-		c: Number.parseFloat(oklchMatch[2]),
-		h: Number.parseFloat(oklchMatch[3]),
+		l: Number.parseFloat(oklchMatch[1] ?? "0"),
+		c: Number.parseFloat(oklchMatch[2] ?? "0"),
+		h: Number.parseFloat(oklchMatch[3] ?? "0"),
 	};
 };
 
@@ -54,7 +54,7 @@ export const QRCode = ({
 				);
 				const backgroundOklch = getOklch(backgroundColor, [0.985, 0, 0]);
 
-				const newSvg = await QR.toString(data, {
+				const newSvg = await qrToString(data, {
 					type: "svg",
 					color: {
 						dark: formatHex(oklch({ mode: "oklch", ...foregroundOklch })),
@@ -71,7 +71,7 @@ export const QRCode = ({
 			}
 		};
 
-		generateQR();
+		void generateQR();
 	}, [data, foreground, background, robustness]);
 
 	if (!svg) {

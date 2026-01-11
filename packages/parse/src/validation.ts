@@ -20,7 +20,7 @@ export const isHostAllowlisted = (hostname: string) =>
         new BlockedHostError({
           host: hostname,
           reason: "Host is not allowlisted",
-        }),
+        })
       );
     const h = hostname.toLowerCase();
     if (ALLOWED_HOSTS.has(h)) return true;
@@ -31,7 +31,7 @@ export const isHostAllowlisted = (hostname: string) =>
   });
 
 export const parseAndValidateUrl = (
-  requestUrl: string,
+  requestUrl: string
 ): Effect.Effect<URL, InvalidUrlError> =>
   Effect.try({
     try: () => {
@@ -51,15 +51,8 @@ export const parseAndValidateUrl = (
   });
 
 export const validateHostSecurity = (
-  urlObj: URL,
+  urlObj: URL
 ): Effect.Effect<void, BlockedHostError> =>
   Effect.gen(function* () {
-    if (!isHostAllowlisted(urlObj.hostname)) {
-      return yield* Effect.fail(
-        new BlockedHostError({
-          host: urlObj.hostname,
-          reason: "Host is not allowlisted",
-        }),
-      );
-    }
+    yield* isHostAllowlisted(urlObj.hostname);
   });

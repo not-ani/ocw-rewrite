@@ -22,8 +22,33 @@
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
       "outputs": [".next/**", "!.next/cache/**", "dist/**", "pkg/**"]
     },
+
+    "format": {
+      "outputs": [".cache/.prettiercache"],
+      "outputLogs": "new-only"
+    },
     "lint": {
-      "dependsOn": ["^lint"]
+      "dependsOn": ["^lint"],
+      "env": [
+        "NODE_ENV",
+        "NEXT_PUBLIC_CONVEX_URL",
+        "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+        "NEXT_PUBLIC_CLERK_FRONTEND_API_URL",
+        "NEXT_PUBLIC_POSTHOG_KEY",
+        "NEXT_PUBLIC_POSTHOG_HOST",
+        "NEXT_PUBLIC_ROOT_DOMAIN",
+        "CLERK_SECRET_KEY",
+        "PROJECT_ID",
+        "PERSONAL_ACCESS_API_KEY",
+        "UPLOADTHING_TOKEN",
+        "CI",
+        "npm_lifecycle_event"
+      ],
+      "outputs": [".cache/.eslintcache"]
+    },
+    "typecheck": {
+      "dependsOn": ["^typecheck"],
+      "outputs": [".cache/tsbuildinfo.json"]
     },
     "check-types": {
       "dependsOn": ["^check-types"]

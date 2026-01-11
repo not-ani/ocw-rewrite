@@ -41,7 +41,9 @@ export const fetchWithConditional = (
 					throw new Error("Response too large");
 				}
 
-				const reader = response.body?.getReader();
+				const reader = response.body?.getReader() as
+					| ReadableStreamDefaultReader<Uint8Array>
+					| undefined;
 				if (!reader) throw new Error("No response body");
 
 				const chunks: Uint8Array[] = [];
@@ -50,9 +52,10 @@ export const fetchWithConditional = (
 				while (true) {
 					const { done, value } = await reader.read();
 					if (done) break;
+					if (!value) continue;
 					totalSize += value.length;
 					if (totalSize > MAX_RESPONSE_SIZE) {
-						reader.cancel();
+						await reader.cancel();
 						throw new Error("Response too large");
 					}
 					chunks.push(value);
@@ -71,8 +74,8 @@ export const fetchWithConditional = (
 
 				return {
 					html,
-					etag: response.headers.get("etag") || undefined,
-					lastModified: response.headers.get("last-modified") || undefined,
+					etag: response.headers.get("etag") ?? undefined,
+					lastModified: response.headers.get("last-modified") ?? undefined,
 					notModified: false,
 				};
 			} finally {

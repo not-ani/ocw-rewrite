@@ -14,7 +14,7 @@ export const isExpired = (fetchedAt: number): boolean =>
   Date.now() - fetchedAt > STALE_TTL * 1000;
 
 export const getClientIp = (request: Request): string =>
-  request.headers.get("x-forwarded-for")?.split(",")?.[0].trim() ??
+  request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
   request.headers.get("x-real-ip") ??
   request.headers.get("client-ip") ??
   "anonymous";

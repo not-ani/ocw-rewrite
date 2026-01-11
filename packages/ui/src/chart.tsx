@@ -46,7 +46,7 @@ function ChartContainer({
   >["children"];
 }) {
   const uniqueId = React.useId();
-  const chartId = `chart-${id || uniqueId.replace(/:/g, "")}`;
+  const chartId = `chart-${id ?? uniqueId.replace(/:/g, "")}`;
 
   return (
     <ChartContext.Provider value={{ config }}>
@@ -70,7 +70,7 @@ function ChartContainer({
 
 const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
   const colorConfig = Object.entries(config).filter(
-    ([, config]) => config.theme || config.color,
+    ([, cfg]) => cfg.theme != null || cfg.color != null,
   );
 
   if (!colorConfig.length) {
@@ -87,7 +87,7 @@ ${prefix} [data-chart=${id}] {
 ${colorConfig
   .map(([key, itemConfig]) => {
     const color =
-      itemConfig.theme?.[theme as keyof typeof itemConfig.theme] ||
+      ("theme" in itemConfig ? itemConfig.theme[theme as keyof typeof THEMES] : undefined) ??
       itemConfig.color;
     return color ? `  --color-${key}: ${color};` : null;
   })
@@ -102,6 +102,27 @@ ${colorConfig
 };
 
 const ChartTooltip = RechartsPrimitive.Tooltip;
+
+type TooltipPayloadItem = {
+  type?: string;
+  name?: string;
+  dataKey?: string | number;
+  value?: unknown;
+  color?: string;
+  payload?: Record<string, unknown> & { fill?: unknown };
+};
+
+function toKey(value: unknown, fallback: string): string {
+  if (typeof value === "string") return value;
+  if (typeof value === "number") return String(value);
+  return fallback;
+}
+
+function formatValue(value: unknown): string {
+  if (typeof value === "number") return value.toLocaleString();
+  if (typeof value === "string") return value;
+  return String(value);
+}
 
 function ChartTooltipContent({
   active,
@@ -126,24 +147,25 @@ function ChartTooltipContent({
     labelKey?: string;
   }) {
   const { config } = useChart();
+  const typedPayload = payload as unknown as TooltipPayloadItem[] | undefined;
 
   const tooltipLabel = React.useMemo(() => {
-    if (hideLabel || !payload?.length) {
+    if (hideLabel || !typedPayload?.length) {
       return null;
     }
 
-    const [item] = payload;
-    const key = `${labelKey || item?.dataKey || item?.name || "value"}`;
+    const [item] = typedPayload;
+    const key = toKey(labelKey ?? item?.dataKey ?? item?.name, "value");
     const itemConfig = getPayloadConfigFromPayload(config, item, key);
     const value =
       !labelKey && typeof label === "string"
-        ? config[label]?.label || label
+        ? (config[label]?.label ?? label)
         : itemConfig?.label;
 
     if (labelFormatter) {
       return (
         <div className={cn("font-medium", labelClassName)}>
-          {labelFormatter(value, payload)}
+          {labelFormatter(value, typedPayload)}
         </div>
       );
     }
@@ -156,18 +178,18 @@ function ChartTooltipContent({
   }, [
     label,
     labelFormatter,
-    payload,
+    typedPayload,
     hideLabel,
     labelClassName,
     config,
     labelKey,
   ]);
 
-  if (!active || !payload?.length) {
+  if (!active || !typedPayload?.length) {
     return null;
   }
 
-  const nestLabel = payload.length === 1 && indicator !== "dot";
+  const nestLabel = typedPayload.length === 1 && indicator !== "dot";
 
   return (
     <div
@@ -178,22 +200,26 @@ function ChartTooltipContent({
     >
       {!nestLabel ? tooltipLabel : null}
       <div className="grid gap-1.5">
-        {payload
+        {typedPayload
           .filter((item) => item.type !== "none")
           .map((item, index) => {
-            const key = `${nameKey || item.name || item.dataKey || "value"}`;
+            const key = toKey(nameKey ?? item.name ?? item.dataKey, "value");
             const itemConfig = getPayloadConfigFromPayload(config, item, key);
-            const indicatorColor = color || item.payload.fill || item.color;
+            const indicatorColor =
+              color ??
+              (typeof item.payload?.fill === "string" ? item.payload.fill : undefined) ??
+              item.color ??
+              "currentColor";
 
             return (
               <div
-                key={item.dataKey}
+                key={toKey(item.dataKey ?? item.name, String(index))}
                 className={cn(
                   "[&>svg]:text-muted-foreground flex w-full flex-wrap items-stretch gap-2 [&>svg]:h-2.5 [&>svg]:w-2.5",
                   indicator === "dot" && "items-center",
                 )}
               >
-                {formatter && item?.value !== undefined && item.name ? (
+                {formatter && item.value !== undefined && item.name ? (
                   formatter(item.value, item.name, item, index, item.payload)
                 ) : (
                   <>
@@ -230,12 +256,12 @@ function ChartTooltipContent({
                       <div className="grid gap-1.5">
                         {nestLabel ? tooltipLabel : null}
                         <span className="text-muted-foreground">
-                          {itemConfig?.label || item.name}
+                          {itemConfig?.label ?? item.name}
                         </span>
                       </div>
-                      {item.value && (
+                      {item.value != null && (
                         <span className="text-foreground font-mono font-medium tabular-nums">
-                          {item.value.toLocaleString()}
+                          {formatValue(item.value)}
                         </span>
                       )}
                     </div>
@@ -263,8 +289,9 @@ function ChartLegendContent({
     nameKey?: string;
   }) {
   const { config } = useChart();
+  const typedPayload = payload as unknown as TooltipPayloadItem[] | undefined;
 
-  if (!payload?.length) {
+  if (!typedPayload?.length) {
     return null;
   }
 
@@ -276,15 +303,15 @@ function ChartLegendContent({
         className,
       )}
     >
-      {payload
+      {typedPayload
         .filter((item) => item.type !== "none")
         .map((item) => {
-          const key = `${nameKey || item.dataKey || "value"}`;
+          const key = toKey(nameKey ?? item.dataKey, "value");
           const itemConfig = getPayloadConfigFromPayload(config, item, key);
 
           return (
             <div
-              key={item.value}
+              key={toKey(item.value ?? item.dataKey, key)}
               className={cn(
                 "[&>svg]:text-muted-foreground flex items-center gap-1.5 [&>svg]:h-3 [&>svg]:w-3",
               )}

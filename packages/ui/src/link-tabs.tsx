@@ -88,7 +88,7 @@ function LinkTabsTab({
   exact = true,
   ...props
 }: LinkTabsTabProps) {
-  const pathname = usePathname();
+  const pathname = usePathname()
   const isActive = exact
     ? pathname === href
     : pathname === href || pathname.startsWith(`${href}/`);
@@ -96,7 +96,7 @@ function LinkTabsTab({
   return (
     <Link
       {...props}
-      href={href as any}
+      href={href}
       data-slot="tabs-trigger"
       data-selected={isActive ? "" : undefined}
       data-orientation={orientation}

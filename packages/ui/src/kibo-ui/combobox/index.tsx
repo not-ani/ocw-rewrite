@@ -51,13 +51,13 @@ const ComboboxContext = createContext<ComboboxContextType>({
 	data: [],
 	type: "item",
 	value: "",
-	onValueChange: () => {},
+	onValueChange: () => undefined,
 	open: false,
-	onOpenChange: () => {},
+	onOpenChange: () => undefined,
 	width: 200,
-	setWidth: () => {},
+	setWidth: () => undefined,
 	inputValue: "",
-	setInputValue: () => {},
+	setInputValue: () => undefined,
 });
 
 export type ComboboxProps = ComponentProps<typeof Popover> & {
@@ -129,7 +129,7 @@ export const ComboboxTrigger = ({
 			for (const entry of entries) {
 				const newWidth = (entry.target as HTMLElement).offsetWidth;
 				if (newWidth) {
-					setWidth?.(newWidth);
+					setWidth(newWidth);
 				}
 			}
 		});

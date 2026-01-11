@@ -1,4 +1,4 @@
-import QR from "qrcode";
+import { toString as qrToString } from "qrcode";
 import type { HTMLAttributes } from "react";
 import { cn } from "../../utils";
 
@@ -17,7 +17,7 @@ export const QRCode = async ({
 	className,
 	...props
 }: QRCodeProps) => {
-	const svg = await QR.toString(data, {
+	const svg = await qrToString(data, {
 		type: "svg",
 		color: {
 			dark: foreground,
@@ -34,7 +34,6 @@ export const QRCode = async ({
 	return (
 		<div
 			className={cn("size-full", "[&_svg]:size-full", className)}
-			// biome-ignore lint/security/noDangerouslySetInnerHtml: "Required for SVG"
 			dangerouslySetInnerHTML={{ __html: svg }}
 			{...props}
 		/>
