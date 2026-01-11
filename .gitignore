@@ -11,3 +11,5 @@ playwright-report/
 playwright/.cache/
 **/playwright/.clerk/
 test-results/
+
+**/.cache/
