@@ -21,7 +21,7 @@ export const env = createEnv({
   client: {
     NEXT_PUBLIC_CONVEX_URL: type("string.url"), // optional URL
     NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: type("string > 1"), // required non-empty string
-    NEXT_PUBLIC_CLERK_FRONTEND_API_URL: type("string"), // optional string
+    NEXT_PUBLIC_CLERK_FRONTEND_API_URL: type("string | undefined"), // optional string
     NEXT_PUBLIC_POSTHOG_KEY: type("string > 1"),
     NEXT_PUBLIC_POSTHOG_HOST: type("string > 1"),
     NEXT_PUBLIC_ROOT_DOMAIN: type("string | undefined"),
