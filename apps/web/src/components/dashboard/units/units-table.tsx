@@ -19,8 +19,8 @@ import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { GripVerticalIcon, MoreHorizontalIcon, TrashIcon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { memo, useCallback, useEffect, useState } from "react";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import { Badge } from "@ocw/ui/badge";
+import { Button } from "@ocw/ui/button";
 import {
 	Dialog,
 	DialogContent,
@@ -28,14 +28,14 @@ import {
 	DialogFooter,
 	DialogHeader,
 	DialogTitle,
-} from "@/components/ui/dialog";
+} from "@ocw/ui/dialog";
 import {
 	DropdownMenu,
 	DropdownMenuContent,
 	DropdownMenuItem,
 	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import type { ColumnDef } from "@/components/ui/kibo-ui/table";
+} from "@ocw/ui/dropdown-menu";
+import type { ColumnDef } from "@ocw/ui/kibo-ui/table";
 import {
 	TableBody as KiboTableBody,
 	TableHead as KiboTableHead,
@@ -43,8 +43,8 @@ import {
 	TableColumnHeader,
 	TableHeaderGroup,
 	TableProvider,
-} from "@/components/ui/kibo-ui/table";
-import { TableCell } from "@/components/ui/table";
+} from "@ocw/ui/kibo-ui/table";
+import { TableCell } from "@ocw/ui/table";
 
 type Unit = {
 	id: Id<"units">;

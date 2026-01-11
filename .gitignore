@@ -12,4 +12,10 @@ playwright/.cache/
 **/playwright/.clerk/
 test-results/
 
+# Rust
+target/
+**/Cargo.lock
+.pnpm-store/
+
+
 **/.cache/

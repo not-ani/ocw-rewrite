@@ -1,4 +1,3 @@
-// NOTE: all instances of id are deprecated and will be removed in a future migration, all fields that point to and id already refer the the _id that Convex generates
 import { defineSchema, defineTable } from "convex/server";
 import { v } from "convex/values";
 

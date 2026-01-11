@@ -17,7 +17,7 @@ import {
 	CommandItem,
 	CommandList,
 	CommandSeparator,
-} from "./ui/command";
+} from "@ocw/ui/command";
 
 const KEYBOARD_SHORTCUT = "⌘K";
 const DEBOUNCE_QUERY_MS = 200;

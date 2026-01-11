@@ -1,6 +1,6 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { arktypeResolver } from "@hookform/resolvers/arktype";
 import { api } from "@ocw/backend/convex/_generated/api";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
@@ -10,9 +10,8 @@ import { useRouter } from "next/navigation";
 import { memo, Suspense, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@ocw/ui/button";
+import { Checkbox } from "@ocw/ui/checkbox";
 import {
 	Form,
 	FormControl,
@@ -21,39 +20,24 @@ import {
 	FormItem,
 	FormLabel,
 	FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from "@ocw/ui/form";
+import { Input } from "@ocw/ui/input";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@/components/ui/select";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Textarea } from "@/components/ui/textarea";
+} from "@ocw/ui/select";
+import { Skeleton } from "@ocw/ui/skeleton";
+import { Textarea } from "@ocw/ui/textarea";
 import { UploadDropzone } from "@/lib/uploadthing";
 import { cn } from "@/lib/utils";
+import {
+	type LessonEditFormValues,
+	lessonEditFormSchema,
+} from "@ocw/validators";
 import LessonPageLoading from "./loading";
-
-const lessonFormSchema = z.object({
-	name: z.string().min(1, "Lesson name is required").max(200),
-	isPublished: z.boolean(),
-	contentType: z.enum([
-		"google_docs",
-		"notion",
-		"quizlet",
-		"google_drive",
-		"youtube",
-		"pdf",
-		"other",
-	]),
-	embedUrl: z.string(),
-	pdfUrl: z.string().optional(),
-	pureLink: z.boolean(),
-});
-
-type LessonFormValues = z.infer<typeof lessonFormSchema>;
 
 function LessonFormSkeleton() {
 	return (
@@ -97,8 +81,8 @@ function LessonEditForm({
 	const createOrUpdateEmbed = useMutation(api.lesson.createOrUpdateEmbed);
 	const [isUploading, setIsUploading] = useState(false);
 
-	const form = useForm<LessonFormValues>({
-		resolver: zodResolver(lessonFormSchema),
+	const form = useForm<LessonEditFormValues>({
+		resolver: arktypeResolver(lessonEditFormSchema),
 		defaultValues: {
 			name: lesson.name,
 			isPublished: lesson.isPublished,
@@ -121,7 +105,7 @@ function LessonEditForm({
 		);
 	}
 
-	const onSubmit = async (values: LessonFormValues) => {
+	const onSubmit = async (values: LessonEditFormValues) => {
 		try {
 			await updateLesson({
 				courseId,
@@ -140,6 +124,7 @@ function LessonEditForm({
 			if (values.contentType !== "pdf" && values.embedUrl?.trim()) {
 				await createOrUpdateEmbed({
 					lessonId,
+					courseId,
 					school,
 					raw: values.embedUrl,
 					skipLog: true,

@@ -1,6 +1,6 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { arktypeResolver } from "@hookform/resolvers/arktype";
 import { api } from "@ocw/backend/convex/_generated/api";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
@@ -8,8 +8,7 @@ import { Loader2, UserPlus } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
-import { Button } from "@/components/ui/button";
+import { Button } from "@ocw/ui/button";
 import {
 	Dialog,
 	DialogContent,
@@ -17,7 +16,7 @@ import {
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@ocw/ui/dialog";
 import {
 	Form,
 	FormControl,
@@ -26,22 +25,19 @@ import {
 	FormItem,
 	FormLabel,
 	FormMessage,
-} from "@/components/ui/form";
+} from "@ocw/ui/form";
 import {
 	Select,
 	SelectContent,
 	SelectItem,
 	SelectTrigger,
 	SelectValue,
-} from "@/components/ui/select";
+} from "@ocw/ui/select";
+import {
+	addUserToCourseFormSchema,
+	type AddUserToCourseFormValues,
+} from "@ocw/validators";
 import { useSite } from "@/lib/multi-tenant/context";
-
-const addUserSchema = z.object({
-	userId: z.string().min(1, "User ID is required"),
-	role: z.enum(["admin", "editor", "user"]),
-});
-
-type AddUserFormValues = z.infer<typeof addUserSchema>;
 
 type ClerkUser = {
 	id: string;
@@ -66,15 +62,15 @@ export function AddUserDialog({
 	const addOrUpdateMember = useMutation(api.courseUsers.addOrUpdateMember);
 	const { subdomain } = useSite();
 
-	const form = useForm<AddUserFormValues>({
-		resolver: zodResolver(addUserSchema),
+	const form = useForm<AddUserToCourseFormValues>({
+		resolver: arktypeResolver(addUserToCourseFormSchema),
 		defaultValues: {
 			userId: "",
 			role: "user",
 		},
 	});
 
-	const onSubmit = async (values: AddUserFormValues) => {
+	const onSubmit = async (values: AddUserToCourseFormValues) => {
 		try {
 			const result = await addOrUpdateMember({
 				courseId,
@@ -132,7 +128,7 @@ export function AddUserDialog({
 										defaultValue={field.value}
 									>
 										<FormControl>
-											<SelectTrigger className="w-[100%]">
+											<SelectTrigger className="w-full">
 												<SelectValue placeholder="Select a user" />
 											</SelectTrigger>
 										</FormControl>
@@ -176,7 +172,7 @@ export function AddUserDialog({
 										defaultValue={field.value}
 									>
 										<FormControl>
-											<SelectTrigger className="w-[100%]">
+											<SelectTrigger className="w-full">
 												<SelectValue placeholder="Select a role" />
 											</SelectTrigger>
 										</FormControl>

@@ -1,0 +1,38 @@
+{
+  "name": "@ocw/parse",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "dev": "",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint --flag unstable_native_nodejs_ts_config",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "next": "catalog:",
+    "@ocw/redis": "workspace:*",
+    "@types/turndown": "^5.0.5",
+    "convex": "catalog:",
+    "effect": "^3.19.14",
+    "linkedom": "^0.18.12",
+    "turndown": "^7.2.1",
+    "turndown-plugin-gfm": "^1.0.2"
+  },
+  "devDependencies": {
+    "@ocw/eslint-config": "workspace:*",
+    "@ocw/prettier-config": "workspace:*",
+    "@ocw/tsconfig": "workspace:*",
+    "@types/node": "catalog:",
+    "eslint": "catalog:",
+    "prettier": "catalog:",
+    "typescript": "catalog:"
+  }
+}

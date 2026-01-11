@@ -9,15 +9,15 @@ import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import { Loader2 } from "lucide-react";
 import { useCallback, useMemo, useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@ocw/ui/button";
 import {
 	Card,
 	CardContent,
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+} from "@ocw/ui/card";
+import { Input } from "@ocw/ui/input";
 import { useSite } from "@/lib/multi-tenant/context";
 import { LessonRow } from "./lesson-row";
 

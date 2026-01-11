@@ -7,12 +7,12 @@ import {
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "@/components/ui/card";
+} from "@ocw/ui/card";
 import {
 	ChartContainer,
 	ChartTooltip,
 	ChartTooltipContent,
-} from "@/components/ui/chart";
+} from "@ocw/ui/chart";
 
 interface StatsCardProps {
 	title: string;

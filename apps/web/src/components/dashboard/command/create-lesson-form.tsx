@@ -1,6 +1,6 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { arktypeResolver } from "@hookform/resolvers/arktype";
 import { api } from "@ocw/backend/convex/_generated/api";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
@@ -8,10 +8,9 @@ import { FileText, Link2, Loader2Icon, XIcon } from "lucide-react";
 import * as React from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
 
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@ocw/ui/button";
+import { Checkbox } from "@ocw/ui/checkbox";
 import {
 	Form,
 	FormControl,
@@ -20,8 +19,8 @@ import {
 	FormItem,
 	FormLabel,
 	FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
+} from "@ocw/ui/form";
+import { Input } from "@ocw/ui/input";
 import {
 	Combobox,
 	ComboboxContent,
@@ -31,23 +30,16 @@ import {
 	ComboboxItem,
 	ComboboxList,
 	ComboboxTrigger,
-} from "@/components/ui/kibo-ui/combobox";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
+} from "@ocw/ui/kibo-ui/combobox";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ocw/ui/tabs";
+import { Textarea } from "@ocw/ui/textarea";
+import {
+	createLessonInlineFormSchema,
+	type CreateLessonInlineFormValues,
+} from "@ocw/validators";
 import { useSite } from "@/lib/multi-tenant/context";
 import { UploadDropzone } from "@/lib/uploadthing";
 import { cn } from "@/lib/utils";
-
-const formSchema = z.object({
-	name: z.string().min(3, "Lesson name must be at least 3 characters").max(200),
-	unitId: z.string().min(1, "Please select a unit"),
-	embedRaw: z.string().optional(),
-	pdfUrl: z.string().optional(),
-	pdfName: z.string().optional(),
-	pureLink: z.boolean().optional(),
-});
-
-type FormValues = z.infer<typeof formSchema>;
 
 interface CreateLessonInlineFormProps {
 	courseId: Id<"courses">;
@@ -68,8 +60,8 @@ export function CreateLessonInlineForm({
 		school: subdomain,
 	});
 
-	const form = useForm<FormValues>({
-		resolver: zodResolver(formSchema),
+	const form = useForm<CreateLessonInlineFormValues>({
+		resolver: arktypeResolver(createLessonInlineFormSchema),
 		defaultValues: {
 			name: "",
 			unitId: "",
@@ -96,7 +88,7 @@ export function CreateLessonInlineForm({
 		}));
 	}, [units]);
 
-	async function onSubmit(values: FormValues) {
+	async function onSubmit(values: CreateLessonInlineFormValues) {
 		setIsSubmitting(true);
 		try {
 			if (contentType === "pdf" && values.pdfUrl) {

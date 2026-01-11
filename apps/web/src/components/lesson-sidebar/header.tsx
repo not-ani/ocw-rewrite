@@ -4,7 +4,7 @@ import {
 	SidebarHeader,
 	SidebarMenu,
 	SidebarMenuItem,
-} from "@/components/ui/sidebar";
+} from "@ocw/ui/sidebar";
 import type { SidebarData } from "./types";
 
 export const CourseHeader = ({ data }: { data: SidebarData }) => {

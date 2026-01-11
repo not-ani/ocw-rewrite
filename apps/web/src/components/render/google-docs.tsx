@@ -2,7 +2,7 @@
 import { memo, useCallback, useEffect, useState } from "react";
 import { Streamdown } from "streamdown";
 
-import { buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@ocw/ui/button";
 
 export const GoogleDocsEmbed = memo(function GoogleDocsEmbed({
 	embedId,
@@ -16,7 +16,7 @@ export const GoogleDocsEmbed = memo(function GoogleDocsEmbed({
 		setLoading(true);
 		try {
 			const response = await fetch(
-				`/api/get-markdown?url=${encodeURIComponent(embedId ?? "")}`,
+				`/api/get-md?url=${encodeURIComponent(embedId ?? "")}`,
 				{ cache: "no-store" },
 			);
 			const data = await response.json();

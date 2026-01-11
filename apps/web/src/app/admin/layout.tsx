@@ -1,4 +1,4 @@
-import { LinkTabs, LinkTabsList, LinkTabsTab } from "@/components/ui/link-tabs";
+import { LinkTabs, LinkTabsList, LinkTabsTab } from "@ocw/ui/link-tabs";
 
 export default function AdminLayout({
 	children,

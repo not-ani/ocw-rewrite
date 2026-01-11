@@ -1,6 +1,6 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { arktypeResolver } from "@hookform/resolvers/arktype";
 import { api } from "@ocw/backend/convex/_generated/api";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
@@ -8,16 +8,15 @@ import { FileText, Link2, Loader2, X } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
+import { Button } from "@ocw/ui/button";
+import { Checkbox } from "@ocw/ui/checkbox";
 import {
 	Dialog,
 	DialogContent,
 	DialogHeader,
 	DialogTitle,
 	DialogTrigger,
-} from "@/components/ui/dialog";
+} from "@ocw/ui/dialog";
 import {
 	Form,
 	FormControl,
@@ -26,21 +25,17 @@ import {
 	FormItem,
 	FormLabel,
 	FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
+} from "@ocw/ui/form";
+import { Input } from "@ocw/ui/input";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@ocw/ui/tabs";
+import { Textarea } from "@ocw/ui/textarea";
+import {
+	createLessonDialogFormSchema,
+	type CreateLessonDialogFormValues,
+} from "@ocw/validators";
 import { useSite } from "@/lib/multi-tenant/context";
 import { UploadDropzone } from "@/lib/uploadthing";
 import { cn } from "@/lib/utils";
-
-const formSchema = z.object({
-	name: z.string().min(1, "Lesson name is required").min(3).max(200),
-	embedRaw: z.string().optional(),
-	pdfUrl: z.string().optional(),
-	pdfName: z.string().optional(),
-	pureLink: z.boolean().optional(),
-});
 
 type CreateLessonFormProps = {
 	callback: () => void;
@@ -53,14 +48,15 @@ export function CreateLessonForm({
 	courseId,
 	unitId,
 }: CreateLessonFormProps) {
-	const form = useForm<z.infer<typeof formSchema>>({
-		resolver: zodResolver(formSchema),
+	const form = useForm<CreateLessonDialogFormValues>({
+		resolver: arktypeResolver(createLessonDialogFormSchema),
 		defaultValues: {
 			name: "",
 			embedRaw: "",
 			pdfUrl: "",
 			pdfName: "",
 			pureLink: false,
+			isPublished: false,
 		},
 	});
 
@@ -72,7 +68,7 @@ export function CreateLessonForm({
 	const pdfUrl = form.watch("pdfUrl");
 	const pdfName = form.watch("pdfName");
 
-	async function onSubmit(values: z.infer<typeof formSchema>) {
+	async function onSubmit(values: CreateLessonDialogFormValues) {
 		setIsSubmitting(true);
 		try {
 			if (contentType === "pdf" && values.pdfUrl) {

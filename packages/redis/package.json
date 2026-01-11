@@ -1,0 +1,35 @@
+{
+  "name": "@ocw/redis",
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "build": "tsc",
+    "clean": "git clean -xdf .cache .turbo dist node_modules",
+    "dev": "tsc",
+    "format": "prettier --check . --ignore-path ../../.gitignore",
+    "lint": "eslint --flag unstable_native_nodejs_ts_config",
+    "typecheck": "tsc --noEmit --emitDeclarationOnly false"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "exports": {
+    ".": "./src/index.ts",
+    "./redis": "./src/redis/index.ts",
+    "./rate-limit": "./src/rate-limit/index.ts"
+  },
+  "devDependencies": {
+    "@ocw/eslint-config": "workspace:*",
+    "@ocw/prettier-config": "workspace:*",
+    "@ocw/tsconfig": "workspace:*",
+    "@types/node": "catalog:",
+    "typescript": "catalog:",
+    "effect": "catalog:",
+    "eslint": "catalog:",
+    "prettier": "catalog:"
+  },
+  "dependencies": {
+    "@upstash/ratelimit": "^2.0.7",
+    "@upstash/redis": "^1.36.0"
+  }
+}

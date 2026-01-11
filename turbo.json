@@ -1,56 +1,96 @@
 {
-	"$schema": "https://turbo.build/schema.json",
-	"ui": "tui",
-	"tasks": {
-		"build": {
-			"dependsOn": ["^build"],
-			"inputs": ["$TURBO_DEFAULT$", ".env*"],
-			"outputs": [".next/**", "!.next/cache/**", "dist/**"]
-		},
-		"lint": {
-			"dependsOn": ["^lint"]
-		},
-		"check-types": {
-			"dependsOn": ["^check-types"]
-		},
-		"dev": {
-			"cache": false,
-			"persistent": true
-		},
-		"dev:setup": {
-			"cache": false,
-			"persistent": true
-		},
-		"test": {
-			"cache": false
-		},
-		"test:watch": {
-			"cache": false,
-			"persistent": true
-		},
-		"test:coverage": {
-			"cache": false
-		},
-		"test:e2e": {
-			"cache": false,
-			"inputs": ["$TURBO_DEFAULT$", "e2e/**", "playwright.config.ts"]
-		},
-		"test:e2e:ui": {
-			"cache": false,
-			"persistent": true
-		},
-		"test:e2e:headed": {
-			"cache": false
-		},
-		"test:e2e:debug": {
-			"cache": false,
-			"persistent": true
-		},
-		"test:e2e:report": {
-			"cache": false
-		},
-		"test:e2e:install": {
-			"cache": false
-		}
-	}
+  "$schema": "https://turbo.build/schema.json",
+  "ui": "tui",
+  "globalEnv": [
+    "NODE_ENV",
+    "NEXT_PUBLIC_CONVEX_URL",
+    "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+    "NEXT_PUBLIC_CLERK_FRONTEND_API_URL",
+    "NEXT_PUBLIC_POSTHOG_KEY",
+    "NEXT_PUBLIC_POSTHOG_HOST",
+    "NEXT_PUBLIC_ROOT_DOMAIN",
+    "CLERK_SECRET_KEY",
+    "PROJECT_ID",
+    "PERSONAL_ACCESS_API_KEY",
+    "UPLOADTHING_TOKEN",
+    "CI",
+    "npm_lifecycle_event"
+  ],
+  "tasks": {
+    "build": {
+      "dependsOn": ["^build"],
+      "inputs": ["$TURBO_DEFAULT$", ".env*"],
+      "outputs": [".next/**", "!.next/cache/**", "dist/**", "pkg/**"]
+    },
+
+    "format": {
+      "outputs": [".cache/.prettiercache"],
+      "outputLogs": "new-only"
+    },
+    "lint": {
+      "dependsOn": ["^lint"],
+      "env": [
+        "NODE_ENV",
+        "NEXT_PUBLIC_CONVEX_URL",
+        "NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY",
+        "NEXT_PUBLIC_CLERK_FRONTEND_API_URL",
+        "NEXT_PUBLIC_POSTHOG_KEY",
+        "NEXT_PUBLIC_POSTHOG_HOST",
+        "NEXT_PUBLIC_ROOT_DOMAIN",
+        "CLERK_SECRET_KEY",
+        "PROJECT_ID",
+        "PERSONAL_ACCESS_API_KEY",
+        "UPLOADTHING_TOKEN",
+        "CI",
+        "npm_lifecycle_event"
+      ],
+      "outputs": [".cache/.eslintcache"]
+    },
+    "typecheck": {
+      "dependsOn": ["^typecheck"],
+      "outputs": [".cache/tsbuildinfo.json"]
+    },
+    "check-types": {
+      "dependsOn": ["^check-types"]
+    },
+    "dev": {
+      "cache": false,
+      "persistent": true
+    },
+    "dev:setup": {
+      "cache": false,
+      "persistent": true
+    },
+    "test": {
+      "cache": false
+    },
+    "test:watch": {
+      "cache": false,
+      "persistent": true
+    },
+    "test:coverage": {
+      "cache": false
+    },
+    "test:e2e": {
+      "cache": false,
+      "inputs": ["$TURBO_DEFAULT$", "e2e/**", "playwright.config.ts"]
+    },
+    "test:e2e:ui": {
+      "cache": false,
+      "persistent": true
+    },
+    "test:e2e:headed": {
+      "cache": false
+    },
+    "test:e2e:debug": {
+      "cache": false,
+      "persistent": true
+    },
+    "test:e2e:report": {
+      "cache": false
+    },
+    "test:e2e:install": {
+      "cache": false
+    }
+  }
 }

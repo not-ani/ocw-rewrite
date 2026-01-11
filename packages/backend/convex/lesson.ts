@@ -39,14 +39,20 @@ export const getLessonById = query({
 	handler: async (ctx, args) => {
 		const lesson = await ctx.db.get(args.id);
 
+		if (!lesson) {
+			throw new ConvexError("Lesson not found");
+		}
+
+		// Validate lesson belongs to the requested school
+		if (lesson.school !== args.school) {
+			throw new ConvexError("Lesson not found");
+		}
+
 		const lessonEmbed = await ctx.db
 			.query("lessonEmbeds")
 			.withIndex("by_lesson_id", (q) => q.eq("lessonId", args.id))
 			.first();
 
-		if (!lesson) {
-			throw new ConvexError("Lesson not found");
-		}
 		if (!lessonEmbed) {
 			throw new ConvexError("Lesson embed not found");
 		}
@@ -139,28 +145,31 @@ function detectEmbed(input: string): {
 	}
 }
 
-export const createOrUpdateEmbed = mutation({
+export const createOrUpdateEmbed = courseMutation("editor")({
 	args: {
 		lessonId: v.id("lessons"),
 		raw: v.string(),
+		courseId: v.id("courses"),
 		school: v.string(),
 		// Skip logging when called alongside update mutation to avoid duplicate logs
 		skipLog: v.optional(v.boolean()),
 	},
 	handler: async (ctx, args) => {
-		const identity = await ctx.auth.getUserIdentity();
-		if (!identity) {
-			throw new Error("Not authenticated");
-		}
+		const courseId = ctx.courseId ?? args.courseId;
 
 		const lesson = await ctx.db.get(args.lessonId);
 		if (!lesson) {
-			throw new Error("Lesson not found");
+			throw new ConvexError("Lesson not found");
+		}
+
+		// Verify lesson belongs to the course (authorization check)
+		if (lesson.courseId !== courseId) {
+			throw new ConvexError("Lesson does not belong to this course");
 		}
 
 		const detected = detectEmbed(args.raw);
 		if (!detected) {
-			throw new Error("Unsupported embed");
+			throw new ConvexError("Unsupported embed");
 		}
 
 		const existing = await ctx.db
@@ -183,8 +192,8 @@ export const createOrUpdateEmbed = mutation({
 		// Only log if not skipped (to avoid duplicate logs when called with update)
 		if (!args.skipLog) {
 			await ctx.scheduler.runAfter(0, internal.lesson.logLessonAction, {
-				userId: identity.tokenIdentifier,
-				courseId: lesson.courseId,
+				userId: ctx.user.userId,
+				courseId: courseId,
 				unitId: lesson.unitId,
 				lessonId: args.lessonId,
 				action: "UPDATE_LESSON",

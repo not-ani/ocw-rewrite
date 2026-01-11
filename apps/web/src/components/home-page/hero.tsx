@@ -1,7 +1,7 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: "required" */
 
 import Link from "next/link";
-import { Button } from "../ui/button";
+import { Button } from "@ocw/ui/button";
 
 export const Hero = () => (
 	<section>

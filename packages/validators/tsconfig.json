@@ -1,0 +1,5 @@
+{
+  "extends": "@ocw/tsconfig/compiled-package.json",
+  "include": ["src"],
+  "exclude": ["node_modules"]
+}

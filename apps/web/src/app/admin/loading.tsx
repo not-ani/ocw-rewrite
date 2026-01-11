@@ -1,5 +1,5 @@
 /** biome-ignore-all lint/suspicious/noArrayIndexKey: perf doesn't matter skeleton */
-import { Skeleton } from "@/components/ui/skeleton";
+import { Skeleton } from "@ocw/ui/skeleton";
 
 function HeaderSkeleton() {
 	return (

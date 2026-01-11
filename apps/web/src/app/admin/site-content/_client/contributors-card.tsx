@@ -1,23 +1,22 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { arktypeResolver } from "@hookform/resolvers/arktype";
 import { api } from "@ocw/backend/convex/_generated/api";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
-import { useMutation, useQuery } from "convex/react";
+import { useMutation } from "convex/react";
 import { Check, Pencil, Plus, Trash2, X } from "lucide-react";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
-import { Button } from "@/components/ui/button";
+import { Button } from "@ocw/ui/button";
 import {
 	Card,
 	CardContent,
 	CardDescription,
 	CardHeader,
 	CardTitle,
-} from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
+} from "@ocw/ui/card";
+import { Input } from "@ocw/ui/input";
 import {
 	Table,
 	TableBody,
@@ -25,8 +24,12 @@ import {
 	TableHead,
 	TableHeader,
 	TableRow,
-} from "@/components/ui/table";
-import { Textarea } from "@/components/ui/textarea";
+} from "@ocw/ui/table";
+import { Textarea } from "@ocw/ui/textarea";
+import {
+	contributorFormSchema,
+	type ContributorFormValues,
+} from "@ocw/validators";
 
 type Contributor = {
 	_id: Id<"contributors">;
@@ -37,15 +40,6 @@ type Contributor = {
 	description: string;
 	order: number;
 };
-
-const contributorSchema = z.object({
-	name: z.string().min(1, "Name is required"),
-	role: z.string().min(1, "Role is required"),
-	avatar: z.url("Must be a valid URL").optional().or(z.literal("")),
-	description: z.string().optional(),
-});
-
-type ContributorFormValues = z.infer<typeof contributorSchema>;
 
 type ContributorsCardProps = {
 	school: string;
@@ -66,7 +60,7 @@ export function ContributorsCard({
 	const deleteContributor = useMutation(api.site.deleteContributor);
 
 	const newContributorForm = useForm<ContributorFormValues>({
-		resolver: zodResolver(contributorSchema),
+		resolver: arktypeResolver(contributorFormSchema),
 		defaultValues: {
 			name: "",
 			role: "",
@@ -90,6 +84,7 @@ export function ContributorsCard({
 
 		try {
 			await updateContributor({
+				school,
 				contributorId: editingId,
 				name: editingContributor.name,
 				role: editingContributor.role,
@@ -143,7 +138,7 @@ export function ContributorsCard({
 
 	const handleDeleteContributor = async (contributorId: Id<"contributors">) => {
 		try {
-			await deleteContributor({ contributorId });
+			await deleteContributor({ school, contributorId });
 			toast.success("Contributor deleted successfully");
 		} catch (error) {
 			toast.error("Failed to delete contributor");

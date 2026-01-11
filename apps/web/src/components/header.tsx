@@ -6,7 +6,7 @@ import type { Route } from "next";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Button } from "@/components/ui/button";
+import { Button } from "@ocw/ui/button";
 import { useSite } from "@/lib/multi-tenant/context";
 import { Search } from "./search";
 import {
@@ -17,7 +17,7 @@ import {
 	NavigationMenuList,
 	NavigationMenuTrigger,
 	navigationMenuTriggerStyle,
-} from "./ui/navigation-menu";
+} from "@ocw/ui/navigation-menu";
 
 const navigationItems = [
 	{

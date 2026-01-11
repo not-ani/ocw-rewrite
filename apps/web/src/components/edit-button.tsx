@@ -5,7 +5,7 @@ import { Edit } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { buttonVariants } from "@/components/ui/button";
+import { buttonVariants } from "@ocw/ui/button";
 import { useSite } from "@/lib/multi-tenant/context";
 import { cn } from "@/lib/utils";
 import { PermissionWrapper } from "./permissions";

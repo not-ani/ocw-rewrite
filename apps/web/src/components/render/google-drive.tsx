@@ -2,7 +2,7 @@
 
 import { memo } from "react";
 import { Embed } from "../iframe";
-import { buttonVariants } from "../ui/button";
+import { buttonVariants } from "@ocw/ui/button";
 
 export const GoogleDriveEmbed = memo(function GoogleDriveEmbed({
 	embedId,

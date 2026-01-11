@@ -1,4 +1,4 @@
-import { Input } from "../ui/input";
+import { Input } from "@ocw/ui/input";
 
 type Props = {
 	value: string;

@@ -1,6 +1,6 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { arktypeResolver } from "@hookform/resolvers/arktype";
 import { api } from "@ocw/backend/convex/_generated/api";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
@@ -9,10 +9,9 @@ import { useRouter } from "next/navigation";
 import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
-import { z } from "zod";
 import { CreateLessonDialog } from "@/components/dashboard/lessons/create-lesson";
 import { ForkLessonDialog } from "@/components/dashboard/lessons/fork-lesson-dialog";
-import { Button } from "@/components/ui/button";
+import { Button } from "@ocw/ui/button";
 import {
 	Form,
 	FormControl,
@@ -21,20 +20,13 @@ import {
 	FormItem,
 	FormLabel,
 	FormMessage,
-} from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Textarea } from "@/components/ui/textarea";
+} from "@ocw/ui/form";
+import { Input } from "@ocw/ui/input";
+import { Skeleton } from "@ocw/ui/skeleton";
+import { Textarea } from "@ocw/ui/textarea";
+import { type UnitEditFormValues, unitEditFormSchema } from "@ocw/validators";
 import { LessonsTable } from "./lessons-table";
 import UnitPageLoading from "./loading";
-
-const unitFormSchema = z.object({
-	name: z.string().min(1, "Unit name is required").max(200),
-	description: z.string().max(1000).optional(),
-	isPublished: z.boolean(),
-});
-
-type UnitFormValues = z.infer<typeof unitFormSchema>;
 
 function UnitFormSkeleton() {
 	return (
@@ -107,8 +99,8 @@ function UnitEditForm({
 	const updateUnit = useMutation(api.units.update);
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
-	const form = useForm<UnitFormValues>({
-		resolver: zodResolver(unitFormSchema),
+	const form = useForm<UnitEditFormValues>({
+		resolver: arktypeResolver(unitEditFormSchema),
 		defaultValues: {
 			name: unit?.name ?? "",
 			description: unit?.description ?? "",
@@ -127,7 +119,7 @@ function UnitEditForm({
 		}
 	}, [unit, form]);
 
-	const onSubmit = async (values: UnitFormValues) => {
+	const onSubmit = async (values: UnitEditFormValues) => {
 		setIsSubmitting(true);
 		try {
 			await updateUnit({

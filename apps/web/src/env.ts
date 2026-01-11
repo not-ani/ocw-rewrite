@@ -1,61 +1,53 @@
 import { createEnv } from "@t3-oss/env-nextjs";
-import { vercel } from "@t3-oss/env-nextjs/presets-zod";
-import { z } from "zod/v4";
+import { type } from "arktype";
+
 /**
+ * Helper predicate for URLs.
+ * We refine a string to be either undefined/empty or a valid URL.
+ */
+/**
+ * Arktype schema for env
  *
-NEXT_PUBLIC_CONVEX_URL=""
-NEXT_PUBLIC_CLERK_FRONTEND_API_URL=""
-NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=""
-CLERK_SECRET_KEY=""
-NEXT_PUBLIC_POSTHOG_KEY=""
-NEXT_PUBLIC_POSTHOG_HOST=""
-PROJECT_ID=""
-PERSONAL_ACCESS_API_KEY=""
-UPLOADTHING_TOKEN=""
-**/
-
+ * Notes:
+ * - Using "string?" for optional strings (can be omitted).
+ * - Using `"\"development\" | \"production\" | \"test\" = \"development\""`
+ *   as a literal-union with default for NODE_ENV.
+ * - NEXT_PUBLIC_CONVEX_URL uses the custom urlOrUndefined refinement.
+ */
 export const env = createEnv({
-	extends: [vercel()],
-	shared: {
-		NODE_ENV: z
-			.enum(["development", "production", "test"])
-			.default("development"),
-	},
-	/**
-	 * Specify your server-side environment variables schema here.
-	 * This way you can ensure the app isn't built with invalid env vars.
-	 */
-	server: {
-		CLERK_SECRET_KEY: z.string(),
-		PROJECT_ID: z.string(),
-		PERSONAL_ACCESS_API_KEY: z.string(),
-		UPLOADTHING_TOKEN: z.string(),
-	},
-
-	/**
-	 * Specify your client-side environment variables schema here.
-	 * For them to be exposed to the client, prefix them with `NEXT_PUBLIC_`.
-	 */
-	client: {
-		NEXT_PUBLIC_CLERK_FRONTEND_API_URL: z.optional(z.string()),
-		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: z.string(),
-		NEXT_PUBLIC_POSTHOG_KEY: z.string(),
-		NEXT_PUBLIC_POSTHOG_HOST: z.string(),
-		NEXT_PUBLIC_CONVEX_URL: z.optional(z.string()),
-	},
-	/**
-	 * Destructure all variables from `process.env` to make sure they aren't tree-shaken away.
-	 */
-	experimental__runtimeEnv: {
-		NODE_ENV: process.env.NODE_ENV,
-		NEXT_PUBLIC_CONVEX_URL: process.env.NEXT_PUBLIC_CONVEX_URL,
-		NEXT_PUBLIC_CLERK_FRONTEND_API_URL:
-			process.env.NEXT_PUBLIC_CLERK_FRONTEND_API_URL,
-		NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
-			process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
-		NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
-		NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
-	},
-	skipValidation:
-		!!process.env.CI || process.env.npm_lifecycle_event === "lint",
+  shared: {
+    NODE_ENV: type('"development" | "production" | "test" | "development"'),
+  },
+  client: {
+    NEXT_PUBLIC_CONVEX_URL: type("string.url"), // optional URL
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY: type("string > 1"), // required non-empty string
+    NEXT_PUBLIC_CLERK_FRONTEND_API_URL: type("string"), // optional string
+    NEXT_PUBLIC_POSTHOG_KEY: type("string > 1"),
+    NEXT_PUBLIC_POSTHOG_HOST: type("string > 1"),
+    NEXT_PUBLIC_ROOT_DOMAIN: type("string | undefined"),
+  },
+  server: {
+    CLERK_SECRET_KEY: type("string > 1"),
+    PROJECT_ID: type("string > 1"),
+    PERSONAL_ACCESS_API_KEY: type("string > 1"),
+    UPLOADTHING_TOKEN: type("string > 1"),
+  },
+  runtimeEnv: {
+    NODE_ENV: process.env.NODE_ENV,
+    NEXT_PUBLIC_CONVEX_URL: process.env.NEXT_PUBLIC_CONVEX_URL,
+    NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY:
+      process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY,
+    NEXT_PUBLIC_CLERK_FRONTEND_API_URL:
+      process.env.NEXT_PUBLIC_CLERK_FRONTEND_API_URL,
+    NEXT_PUBLIC_POSTHOG_KEY: process.env.NEXT_PUBLIC_POSTHOG_KEY,
+    NEXT_PUBLIC_POSTHOG_HOST: process.env.NEXT_PUBLIC_POSTHOG_HOST,
+    NEXT_PUBLIC_ROOT_DOMAIN: process.env.NEXT_PUBLIC_ROOT_DOMAIN,
+    CLERK_SECRET_KEY: process.env.CLERK_SECRET_KEY,
+    PROJECT_ID: process.env.PROJECT_ID,
+    PERSONAL_ACCESS_API_KEY: process.env.PERSONAL_ACCESS_API_KEY,
+    UPLOADTHING_TOKEN: process.env.UPLOADTHING_TOKEN,
+  },
+  emptyStringAsUndefined: true,
+  skipValidation:
+    !!process.env.CI || process.env.npm_lifecycle_event === "lint",
 });

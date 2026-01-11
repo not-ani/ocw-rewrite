@@ -7,7 +7,7 @@ import {
 	SidebarContent,
 	SidebarHeader,
 	SidebarSeparator,
-} from "@/components/ui/sidebar";
+} from "@ocw/ui/sidebar";
 import { UnitLessonNavigation } from "./client";
 import { CourseHeader } from "./header";
 

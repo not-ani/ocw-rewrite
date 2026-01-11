@@ -1,7 +1,7 @@
 "use client";
 
 import { memo } from "react";
-import { buttonVariants } from "../ui/button";
+import { buttonVariants } from "@ocw/ui/button";
 
 export const YouTubeEmbed = memo(function YouTubeEmbed({
 	embedId,

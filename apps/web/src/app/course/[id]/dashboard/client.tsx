@@ -16,8 +16,8 @@ import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import { CreateUnitDialog } from "@/components/dashboard/units/create-unit";
 import { ForkUnitDialog } from "@/components/dashboard/units/fork-unit-dialog";
 import { UnitsTable } from "@/components/dashboard/units/units-table";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
+import { Button } from "@ocw/ui/button";
+import { Skeleton } from "@ocw/ui/skeleton";
 
 function DashboardHeaderSkeleton() {
 	return (

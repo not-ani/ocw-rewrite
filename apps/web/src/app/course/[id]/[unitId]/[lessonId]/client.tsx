@@ -51,14 +51,14 @@ const YouTubeEmbed = dynamic(
 
 import dynamic from "next/dynamic";
 import { Search } from "@/components/search";
-import { buttonVariants } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
+import { buttonVariants } from "@ocw/ui/button";
+import { Separator } from "@ocw/ui/separator";
 import {
 	SidebarInset,
 	SidebarProvider,
 	SidebarTrigger,
-} from "@/components/ui/sidebar";
-import { Skeleton } from "@/components/ui/skeleton";
+} from "@ocw/ui/sidebar";
+import { Skeleton } from "@ocw/ui/skeleton";
 import type { EmbedContent } from "@/lib/convex-utils";
 import { cn } from "@/lib/utils";
 

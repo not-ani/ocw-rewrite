@@ -1,25 +1,25 @@
 {
-	"name": "@ocw/backend",
-	"version": "1.0.0",
-	"scripts": {
-		"dev": "convex dev",
-		"dev:setup": "convex dev --configure --until-success",
-		"test": "vitest run",
-		"test:watch": "vitest",
-		"test:coverage": "vitest run --coverage"
-	},
-	"author": "",
-	"license": "ISC",
-	"description": "",
-	"devDependencies": {
-		"@types/node": "catalog:",
-		"convex-test": "^0.0.34",
-		"typescript": "catalog:",
-		"vitest": "^2.1.8"
-	},
-	"dependencies": {
-		"@convex-dev/migrations": "^0.2.9",
-		"convex": "catalog:",
-		"convex-helpers": "^0.1.106"
-	}
+  "name": "@ocw/backend",
+  "version": "1.0.0",
+  "scripts": {
+    "dev": "convex dev",
+    "dev:setup": "convex dev --configure --until-success",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:coverage": "vitest run --coverage"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "devDependencies": {
+    "@types/node": "catalog:",
+    "convex-test": "^0.0.34",
+    "typescript": "catalog:",
+    "vitest": "^2.1.8"
+  },
+  "dependencies": {
+    "@convex-dev/migrations": "^0.2.9",
+    "convex": "catalog:",
+    "convex-helpers": "^0.1.106"
+  }
 }

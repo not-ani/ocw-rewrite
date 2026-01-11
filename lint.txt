@@ -1,0 +1,216 @@
+
+> ocw-rewrite@ lint /Users/ani/ocw-rewrite
+> turbo run lint --continue -- --cache --cache-location .cache/.eslintcache
+
+• Packages in scope: @ocw/backend, @ocw/docs, @ocw/env, @ocw/eslint-config, @ocw/github, @ocw/parse, @ocw/prettier-config, @ocw/redis, @ocw/tsconfig, @ocw/ui, @ocw/validators, web
+• Running lint in 12 packages
+• Remote caching disabled
+@ocw/env:lint: cache miss, executing 65055fdac6fbdb45
+@ocw/redis:lint: cache miss, executing 45f9b4345b0eba38
+@ocw/ui:lint: cache miss, executing 70cd11d02d8b222a
+@ocw/validators:lint: cache miss, executing 26a57159cda567ad
+@ocw/validators:lint: 
+@ocw/validators:lint: > @ocw/validators@0.0.0 lint /Users/ani/ocw-rewrite/packages/validators
+@ocw/validators:lint: > eslint --flag unstable_native_nodejs_ts_config --cache --cache-location .cache/.eslintcache
+@ocw/validators:lint: 
+@ocw/ui:lint: 
+@ocw/ui:lint: > @ocw/ui@0.0.0 lint /Users/ani/ocw-rewrite/packages/ui
+@ocw/ui:lint: > eslint --flag unstable_native_nodejs_ts_config --cache --cache-location .cache/.eslintcache
+@ocw/ui:lint: 
+@ocw/redis:lint: 
+@ocw/redis:lint: > @ocw/redis@1.0.0 lint /Users/ani/ocw-rewrite/packages/redis
+@ocw/redis:lint: > eslint --flag unstable_native_nodejs_ts_config --cache --cache-location .cache/.eslintcache
+@ocw/redis:lint: 
+@ocw/env:lint: 
+@ocw/env:lint: > @ocw/env@0.0.0 lint /Users/ani/ocw-rewrite/packages/env
+@ocw/env:lint: > eslint --flag unstable_native_nodejs_ts_config --cache --cache-location .cache/.eslintcache
+@ocw/env:lint: 
+@ocw/validators:lint: 
+@ocw/validators:lint: Oops! Something went wrong! :(
+@ocw/validators:lint: 
+@ocw/validators:lint: ESLint: 9.39.2
+@ocw/validators:lint: 
+@ocw/validators:lint: ESLint couldn't find an eslint.config.(js|mjs|cjs) file.
+@ocw/validators:lint: 
+@ocw/validators:lint: From ESLint v9.0.0, the default configuration file is now eslint.config.js.
+@ocw/validators:lint: If you are using a .eslintrc.* file, please follow the migration guide
+@ocw/validators:lint: to update your configuration file to the new format:
+@ocw/validators:lint: 
+@ocw/validators:lint: https://eslint.org/docs/latest/use/configure/migration-guide
+@ocw/validators:lint: 
+@ocw/validators:lint: If you still have problems after following the migration guide, please stop by
+@ocw/validators:lint: https://eslint.org/chat/help to chat with the team.
+@ocw/validators:lint: 
+@ocw/validators:lint:  ELIFECYCLE  Command failed with exit code 2.
+@ocw/redis:lint: 
+@ocw/redis:lint: /Users/ani/ocw-rewrite/packages/redis/src/redis/live.ts
+@ocw/redis:lint:   12:47  error  Unnecessary optional chain on a non-nullish value  @typescript-eslint/no-unnecessary-condition
+@ocw/redis:lint: 
+@ocw/redis:lint: ✖ 1 problem (1 error, 0 warnings)
+@ocw/redis:lint: 
+@ocw/env:lint: 
+@ocw/env:lint: /Users/ani/ocw-rewrite/packages/env/src/web.ts
+@ocw/env:lint:   23:15  error  NODE_ENV is not listed as a dependency in turbo.json                            turbo/no-undeclared-env-vars
+@ocw/env:lint:   24:29  error  NEXT_PUBLIC_CONVEX_URL is not listed as a dependency in turbo.json              turbo/no-undeclared-env-vars
+@ocw/env:lint:   25:40  error  NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY is not listed as a dependency in turbo.json   turbo/no-undeclared-env-vars
+@ocw/env:lint:   26:41  error  NEXT_PUBLIC_CLERK_FRONTEND_API_URL is not listed as a dependency in turbo.json  turbo/no-undeclared-env-vars
+@ocw/env:lint:   27:30  error  NEXT_PUBLIC_POSTHOG_KEY is not listed as a dependency in turbo.json             turbo/no-undeclared-env-vars
+@ocw/env:lint:   28:31  error  NEXT_PUBLIC_POSTHOG_HOST is not listed as a dependency in turbo.json            turbo/no-undeclared-env-vars
+@ocw/env:lint:   29:30  error  NEXT_PUBLIC_ROOT_DOMAIN is not listed as a dependency in turbo.json             turbo/no-undeclared-env-vars
+@ocw/env:lint:   30:23  error  CLERK_SECRET_KEY is not listed as a dependency in turbo.json                    turbo/no-undeclared-env-vars
+@ocw/env:lint:   31:17  error  PROJECT_ID is not listed as a dependency in turbo.json                          turbo/no-undeclared-env-vars
+@ocw/env:lint:   32:30  error  PERSONAL_ACCESS_API_KEY is not listed as a dependency in turbo.json             turbo/no-undeclared-env-vars
+@ocw/env:lint:   33:24  error  UPLOADTHING_TOKEN is not listed as a dependency in turbo.json                   turbo/no-undeclared-env-vars
+@ocw/env:lint:   36:21  error  CI is not listed as a dependency in turbo.json                                  turbo/no-undeclared-env-vars
+@ocw/env:lint:   36:39  error  npm_lifecycle_event is not listed as a dependency in turbo.json                 turbo/no-undeclared-env-vars
+@ocw/env:lint: 
+@ocw/env:lint: ✖ 13 problems (13 errors, 0 warnings)
+@ocw/env:lint: 
+@ocw/redis:lint:  ELIFECYCLE  Command failed with exit code 1.
+@ocw/env:lint:  ELIFECYCLE  Command failed with exit code 1.
+@ocw/parse:lint: cache miss, executing 0d915438c6ff5baa
+@ocw/parse:lint: 
+@ocw/parse:lint: > @ocw/parse@1.0.0 lint /Users/ani/ocw-rewrite/packages/parse
+@ocw/parse:lint: > eslint --flag unstable_native_nodejs_ts_config --cache --cache-location .cache/.eslintcache
+@ocw/parse:lint: 
+@ocw/ui:lint: 
+@ocw/ui:lint: /Users/ani/ocw-rewrite/packages/ui/src/chart.tsx
+@ocw/ui:lint:    46:30  error  Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator  @typescript-eslint/prefer-nullish-coalescing
+@ocw/ui:lint:    70:32  error  Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator  @typescript-eslint/prefer-nullish-coalescing
+@ocw/ui:lint:    87:63  error  Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator  @typescript-eslint/prefer-nullish-coalescing
+@ocw/ui:lint:   133:27  error  Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator  @typescript-eslint/prefer-nullish-coalescing
+@ocw/ui:lint:   133:44  error  Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator  @typescript-eslint/prefer-nullish-coalescing
+@ocw/ui:lint:   133:58  error  Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator  @typescript-eslint/prefer-nullish-coalescing
+@ocw/ui:lint:   137:28  error  Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator  @typescript-eslint/prefer-nullish-coalescing
+@ocw/ui:lint:   181:30  error  Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator  @typescript-eslint/prefer-nullish-coalescing
+@ocw/ui:lint:   181:43  error  Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator  @typescript-eslint/prefer-nullish-coalescing
+@ocw/ui:lint:   181:59  error  Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator  @typescript-eslint/prefer-nullish-coalescing
+@ocw/ui:lint:   183:13  error  Unsafe assignment of an `any` value                                                                        @typescript-eslint/no-unsafe-assignment
+@ocw/ui:lint:   183:36  error  Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator  @typescript-eslint/prefer-nullish-coalescing
+@ocw/ui:lint:   183:52  error  Unsafe member access .fill on an `any` value                                                               @typescript-eslint/no-unsafe-member-access
+@ocw/ui:lint:   183:57  error  Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator  @typescript-eslint/prefer-nullish-coalescing
+@ocw/ui:lint:   193:27  error  Unnecessary optional chain on a non-nullish value                                                          @typescript-eslint/no-unnecessary-condition
+@ocw/ui:lint:   194:56  error  Unsafe argument of type `any` assigned to a parameter of type `Payload<ValueType, NameType>[]`             @typescript-eslint/no-unsafe-argument
+@ocw/ui:lint:   214:16  error  Unsafe assignment of an `any` value                                                                        @typescript-eslint/no-unsafe-assignment
+@ocw/ui:lint:   215:16  error  Unsafe assignment of an `any` value                                                                        @typescript-eslint/no-unsafe-assignment
+@ocw/ui:lint:   230:33  error  Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator  @typescript-eslint/prefer-nullish-coalescing
+@ocw/ui:lint:   279:21  error  Invalid type "DataKey<any>" of template literal expression                                                 @typescript-eslint/restrict-template-expressions
+@ocw/ui:lint:   279:29  error  Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator  @typescript-eslint/prefer-nullish-coalescing
+@ocw/ui:lint:   279:45  error  Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator  @typescript-eslint/prefer-nullish-coalescing
+@ocw/ui:lint:   284:13  error  Unsafe assignment of an `any` value                                                                        @typescript-eslint/no-unsafe-assignment
+@ocw/ui:lint: 
+@ocw/ui:lint: /Users/ani/ocw-rewrite/packages/ui/src/form.tsx
+@ocw/ui:lint:    52:6   error  Unnecessary conditional, value is always falsy     @typescript-eslint/no-unnecessary-condition
+@ocw/ui:lint:   141:35  error  Unnecessary optional chain on a non-nullish value  @typescript-eslint/no-unnecessary-condition
+@ocw/ui:lint: 
+@ocw/ui:lint: /Users/ani/ocw-rewrite/packages/ui/src/kibo-ui/combobox/index.tsx
+@ocw/ui:lint:    54:23  error  Unexpected empty method 'onValueChange'            @typescript-eslint/no-empty-function
+@ocw/ui:lint:    56:22  error  Unexpected empty method 'onOpenChange'             @typescript-eslint/no-empty-function
+@ocw/ui:lint:    58:18  error  Unexpected empty method 'setWidth'                 @typescript-eslint/no-empty-function
+@ocw/ui:lint:    60:23  error  Unexpected empty method 'setInputValue'            @typescript-eslint/no-empty-function
+@ocw/ui:lint:   132:14  error  Unnecessary optional chain on a non-nullish value  @typescript-eslint/no-unnecessary-condition
+@ocw/ui:lint: 
+@ocw/ui:lint: /Users/ani/ocw-rewrite/packages/ui/src/kibo-ui/qr-code/index.tsx
+@ocw/ui:lint:   57:26  error  'QR' will use Object's default stringification format ('[object Object]') when stringified                                                                          @typescript-eslint/no-base-to-string
+@ocw/ui:lint:   74:3   error  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+@ocw/ui:lint: 
+@ocw/ui:lint: /Users/ani/ocw-rewrite/packages/ui/src/kibo-ui/qr-code/server.tsx
+@ocw/ui:lint:   20:20  error  'QR' will use Object's default stringification format ('[object Object]') when stringified  @typescript-eslint/no-base-to-string
+@ocw/ui:lint: 
+@ocw/ui:lint: /Users/ani/ocw-rewrite/packages/ui/src/kibo-ui/table/index.tsx
+@ocw/ui:lint:   66:16  warning  Compilation Skipped: Use of incompatible library
+@ocw/ui:lint: 
+@ocw/ui:lint: This API returns functions which cannot be memoized without leading to stale UI. To prevent this, by default React Compiler will skip memoizing this component/hook. However, you may see issues if values from this API are passed to other components/hooks that are memoized.
+@ocw/ui:lint: 
+@ocw/ui:lint: /Users/ani/ocw-rewrite/packages/ui/src/kibo-ui/table/index.tsx:66:16
+@ocw/ui:lint:   64 | }: TableProviderProps<TData, TValue>) {
+@ocw/ui:lint:   65 | 	const [sorting, setSorting] = useAtom(sortingAtom);
+@ocw/ui:lint: > 66 | 	const table = useReactTable({
+@ocw/ui:lint:      | 	              ^^^^^^^^^^^^^ TanStack Table's `useReactTable()` API returns functions that cannot be memoized safely
+@ocw/ui:lint:   67 | 		data,
+@ocw/ui:lint:   68 | 		columns,
+@ocw/ui:lint:   69 | 		getCoreRowModel: getCoreRowModel(),  react-hooks/incompatible-library
+@ocw/ui:lint: 
+@ocw/ui:lint: /Users/ani/ocw-rewrite/packages/ui/src/link-tabs.tsx
+@ocw/ui:lint:    91:9   error  Unsafe assignment of an error typed value                                         @typescript-eslint/no-unsafe-assignment
+@ocw/ui:lint:    91:20  error  Unsafe call of a(n) `error` type typed value                                      @typescript-eslint/no-unsafe-call
+@ocw/ui:lint:    92:9   error  Unsafe assignment of an error typed value                                         @typescript-eslint/no-unsafe-assignment
+@ocw/ui:lint:    94:28  error  Unsafe call of a(n) `error` type typed value                                      @typescript-eslint/no-unsafe-call
+@ocw/ui:lint:    94:37  error  Unsafe member access .startsWith on an `error` typed value                        @typescript-eslint/no-unsafe-member-access
+@ocw/ui:lint:    99:13  error  Unsafe assignment of an `any` value                                               @typescript-eslint/no-unsafe-assignment
+@ocw/ui:lint:    99:21  error  Unexpected any. Specify a different type                                          @typescript-eslint/no-explicit-any
+@ocw/ui:lint:   109:9   error  Unsafe argument of type error typed assigned to a parameter of type `ClassValue`  @typescript-eslint/no-unsafe-argument
+@ocw/ui:lint: 
+@ocw/ui:lint: /Users/ani/ocw-rewrite/packages/ui/src/sidebar.tsx
+@ocw/ui:lint:   611:24  error  Error: Cannot call impure function during render
+@ocw/ui:lint: 
+@ocw/ui:lint: `Math.random` is an impure function. Calling an impure function can produce unstable results that update unpredictably when the component happens to re-render. (https://react.dev/reference/rules/components-and-hooks-must-be-pure#components-and-hooks-must-be-idempotent).
+@ocw/ui:lint: 
+@ocw/ui:lint: /Users/ani/ocw-rewrite/packages/ui/src/sidebar.tsx:611:24
+@ocw/ui:lint:   609 | 	// Random width between 50 to 90%.
+@ocw/ui:lint:   610 | 	const width = React.useMemo(() => {
+@ocw/ui:lint: > 611 | 		return `${Math.floor(Math.random() * 40) + 50}%`;
+@ocw/ui:lint:       | 		                     ^^^^^^^^^^^^^ Cannot call impure function
+@ocw/ui:lint:   612 | 	}, []);
+@ocw/ui:lint:   613 |
+@ocw/ui:lint:   614 | 	return (  react-hooks/purity
+@ocw/ui:lint: 
+@ocw/ui:lint: ✖ 43 problems (42 errors, 1 warning)
+@ocw/ui:lint: 
+@ocw/ui:lint:  ELIFECYCLE  Command failed with exit code 1.
+@ocw/parse:lint: 
+@ocw/parse:lint: /Users/ani/ocw-rewrite/packages/parse/src/fetch.ts
+@ocw/parse:lint:   51:20  error  Unsafe object destructuring of a property with an `any` value                                                                                                       @typescript-eslint/no-unsafe-assignment
+@ocw/parse:lint:   53:25  error  Unsafe member access .length on an `any` value                                                                                                                      @typescript-eslint/no-unsafe-member-access
+@ocw/parse:lint:   55:7   error  Promises must be awaited, end with a call to .catch, end with a call to .then with a rejection handler or be explicitly marked as ignored with the `void` operator  @typescript-eslint/no-floating-promises
+@ocw/parse:lint:   58:18  error  Unsafe argument of type `any` assigned to a parameter of type `Uint8Array<ArrayBufferLike>`                                                                         @typescript-eslint/no-unsafe-argument
+@ocw/parse:lint:   74:41  error  Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator                                                           @typescript-eslint/prefer-nullish-coalescing
+@ocw/parse:lint:   75:58  error  Prefer using nullish coalescing operator (`??`) instead of a logical or (`||`), as it is a safer operator                                                           @typescript-eslint/prefer-nullish-coalescing
+@ocw/parse:lint: 
+@ocw/parse:lint: /Users/ani/ocw-rewrite/packages/parse/src/parser/service.ts
+@ocw/parse:lint:   14:21  error  Unsafe argument of type error typed assigned to a parameter of type `Plugin | Plugin[]`  @typescript-eslint/no-unsafe-argument
+@ocw/parse:lint:   30:15  error  Unsafe assignment of an `any` value                                                      @typescript-eslint/no-unsafe-assignment
+@ocw/parse:lint:   30:49  error  Unexpected any. Specify a different type                                                 @typescript-eslint/no-explicit-any
+@ocw/parse:lint:   33:15  error  Unsafe assignment of an `any` value                                                      @typescript-eslint/no-unsafe-assignment
+@ocw/parse:lint:   33:24  error  Unsafe call of a(n) `any` typed value                                                    @typescript-eslint/no-unsafe-call
+@ocw/parse:lint:   33:33  error  Unsafe member access .querySelectorAll on an `any` value                                 @typescript-eslint/no-unsafe-member-access
+@ocw/parse:lint:   34:9   error  Unsafe call of a(n) `any` typed value                                                    @typescript-eslint/no-unsafe-call
+@ocw/parse:lint:   34:16  error  Unsafe member access .forEach on an `any` value                                          @typescript-eslint/no-unsafe-member-access
+@ocw/parse:lint:   34:30  error  Unexpected any. Specify a different type                                                 @typescript-eslint/no-explicit-any
+@ocw/parse:lint:   35:17  error  Unsafe assignment of an `any` value                                                      @typescript-eslint/no-unsafe-assignment
+@ocw/parse:lint:   35:23  error  Unsafe call of a(n) `any` typed value                                                    @typescript-eslint/no-unsafe-call
+@ocw/parse:lint:   35:27  error  Unsafe member access .getAttribute on an `any` value                                     @typescript-eslint/no-unsafe-member-access
+@ocw/parse:lint:   36:41  error  Unsafe argument of type `any` assigned to a parameter of type `string`                   @typescript-eslint/no-unsafe-argument
+@ocw/parse:lint:   37:13  error  Unsafe call of a(n) `any` typed value                                                    @typescript-eslint/no-unsafe-call
+@ocw/parse:lint:   37:17  error  Unsafe member access .replaceWith on an `any` value                                      @typescript-eslint/no-unsafe-member-access
+@ocw/parse:lint:   42:9   error  Unsafe call of a(n) `any` typed value                                                    @typescript-eslint/no-unsafe-call
+@ocw/parse:lint:   42:9   error  Unsafe call of a(n) `any` typed value                                                    @typescript-eslint/no-unsafe-call
+@ocw/parse:lint:   42:18  error  Unsafe member access .querySelectorAll on an `any` value                                 @typescript-eslint/no-unsafe-member-access
+@ocw/parse:lint:   42:53  error  Unsafe member access .forEach on an `any` value                                          @typescript-eslint/no-unsafe-member-access
+@ocw/parse:lint:   42:66  error  Unexpected any. Specify a different type                                                 @typescript-eslint/no-explicit-any
+@ocw/parse:lint:   43:11  error  Unsafe call of a(n) `any` typed value                                                    @typescript-eslint/no-unsafe-call
+@ocw/parse:lint:   43:14  error  Unsafe member access .remove on an `any` value                                           @typescript-eslint/no-unsafe-member-access
+@ocw/parse:lint:   49:17  error  Unsafe assignment of an `any` value                                                      @typescript-eslint/no-unsafe-assignment
+@ocw/parse:lint:   49:22  error  Unsafe call of a(n) `any` typed value                                                    @typescript-eslint/no-unsafe-call
+@ocw/parse:lint:   49:31  error  Unsafe member access .querySelector on an `any` value                                    @typescript-eslint/no-unsafe-member-access
+@ocw/parse:lint:   50:19  error  Unsafe member access .innerHTML on an `any` value                                        @typescript-eslint/no-unsafe-member-access
+@ocw/parse:lint:   51:13  error  Unsafe assignment of an `any` value                                                      @typescript-eslint/no-unsafe-assignment
+@ocw/parse:lint:   51:26  error  Unsafe member access .innerHTML on an `any` value                                        @typescript-eslint/no-unsafe-member-access
+@ocw/parse:lint: 
+@ocw/parse:lint: /Users/ani/ocw-rewrite/packages/parse/src/utils.ts
+@ocw/parse:lint:   17:53  error  Unnecessary optional chain on a non-nullish value  @typescript-eslint/no-unnecessary-condition
+@ocw/parse:lint: 
+@ocw/parse:lint: /Users/ani/ocw-rewrite/packages/parse/src/validation.ts
+@ocw/parse:lint:    2:8  error  'dns' is defined but never used. Allowed unused vars must match /^_/u  @typescript-eslint/no-unused-vars
+@ocw/parse:lint:   58:9  error  Unnecessary conditional, value is always falsy                         @typescript-eslint/no-unnecessary-condition
+@ocw/parse:lint: 
+@ocw/parse:lint: ✖ 37 problems (37 errors, 0 warnings)
+@ocw/parse:lint: 
+@ocw/parse:lint:  ELIFECYCLE  Command failed with exit code 1.
+
+ Tasks:    0 successful, 5 total
+Cached:    0 cached, 5 total
+  Time:    2.173s 
+Failed:    @ocw/env#lint, @ocw/parse#lint, @ocw/redis#lint, @ocw/ui#lint, @ocw/validators#lint
+
+ ELIFECYCLE  Command failed with exit code 2.

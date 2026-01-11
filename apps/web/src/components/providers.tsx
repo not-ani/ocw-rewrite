@@ -5,21 +5,21 @@ import { ConvexReactClient } from "convex/react";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 import { env } from "@/env";
 import { ThemeProvider } from "./theme-provider";
-import { Toaster } from "./ui/sonner";
+import { Toaster } from "@ocw/ui/sonner";
 
-const convex = new ConvexReactClient(env.NEXT_PUBLIC_CONVEX_URL);
+const convex = new ConvexReactClient(env.NEXT_PUBLIC_CONVEX_URL ?? "");
 
 export default function Providers({ children }: { children: React.ReactNode }) {
-	return (
-		<ThemeProvider
-			attribute="class"
-			defaultTheme="dark"
-			disableTransitionOnChange
-		>
-			<ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-				{children}
-			</ConvexProviderWithClerk>
-			<Toaster richColors />
-		</ThemeProvider>
-	);
+  return (
+    <ThemeProvider
+      attribute="class"
+      defaultTheme="dark"
+      disableTransitionOnChange
+    >
+      <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
+        {children}
+      </ConvexProviderWithClerk>
+      <Toaster richColors />
+    </ThemeProvider>
+  );
 }

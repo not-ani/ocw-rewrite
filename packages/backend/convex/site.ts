@@ -1,5 +1,6 @@
 import { ConvexError, v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { query } from "./_generated/server";
+import { siteAdminMutation } from "./auth";
 
 export const getSiteConfig = query({
 	args: {
@@ -43,7 +44,7 @@ export const getSites = query({
 	},
 });
 
-export const updateSiteConfigBasicFields = mutation({
+export const updateSiteConfigBasicFields = siteAdminMutation({
 	args: {
 		school: v.string(),
 		schoolName: v.string(),
@@ -74,7 +75,7 @@ export const updateSiteConfigBasicFields = mutation({
 	},
 });
 
-export const updateClubInfo = mutation({
+export const updateClubInfo = siteAdminMutation({
 	args: {
 		school: v.string(),
 		clubName: v.string(),
@@ -119,7 +120,7 @@ export const getContributors = query({
 	},
 });
 
-export const createContributor = mutation({
+export const createContributor = siteAdminMutation({
 	args: {
 		school: v.string(),
 		name: v.string(),
@@ -152,8 +153,9 @@ export const createContributor = mutation({
 	},
 });
 
-export const updateContributor = mutation({
+export const updateContributor = siteAdminMutation({
 	args: {
+		school: v.string(),
 		contributorId: v.id("contributors"),
 		name: v.optional(v.string()),
 		role: v.optional(v.string()),
@@ -161,11 +163,16 @@ export const updateContributor = mutation({
 		description: v.optional(v.string()),
 	},
 	handler: async (ctx, args) => {
-		const { contributorId, ...updates } = args;
+		const { contributorId, school, ...updates } = args;
 		const contributor = await ctx.db.get(contributorId);
 
 		if (!contributor) {
 			throw new ConvexError("Contributor not found");
+		}
+
+		// Verify contributor belongs to the authorized school
+		if (contributor.school !== school) {
+			throw new ConvexError("Contributor does not belong to this school");
 		}
 
 		const patchData: {
@@ -187,8 +194,9 @@ export const updateContributor = mutation({
 	},
 });
 
-export const deleteContributor = mutation({
+export const deleteContributor = siteAdminMutation({
 	args: {
+		school: v.string(),
 		contributorId: v.id("contributors"),
 	},
 	handler: async (ctx, args) => {
@@ -196,6 +204,11 @@ export const deleteContributor = mutation({
 
 		if (!contributor) {
 			throw new ConvexError("Contributor not found");
+		}
+
+		// Verify contributor belongs to the authorized school
+		if (contributor.school !== args.school) {
+			throw new ConvexError("Contributor does not belong to this school");
 		}
 
 		await ctx.db.delete(args.contributorId);
@@ -220,7 +233,7 @@ export const deleteContributor = mutation({
 	},
 });
 
-export const reorderContributors = mutation({
+export const reorderContributors = siteAdminMutation({
 	args: {
 		school: v.string(),
 		contributorIds: v.array(v.id("contributors")),
@@ -248,7 +261,7 @@ export const reorderContributors = mutation({
 	},
 });
 
-export const updatePersonsContact = mutation({
+export const updatePersonsContact = siteAdminMutation({
 	args: {
 		school: v.string(),
 		personsContact: v.array(

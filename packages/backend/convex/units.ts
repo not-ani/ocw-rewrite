@@ -27,7 +27,14 @@ export const getById = query({
 	args: { id: v.id("units"), school: v.string() },
 	handler: async (ctx, args) => {
 		const unit = await ctx.db.get(args.id);
-		return unit ?? null;
+		if (!unit) {
+			return null;
+		}
+		// Validate unit belongs to the requested school
+		if (unit.school !== args.school) {
+			return null;
+		}
+		return unit;
 	},
 });
 

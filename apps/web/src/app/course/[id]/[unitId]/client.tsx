@@ -10,8 +10,8 @@ import {
 	AccordionContent,
 	AccordionItem,
 	AccordionTrigger,
-} from "@/components/ui/accordion";
-import { Skeleton } from "@/components/ui/skeleton";
+} from "@ocw/ui/accordion";
+import { Skeleton } from "@ocw/ui/skeleton";
 export function UnitPageSkeleton() {
 	return (
 		<div className="flex min-h-screen flex-col md:flex-row">
