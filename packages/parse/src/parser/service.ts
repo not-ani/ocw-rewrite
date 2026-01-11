@@ -10,10 +10,11 @@ const turndownService = new TurndownService({
   headingStyle: "atx",
   codeBlockStyle: "fenced",
 });
-turndownService.use(gfm as unknown as (service: TurndownService) => void);
+turndownService.use(gfm);
 
-// Pre-compile regex for image processing
-const LATEX_PATTERN = /[a-zA-Z0-9\\^_=+]/;
+// Pre-compile regex for image processing - match LaTeX-like formulas
+// Requires at least one of: ^, _, \, or = with alphanumeric content
+const LATEX_PATTERN = /[\^_\\]|[a-zA-Z0-9]+\s*[=+\-*/]\s*[a-zA-Z0-9]/;
 
 export class ParserService extends Context.Tag("ParserService")<
   ParserService,
@@ -26,26 +27,26 @@ export const ParserServiceLive = Layer.succeed(ParserService, {
   parseHtmlToMarkdown: (html: string) =>
     Effect.try({
       try: () => {
-        const { document } = parseHTML(html) as unknown as { document: Document };
+        const { document } = parseHTML(html);
 
-        // 1. Process Images
+        // 1. Process Images - convert LaTeX images to inline LaTeX
         const images = document.querySelectorAll("img[alt]");
-        images.forEach((img) => {
-          const alt = (img as unknown as Element).getAttribute("alt");
+        images.forEach((img: Element) => {
+          const alt = img.getAttribute("alt");
           if (alt && LATEX_PATTERN.test(alt)) {
-            (img as unknown as Element).replaceWith(`$$${alt}$$`);
+            img.replaceWith(`$$${alt}$$`);
           }
         });
 
         // 2. Remove Junk
-        document.querySelectorAll(REMOVE_SELECTORS).forEach((el) => {
-          (el as unknown as Element).remove();
+        document.querySelectorAll(REMOVE_SELECTORS).forEach((el: Element) => {
+          el.remove();
         });
 
         // 3. Extract Content
         let content: string | null = null;
         for (const selector of CONTENT_SELECTORS) {
-          const el = document.querySelector(selector) as unknown as Element | null;
+          const el = document.querySelector(selector);
           if (el?.innerHTML) {
             content = el.innerHTML;
             break;

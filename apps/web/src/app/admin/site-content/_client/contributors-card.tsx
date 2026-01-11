@@ -84,6 +84,7 @@ export function ContributorsCard({
 
 		try {
 			await updateContributor({
+				school,
 				contributorId: editingId,
 				name: editingContributor.name,
 				role: editingContributor.role,
@@ -137,7 +138,7 @@ export function ContributorsCard({
 
 	const handleDeleteContributor = async (contributorId: Id<"contributors">) => {
 		try {
-			await deleteContributor({ contributorId });
+			await deleteContributor({ school, contributorId });
 			toast.success("Contributor deleted successfully");
 		} catch (error) {
 			toast.error("Failed to delete contributor");

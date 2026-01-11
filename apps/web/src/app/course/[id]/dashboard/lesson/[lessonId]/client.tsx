@@ -124,6 +124,7 @@ function LessonEditForm({
 			if (values.contentType !== "pdf" && values.embedUrl?.trim()) {
 				await createOrUpdateEmbed({
 					lessonId,
+					courseId,
 					school,
 					raw: values.embedUrl,
 					skipLog: true,
