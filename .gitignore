@@ -17,4 +17,5 @@ target/
 **/Cargo.lock
 .pnpm-store/
 
-**/.cache
+
+**/.cache/
