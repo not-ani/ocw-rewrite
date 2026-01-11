@@ -1,5 +1,5 @@
 import { PostHog } from "posthog-node";
-import { env } from "@ocw/env/web";
+import { env } from "@/env";
 
 let posthogInstance = null;
 

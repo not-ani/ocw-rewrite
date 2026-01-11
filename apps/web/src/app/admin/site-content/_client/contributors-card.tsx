@@ -1,6 +1,6 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { arktypeResolver } from "@hookform/resolvers/arktype";
 import { api } from "@ocw/backend/convex/_generated/api";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
@@ -60,7 +60,7 @@ export function ContributorsCard({
 	const deleteContributor = useMutation(api.site.deleteContributor);
 
 	const newContributorForm = useForm<ContributorFormValues>({
-		resolver: zodResolver(contributorFormSchema),
+		resolver: arktypeResolver(contributorFormSchema),
 		defaultValues: {
 			name: "",
 			role: "",

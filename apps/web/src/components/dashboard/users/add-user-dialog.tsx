@@ -1,6 +1,6 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { arktypeResolver } from "@hookform/resolvers/arktype";
 import { api } from "@ocw/backend/convex/_generated/api";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { useMutation } from "convex/react";
@@ -63,7 +63,7 @@ export function AddUserDialog({
 	const { subdomain } = useSite();
 
 	const form = useForm<AddUserToCourseFormValues>({
-		resolver: zodResolver(addUserToCourseFormSchema),
+		resolver: arktypeResolver(addUserToCourseFormSchema),
 		defaultValues: {
 			userId: "",
 			role: "user",

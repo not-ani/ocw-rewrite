@@ -1,6 +1,6 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { arktypeResolver } from "@hookform/resolvers/arktype";
 import { api } from "@ocw/backend/convex/_generated/api";
 import { useMutation } from "convex/react";
 import { Loader2Icon, Plus } from "lucide-react";
@@ -42,7 +42,7 @@ export function AddCourseDialog() {
 	const createCourse = useMutation(api.admin.createCourse);
 
 	const form = useForm<AddCourseFormValues>({
-		resolver: zodResolver(addCourseFormSchema),
+		resolver: arktypeResolver(addCourseFormSchema),
 		defaultValues: {
 			name: "",
 			description: "",

@@ -1,6 +1,6 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { arktypeResolver } from "@hookform/resolvers/arktype";
 import { api } from "@ocw/backend/convex/_generated/api";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
@@ -61,7 +61,7 @@ export function CreateLessonInlineForm({
 	});
 
 	const form = useForm<CreateLessonInlineFormValues>({
-		resolver: zodResolver(createLessonInlineFormSchema),
+		resolver: arktypeResolver(createLessonInlineFormSchema),
 		defaultValues: {
 			name: "",
 			unitId: "",

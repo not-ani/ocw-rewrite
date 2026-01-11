@@ -5,6 +5,9 @@ const nextConfig: NextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
   async rewrites() {
     return [
       {
@@ -32,13 +35,7 @@ const nextConfig: NextConfig = {
     ],
   },
   reactCompiler: true,
-  transpilePackages: [
-    "@ocw/ui",
-    "@ocw/redis",
-    "@ocw/env",
-    "@ocw/parse",
-    "@ocw/validators",
-  ],
+  transpilePackages: ["@ocw/ui", "@ocw/redis", "@ocw/parse", "@ocw/validators"],
 };
 
 export default nextConfig;

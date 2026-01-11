@@ -1,6 +1,6 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { arktypeResolver } from "@hookform/resolvers/arktype";
 import { api } from "@ocw/backend/convex/_generated/api";
 import { useMutation } from "convex/react";
 import { Check, Pencil, Plus, Trash2, X } from "lucide-react";
@@ -49,7 +49,7 @@ export function ContactPersonsCard({
 	const updatePersonsContact = useMutation(api.site.updatePersonsContact);
 
 	const newContactForm = useForm<ContactPersonFormValues>({
-		resolver: zodResolver(contactPersonFormSchema),
+		resolver: arktypeResolver(contactPersonFormSchema),
 		defaultValues: {
 			name: "",
 			email: "",

@@ -1,6 +1,6 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { arktypeResolver } from "@hookform/resolvers/arktype";
 import { api } from "@ocw/backend/convex/_generated/api";
 import { useMutation } from "convex/react";
 import { Loader2 } from "lucide-react";
@@ -42,7 +42,7 @@ export function ClubInformationCard({
 	const updateClubInfo = useMutation(api.site.updateClubInfo);
 
 	const form = useForm<ClubInformationFormValues>({
-		resolver: zodResolver(clubInformationFormSchema),
+		resolver: arktypeResolver(clubInformationFormSchema),
 		defaultValues: {
 			clubName: clubName || "",
 			clubEmail: clubEmail || "",

@@ -9,15 +9,18 @@ catalogs:
     '@eslint/js':
       specifier: ^9.38.0
       version: 9.39.2
+    '@tailwindcss/postcss':
+      specifier: ^4.1.16
+      version: 4.1.18
     '@types/node':
       specifier: ^20
       version: 20.19.19
+    arktype:
+      specifier: ^2.1.0
+      version: 2.1.27
     convex:
       specifier: ^1.27.0
       version: 1.27.3
-    dotenv:
-      specifier: ^17.2.2
-      version: 17.2.2
     effect:
       specifier: ^3.19.14
       version: 3.19.14
@@ -33,12 +36,12 @@ catalogs:
     prettier:
       specifier: ^3.6.2
       version: 3.7.4
+    tailwindcss:
+      specifier: ^4.1.16
+      version: 4.1.18
     typescript:
       specifier: ^5
       version: 5.9.3
-    zod:
-      specifier: ^4.1.13
-      version: 4.3.5
   react19:
     '@types/react':
       specifier: ~19.1.0
@@ -93,9 +96,6 @@ importers:
       '@ocw/backend':
         specifier: workspace:*
         version: link:../../packages/backend
-      '@ocw/env':
-        specifier: workspace:*
-        version: link:../../packages/env
       '@ocw/parse':
         specifier: workspace:*
         version: link:../../packages/parse
@@ -168,6 +168,9 @@ importers:
       '@upstash/redis':
         specifier: ^1.36.0
         version: 1.36.0
+      arktype:
+        specifier: 'catalog:'
+        version: 2.1.27
       babel-plugin-react-compiler:
         specifier: ^1.0.0
         version: 1.0.0
@@ -252,9 +255,6 @@ importers:
       uploadthing:
         specifier: ^7.7.4
         version: 7.7.4(express@5.2.1)(next@16.1.1(@babel/core@7.28.5)(@playwright/test@1.57.0)(babel-plugin-react-compiler@1.0.0)(react-dom@19.1.4(react@19.1.4))(react@19.1.4))(tailwindcss@4.1.18)
-      zod:
-        specifier: ^4.1.11
-        version: 4.3.5
     devDependencies:
       '@clerk/testing':
         specifier: ^1.13.19
@@ -265,6 +265,9 @@ importers:
       '@ocw/prettier-config':
         specifier: workspace:*
         version: link:../../tooling/prettier
+      '@ocw/tailwind-config':
+        specifier: workspace:*
+        version: link:../../tooling/tailwind
       '@ocw/tsconfig':
         specifier: workspace:*
         version: link:../../tooling/typescript
@@ -301,9 +304,6 @@ importers:
       '@convex-dev/migrations':
         specifier: ^0.2.9
         version: 0.2.9(convex@1.27.3(@clerk/clerk-react@5.59.3(react-dom@19.2.1(react@19.2.3))(react@19.2.3))(react@19.2.3))
-      '@ocw/env':
-        specifier: workspace:*
-        version: link:../env
       convex:
         specifier: 'catalog:'
         version: 1.27.3(@clerk/clerk-react@5.59.3(react-dom@19.2.1(react@19.2.3))(react@19.2.3))(react@19.2.3)
@@ -324,48 +324,8 @@ importers:
         specifier: ^2.1.8
         version: 2.1.9(@types/node@20.19.19)(jsdom@27.4.0)(lightningcss@1.30.2)
 
-  packages/env:
-    dependencies:
-      '@t3-oss/env-core':
-        specifier: ^0.13.10
-        version: 0.13.10(arktype@2.1.27)(typescript@5.9.3)(zod@4.3.5)
-      '@t3-oss/env-nextjs':
-        specifier: ^0.13.1
-        version: 0.13.10(arktype@2.1.27)(typescript@5.9.3)(zod@4.3.5)
-      dotenv:
-        specifier: 'catalog:'
-        version: 17.2.2
-      zod:
-        specifier: 'catalog:'
-        version: 4.3.5
-    devDependencies:
-      '@ocw/eslint-config':
-        specifier: workspace:*
-        version: link:../../tooling/eslint
-      '@ocw/prettier-config':
-        specifier: workspace:*
-        version: link:../../tooling/prettier
-      '@ocw/tsconfig':
-        specifier: workspace:*
-        version: link:../../tooling/typescript
-      '@types/node':
-        specifier: 'catalog:'
-        version: 20.19.19
-      eslint:
-        specifier: 'catalog:'
-        version: 9.39.2(jiti@2.6.1)
-      prettier:
-        specifier: 'catalog:'
-        version: 3.7.4
-      typescript:
-        specifier: 'catalog:'
-        version: 5.9.3
-
   packages/parse:
     dependencies:
-      '@ocw/env':
-        specifier: workspace:*
-        version: link:../env
       '@ocw/redis':
         specifier: workspace:*
         version: link:../redis
@@ -539,9 +499,6 @@ importers:
       tailwind-merge:
         specifier: ^3.3.1
         version: 3.4.0
-      zod:
-        specifier: 'catalog:'
-        version: 4.3.5
     devDependencies:
       '@ocw/eslint-config':
         specifier: workspace:*
@@ -579,9 +536,9 @@ importers:
 
   packages/validators:
     dependencies:
-      zod:
+      arktype:
         specifier: 'catalog:'
-        version: 4.3.5
+        version: 2.1.27
     devDependencies:
       '@ocw/eslint-config':
         specifier: workspace:*
@@ -677,6 +634,40 @@ importers:
       '@types/node':
         specifier: 'catalog:'
         version: 20.19.19
+      typescript:
+        specifier: 'catalog:'
+        version: 5.9.3
+
+  tooling/tailwind:
+    dependencies:
+      '@tailwindcss/postcss':
+        specifier: 'catalog:'
+        version: 4.1.18
+      postcss:
+        specifier: ^8.5.6
+        version: 8.5.6
+      tailwindcss:
+        specifier: 'catalog:'
+        version: 4.1.18
+    devDependencies:
+      '@ocw/eslint-config':
+        specifier: workspace:*
+        version: link:../eslint
+      '@ocw/prettier-config':
+        specifier: workspace:*
+        version: link:../prettier
+      '@ocw/tsconfig':
+        specifier: workspace:*
+        version: link:../typescript
+      '@types/node':
+        specifier: 'catalog:'
+        version: 20.19.19
+      eslint:
+        specifier: 'catalog:'
+        version: 9.39.2(jiti@2.6.1)
+      prettier:
+        specifier: 'catalog:'
+        version: 3.7.4
       typescript:
         specifier: 'catalog:'
         version: 5.9.3

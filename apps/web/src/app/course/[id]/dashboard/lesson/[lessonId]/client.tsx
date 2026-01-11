@@ -1,6 +1,6 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { arktypeResolver } from "@hookform/resolvers/arktype";
 import { api } from "@ocw/backend/convex/_generated/api";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
@@ -82,7 +82,7 @@ function LessonEditForm({
 	const [isUploading, setIsUploading] = useState(false);
 
 	const form = useForm<LessonEditFormValues>({
-		resolver: zodResolver(lessonEditFormSchema),
+		resolver: arktypeResolver(lessonEditFormSchema),
 		defaultValues: {
 			name: lesson.name,
 			isPublished: lesson.isPublished,

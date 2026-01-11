@@ -1,6 +1,6 @@
 "use client";
 
-import { zodResolver } from "@hookform/resolvers/zod";
+import { arktypeResolver } from "@hookform/resolvers/arktype";
 import { api } from "@ocw/backend/convex/_generated/api";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { useMutation, useQuery } from "convex/react";
@@ -100,7 +100,7 @@ function UnitEditForm({
 	const [isSubmitting, setIsSubmitting] = useState(false);
 
 	const form = useForm<UnitEditFormValues>({
-		resolver: zodResolver(unitEditFormSchema),
+		resolver: arktypeResolver(unitEditFormSchema),
 		defaultValues: {
 			name: unit?.name ?? "",
 			description: unit?.description ?? "",

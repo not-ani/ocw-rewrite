@@ -1,156 +1,114 @@
-import { z } from "zod";
+import { type } from "arktype";
 
-// Admin - Courses
-export const addCourseFormSchema = z.object({
-	name: z
-		.string()
-		.min(3, "Course name must be at least 3 characters")
-		.max(100, "Course name must be less than 100 characters"),
-	description: z
-		.string()
-		.min(10, "Description must be at least 10 characters")
-		.max(500, "Description must be less than 500 characters"),
-	subjectId: z.string().min(1, "Subject ID is required"),
-	isPublic: z.boolean().default(false),
+export const addCourseFormSchema = type({
+  name: "3 <= string <= 100",
+  description: "10 <= string <= 500",
+  subjectId: "string",
+  isPublic: "boolean = false",
 });
 
-export type AddCourseFormValues = z.infer<typeof addCourseFormSchema>;
+export type AddCourseFormValues = typeof addCourseFormSchema.infer;
 
-// Dashboard - Users
-export const addUserToCourseFormSchema = z.object({
-	userId: z.string().min(1, "User ID is required"),
-	role: z.enum(["admin", "editor", "user"]),
+export const addUserToCourseFormSchema = type({
+  userId: "string",
+  role: "'admin' | 'editor' | 'user'",
 });
 
-export type AddUserToCourseFormValues = z.infer<
-	typeof addUserToCourseFormSchema
->;
+export type AddUserToCourseFormValues = typeof addUserToCourseFormSchema.infer;
 
-// Dashboard - Units
-export const createUnitDialogFormSchema = z.object({
-	unitName: z.string().min(1).min(3).max(50),
-	description: z.string().optional(),
-	isPublished: z.boolean().default(true).optional(),
+export const createUnitDialogFormSchema = type({
+  unitName: "3 <= string <= 50",
+  description: "string?",
+  isPublished: "boolean",
 });
 
-export type CreateUnitDialogFormValues = z.infer<
-	typeof createUnitDialogFormSchema
->;
+export type CreateUnitDialogFormValues =
+  typeof createUnitDialogFormSchema.infer;
 
-export const createUnitInlineFormSchema = z.object({
-	unitName: z
-		.string()
-		.min(3, "Unit name must be at least 3 characters")
-		.max(50),
-	description: z.string().optional(),
-	isPublished: z.boolean().default(false).optional(),
+export const createUnitInlineFormSchema = type({
+  unitName: "3 <= string <= 50",
+  description: "string",
+  isPublished: "boolean",
 });
 
-export type CreateUnitInlineFormValues = z.infer<
-	typeof createUnitInlineFormSchema
->;
+export type CreateUnitInlineFormValues =
+  typeof createUnitInlineFormSchema.infer;
 
-// Dashboard - Lessons
-export const createLessonDialogFormSchema = z.object({
-	name: z.string().min(1, "Lesson name is required").min(3).max(200),
-	embedRaw: z.string().optional(),
-	pdfUrl: z.string().optional(),
-	pdfName: z.string().optional(),
-	pureLink: z.boolean().optional(),
-	// Present in UI but not currently used in submit payload
-	isPublished: z.boolean().optional(),
+export const createLessonDialogFormSchema = type({
+  name: "3 <= string <= 200",
+  embedRaw: "string?",
+  pdfUrl: "string?",
+  pdfName: "string?",
+  pureLink: "boolean?",
+  isPublished: "boolean?",
 });
 
-export type CreateLessonDialogFormValues = z.infer<
-	typeof createLessonDialogFormSchema
->;
+export type CreateLessonDialogFormValues =
+  typeof createLessonDialogFormSchema.infer;
 
-export const createLessonInlineFormSchema = z.object({
-	name: z.string().min(3, "Lesson name must be at least 3 characters").max(200),
-	unitId: z.string().min(1, "Please select a unit"),
-	embedRaw: z.string().optional(),
-	pdfUrl: z.string().optional(),
-	pdfName: z.string().optional(),
-	pureLink: z.boolean().optional(),
+export const createLessonInlineFormSchema = type({
+  name: "3 <= string <= 200",
+  unitId: "string",
+  embedRaw: "string?",
+  pdfUrl: "string?",
+  pdfName: "string?",
+  pureLink: "boolean?",
 });
 
-export type CreateLessonInlineFormValues = z.infer<
-	typeof createLessonInlineFormSchema
->;
+export type CreateLessonInlineFormValues =
+  typeof createLessonInlineFormSchema.infer;
 
-// Course dashboard - Unit edit
-export const unitEditFormSchema = z.object({
-	name: z.string().min(1, "Unit name is required").max(200),
-	description: z.string().max(1000).optional(),
-	isPublished: z.boolean(),
+export const unitEditFormSchema = type({
+  name: "1 <= string <= 200",
+  description: "string?",
+  isPublished: "boolean",
 });
 
-export type UnitEditFormValues = z.infer<typeof unitEditFormSchema>;
+export type UnitEditFormValues = typeof unitEditFormSchema.infer;
 
-// Course dashboard - Lesson edit
-export const lessonEditFormSchema = z.object({
-	name: z.string().min(1, "Lesson name is required").max(200),
-	isPublished: z.boolean(),
-	contentType: z.enum([
-		"google_docs",
-		"notion",
-		"quizlet",
-		"google_drive",
-		"youtube",
-		"pdf",
-		"other",
-	]),
-	embedUrl: z.string(),
-	pdfUrl: z.string().optional(),
-	pureLink: z.boolean(),
+export const lessonEditFormSchema = type({
+  name: "1 <= string <= 200",
+  isPublished: "boolean",
+  contentType:
+    "'google_docs' | 'notion' | 'quizlet' | 'google_drive' | 'youtube' | 'pdf' | 'other'",
+  embedUrl: "string",
+  pdfUrl: "string?",
+  pureLink: "boolean",
 });
 
-export type LessonEditFormValues = z.infer<typeof lessonEditFormSchema>;
+export type LessonEditFormValues = typeof lessonEditFormSchema.infer;
 
-// Admin - Site Content
-export const basicInformationFormSchema = z.object({
-	schoolName: z.string().min(1, "School name is required"),
-	siteHero: z.string().optional(),
-	siteLogo: z.string().url("Must be a valid URL").optional().or(z.literal("")),
-	siteContributeLink: z
-		.string()
-		.url("Must be a valid URL")
-		.optional()
-		.or(z.literal("")),
-	instagramUrl: z
-		.string()
-		.url("Must be a valid URL")
-		.optional()
-		.or(z.literal("")),
+export const basicInformationFormSchema = type({
+  schoolName: "string",
+  siteHero: "string?",
+  siteLogo: "string.url?",
+  siteContributeLink: "string.url?",
+  instagramUrl: "string.url?",
 });
 
-export type BasicInformationFormValues = z.infer<
-	typeof basicInformationFormSchema
->;
+export type BasicInformationFormValues =
+  typeof basicInformationFormSchema.infer;
 
-export const clubInformationFormSchema = z.object({
-	clubName: z.string().min(1, "Club name is required"),
-	clubEmail: z.email("Must be a valid email address"),
+export const clubInformationFormSchema = type({
+  clubName: "string",
+  clubEmail: "string.email",
 });
 
-export type ClubInformationFormValues = z.infer<
-	typeof clubInformationFormSchema
->;
+export type ClubInformationFormValues = typeof clubInformationFormSchema.infer;
 
-export const contactPersonFormSchema = z.object({
-	name: z.string().min(1, "Name is required"),
-	email: z.email("Must be a valid email address"),
-	description: z.string().optional(),
+export const contactPersonFormSchema = type({
+  name: "string",
+  email: "string.email",
+  description: "string?",
 });
 
-export type ContactPersonFormValues = z.infer<typeof contactPersonFormSchema>;
+export type ContactPersonFormValues = typeof contactPersonFormSchema.infer;
 
-export const contributorFormSchema = z.object({
-	name: z.string().min(1, "Name is required"),
-	role: z.string().min(1, "Role is required"),
-	avatar: z.url("Must be a valid URL").optional().or(z.literal("")),
-	description: z.string().optional(),
+export const contributorFormSchema = type({
+  name: "string",
+  role: "string",
+  avatar: "string.url?",
+  description: "string?",
 });
 
-export type ContributorFormValues = z.infer<typeof contributorFormSchema>;
-
+export type ContributorFormValues = typeof contributorFormSchema.infer;

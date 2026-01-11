@@ -93,8 +93,7 @@
     "typescript": "catalog:"
   },
   "peerDependencies": {
-    "react": "catalog:react19",
-    "zod": "catalog:"
+    "react": "catalog:react19"
   },
   "prettier": "@ocw/prettier-config"
 }

@@ -14,11 +14,11 @@
     }
   },
   "scripts": {
-    "check": "biome check --write .",
     "dev": "turbo dev",
     "build": "turbo build",
     "check-types": "turbo check-types",
     "dev:native": "turbo -F native dev",
+    "typecheck": "turbo run typecheck",
     "dev:web": "turbo -F web dev",
     "dev:server": "turbo -F @ocw/backend dev",
     "format": "turbo run format --continue -- --cache --cache-location .cache/.prettiercache",

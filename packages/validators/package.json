@@ -15,7 +15,7 @@
     ".": "./src/index.ts"
   },
   "dependencies": {
-    "zod": "catalog:"
+    "arktype": "catalog:"
   },
   "devDependencies": {
     "@ocw/eslint-config": "workspace:*",

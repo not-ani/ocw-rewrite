@@ -31,5 +31,4 @@ export * from "./textarea";
 export * from "./tooltip";
 export * from "./kibo-ui/combobox";
 export * from "./kibo-ui/qr-code";
-export * from "./kibo-ui/table";
 export * from "./utils";
