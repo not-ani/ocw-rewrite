@@ -15,19 +15,21 @@ import { coursesSearchParams } from "./parser";
 
 export function CourseCardSkeleton() {
 	return (
-		<div className="flex flex-col overflow-hidden rounded-lg bg-card shadow-md">
-			<div className="flex h-36 flex-col p-4">
+		<div className="flex min-h-[10rem] flex-col overflow-hidden rounded-lg bg-card shadow-md">
+			<div className="flex flex-1 flex-col p-5">
 				{/* Title */}
-				<Skeleton className="mb-2 h-6 w-3/4" />
+				<Skeleton className="mb-3 h-6 w-3/4" />
 
 				{/* Description */}
-				<Skeleton className="mb-3 h-4 w-full" />
-				<Skeleton className="mb-3 h-4 w-5/6" />
-				<Skeleton className="mb-3 h-4 w-2/3" />
+				<div className="mb-4 space-y-2">
+					<Skeleton className="h-4 w-full" />
+					<Skeleton className="h-4 w-5/6" />
+					<Skeleton className="h-4 w-2/3" />
+				</div>
 
 				{/* Units footer */}
-				<div className="mt-auto flex items-center justify-between">
-					<Skeleton className="h-4 w-16" />
+				<div className="mt-auto flex items-center pt-3 border-t border-border/50">
+					<Skeleton className="h-4 w-20" />
 				</div>
 			</div>
 		</div>
@@ -48,7 +50,7 @@ function CoursesPageSkeleton() {
 					</div>
 				</div>
 
-				<div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+				<div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-stretch">
 					{skeletonKeys.map((i) => (
 						<CourseCardSkeleton key={i} />
 					))}
@@ -147,23 +149,23 @@ function CoursesData({
 					</div>
 				) : (
 					<div>
-						<div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+						<div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-stretch">
 							{courses.map((course) => (
 								<Link
 									prefetch
 									key={course._id}
-									className="flex flex-col overflow-hidden rounded-lg bg-card shadow-md transition-shadow duration-200 hover:shadow-lg"
+									className="group flex min-h-[10rem] flex-col overflow-hidden rounded-lg bg-card shadow-md transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
 									href={`/course/${course._id}`}
 								>
-									<div className="flex h-36 flex-col p-4">
-										<h3 className="mb-2 line-clamp-2 font-semibold text-foreground text-lg">
+									<div className="flex flex-1 flex-col p-5">
+										<h3 className="mb-3 font-semibold text-foreground text-lg leading-snug group-hover:text-primary transition-colors">
 											{course.name}
 										</h3>
-										<p className="mb-3 line-clamp-3 text-muted-foreground text-sm">
+										<p className="mb-4 text-muted-foreground text-sm leading-relaxed">
 											{course.description}
 										</p>
-										<div className="mt-auto flex items-center justify-between">
-											<span className="text-muted-foreground text-sm">
+										<div className="mt-auto flex items-center pt-3 border-t border-border/50">
+											<span className="text-muted-foreground text-xs font-medium uppercase tracking-wide">
 												{course.unitLength ?? 0} units
 											</span>
 										</div>
@@ -175,7 +177,7 @@ function CoursesData({
 								(_, index) => (
 									<div
 										key={`filler-${index}`}
-										className="pointer-events-none h-36 rounded-lg opacity-0"
+										className="pointer-events-none min-h-[10rem] rounded-lg opacity-0"
 									/>
 								),
 							)}

@@ -1,6 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@import "@ocw/tailwind-config/theme";
+@import "../node_modules/@ocw/tailwind-config/theme.css";
 
 @source "../../../packages/ui/src/*.{ts,tsx}";
 
