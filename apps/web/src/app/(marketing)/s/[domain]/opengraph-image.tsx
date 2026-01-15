@@ -11,7 +11,8 @@ export const size = {
 
 export const contentType = "image/png";
 export const runtime = "nodejs";
-export const dynamic = "force-dynamic";
+// Cache OG images for 1 hour, revalidate in background
+export const revalidate = 3600;
 
 export default async function Image() {
 	try {

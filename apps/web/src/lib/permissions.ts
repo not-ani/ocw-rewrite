@@ -1,146 +1,190 @@
 import "server-only";
 
-import { clerkClient } from "@clerk/nextjs/server";
+import { auth, clerkClient } from "@clerk/nextjs/server";
 import { api } from "@ocw/backend/convex/_generated/api";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { fetchQuery } from "convex/nextjs";
 import { getAuthToken } from "./auth";
 import { extractSubdomain } from "./multi-tenant/server";
-/**
- * Check if the current user has permission to manage users for a course
- * This is a server-side only function
- */
+import { LRUCache } from "lru-cache";
+import { cache } from "react";
+import { Effect } from "effect";
+
+const permissionCache = new LRUCache<string, boolean>({
+  max: 1_000,
+  ttl: 1000 * 60 * 5,
+});
+
+const getAuthContext = cache(() =>
+  Effect.runPromise(
+    Effect.gen(function* () {
+      const { userId } = yield* Effect.promise(() => auth());
+
+      if (!userId) {
+        return { userId: null, token: null, subdomain: null };
+      }
+
+      const { token, subdomain } = yield* Effect.all({
+        token: Effect.promise(() => getAuthToken()),
+        subdomain: Effect.promise(() => extractSubdomain()),
+      });
+
+      return { userId, token, subdomain };
+    }),
+  ),
+);
+
 export async function checkUserManagementPermission(courseId: Id<"courses">) {
-	const token = await getAuthToken();
-	const subdomain = await extractSubdomain();
-	if (!subdomain) {
-		return { authorized: false, membership: null } as const;
-	}
-	if (!token) {
-		return { authorized: false, membership: null } as const;
-	}
+  return Effect.runPromise(
+    Effect.gen(function* () {
+      const { userId, token, subdomain } = yield* Effect.promise(() =>
+        getAuthContext(),
+      );
 
-	const siteUser = await fetchQuery(
-		api.permissions.getSiteUser,
-		{ school: subdomain },
-		{ token },
-	);
+      if (!userId || !token || !subdomain) {
+        return { authorized: false, membership: null } as const;
+      }
 
-	const membership = await fetchQuery(
-		api.courseUsers.getMyMembership,
-		{ courseId, school: subdomain },
-		{ token },
-	);
+      const cacheKey = `${userId}:${subdomain}:${courseId}:manage-users`;
+      const cached = permissionCache.get(cacheKey);
 
-	const membershipData = membership;
+      if (cached !== undefined) {
+        return { authorized: cached, membership: null } as const;
+      }
 
-	const isSiteAdmin = siteUser?.role === "admin";
-	const isCourseAdmin = membershipData?.role === "admin";
-	const isCourseEditor = membershipData?.role === "editor";
+      const { siteUser, membership } = yield* Effect.all({
+        siteUser: Effect.promise(() =>
+          fetchQuery(
+            api.permissions.getSiteUser,
+            { school: subdomain },
+            { token },
+          ),
+        ),
+        membership: Effect.promise(() =>
+          fetchQuery(
+            api.courseUsers.getMyMembership,
+            { courseId, school: subdomain },
+            { token },
+          ),
+        ),
+      });
 
-	const canManage =
-		membershipData &&
-		(isCourseAdmin ||
-			isCourseEditor ||
-			(Array.isArray(membershipData.permissions) &&
-				membershipData.permissions.includes("manage_users")));
+      const isSiteAdmin = siteUser?.role === "admin";
 
-	if (isSiteAdmin) {
-		return {
-			authorized: true,
-			membership: { role: "admin", permissions: ["manage_users"] },
-		} as const;
-	}
+      const canManage =
+        isSiteAdmin ||
+        membership?.role === "admin" ||
+        membership?.role === "editor" ||
+        membership?.permissions.includes("manage_users");
 
-	return { authorized: canManage, membership: membershipData } as const;
+      permissionCache.set(cacheKey, !!canManage);
+
+      if (isSiteAdmin) {
+        return {
+          authorized: true,
+          membership: { role: "admin", permissions: ["manage_users"] },
+        } as const;
+      }
+
+      return { authorized: !!canManage, membership } as const;
+    }),
+  );
 }
 
 export async function checkAdminOrEditorPermission(courseId: Id<"courses">) {
-	const token = await getAuthToken();
-	const subdomain = await extractSubdomain();
-	if (!subdomain) {
-		return { authorized: false, membership: null } as const;
-	}
-	if (!token) {
-		return { authorized: false, membership: null } as const;
-	}
+  return Effect.runPromise(
+    Effect.gen(function* () {
+      const { userId, token, subdomain } = yield* Effect.promise(() =>
+        getAuthContext(),
+      );
 
-	const siteUser = await fetchQuery(
-		api.permissions.getSiteUser,
-		{ school: subdomain },
-		{ token },
-	);
+      if (!userId || !token || !subdomain) {
+        return { authorized: false, membership: null } as const;
+      }
 
-	const membership = await fetchQuery(
-		api.courseUsers.getMyMembership,
-		{ courseId, school: subdomain },
-		{ token },
-	);
+      const cacheKey = `${userId}:${subdomain}:${courseId}:admin-editor`;
+      const cached = permissionCache.get(cacheKey);
 
-	const membershipData = membership;
+      if (cached !== undefined) {
+        return { authorized: cached, membership: null } as const;
+      }
 
-	const isCourseAdmin =
-		siteUser?.role === "admin" || membershipData?.role === "admin";
-	const isCourseEditor =
-		siteUser?.role === "admin" || membershipData?.role === "editor";
-	const isAuthorized = membershipData && (isCourseAdmin || isCourseEditor);
+      const { siteUser, membership } = yield* Effect.all({
+        siteUser: Effect.promise(() =>
+          fetchQuery(
+            api.permissions.getSiteUser,
+            { school: subdomain },
+            { token },
+          ),
+        ),
+        membership: Effect.promise(() =>
+          fetchQuery(
+            api.courseUsers.getMyMembership,
+            { courseId, school: subdomain },
+            { token },
+          ),
+        ),
+      });
 
-	return { authorized: isAuthorized, membership: membershipData } as const;
+      const isAuthorized =
+        siteUser?.role === "admin" ||
+        membership?.role === "admin" ||
+        membership?.role === "editor";
+
+      permissionCache.set(cacheKey, !!isAuthorized);
+
+      return { authorized: !!isAuthorized, membership } as const;
+    }),
+  );
 }
 
-/**
- * Fetch all organization users from Clerk
- * Returns users with basic information needed for display
- */
 export async function getAllClerkUsers() {
-	const client = await clerkClient();
+  const client = await clerkClient();
 
-	try {
-		const { data: users } = await client.users.getUserList({
-			limit: 100,
-			orderBy: "-created_at",
-		});
+  try {
+    const { data: users } = await client.users.getUserList({
+      limit: 100,
+      orderBy: "-created_at",
+    });
 
-		return users.map((user) => ({
-			id: user.id,
-			clerkId: user.id,
-			email: user.emailAddresses[0]?.emailAddress ?? "",
-			firstName: user.firstName ?? "",
-			lastName: user.lastName ?? "",
-			fullName:
-				`${user.firstName ?? ""} ${user.lastName ?? ""}`.trim() ||
-				"Unknown User",
-			imageUrl: user.imageUrl,
-			createdAt: user.createdAt,
-		}));
-	} catch (error) {
-		console.error("Error fetching Clerk users:", error);
-		return [];
-	}
+    return users.map((user) => ({
+      id: user.id,
+      clerkId: user.id,
+      email: user.emailAddresses[0]?.emailAddress ?? "",
+      firstName: user.firstName ?? "",
+      lastName: user.lastName ?? "",
+      fullName:
+        `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim() ||
+        "Unknown User",
+      imageUrl: user.imageUrl,
+      createdAt: user.createdAt,
+    }));
+  } catch (error) {
+    console.error("Error fetching Clerk users:", error);
+    return [];
+  }
 }
 
-/**
- * Get a single Clerk user by ID
- */
 export async function getClerkUser(userId: string) {
-	const client = await clerkClient();
+  const client = await clerkClient();
 
-	try {
-		const user = await client.users.getUser(userId);
-		return {
-			id: user.id,
-			clerkId: user.id,
-			email: user.emailAddresses[0]?.emailAddress ?? "",
-			firstName: user.firstName ?? "",
-			lastName: user.lastName ?? "",
-			fullName:
-				`${user.firstName ?? ""} ${user.lastName ?? ""}`.trim() ||
-				"Unknown User",
-			imageUrl: user.imageUrl,
-			createdAt: user.createdAt,
-		};
-	} catch (error) {
-		console.error("Error fetching Clerk user:", error);
-		return null;
-	}
+  try {
+    const user = await client.users.getUser(userId);
+
+    return {
+      id: user.id,
+      clerkId: user.id,
+      email: user.emailAddresses[0]?.emailAddress ?? "",
+      firstName: user.firstName ?? "",
+      lastName: user.lastName ?? "",
+      fullName:
+        `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim() ||
+        "Unknown User",
+      imageUrl: user.imageUrl,
+      createdAt: user.createdAt,
+    };
+  } catch (error) {
+    console.error("Error fetching Clerk user:", error);
+    return null;
+  }
 }

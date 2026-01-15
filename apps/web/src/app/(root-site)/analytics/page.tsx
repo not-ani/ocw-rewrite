@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import Link from "next/link";
 import { type MonthlyTraffic, TrafficChart } from "@/components/linear-chart";
 import { env } from "@/env";

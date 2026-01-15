@@ -18,39 +18,39 @@ type Props = {
 
 export const CourseCard = memo(function CourseCard({ course }: Props) {
 	return (
-		<div className="overflow-hidden rounded-lg bg-card shadow-md transition-shadow duration-200 hover:shadow-lg">
+		<Link
+			href={`/course/${course._id}`}
+			className="block overflow-hidden rounded-lg bg-card shadow-md transition-shadow duration-200 hover:shadow-lg"
+		>
 			{course.imageUrl ? (
-				<Image
-					alt={course.name}
-					fill
-					className="h-48 w-full object-cover"
-					loading="lazy"
-					src={course.imageUrl}
-				/>
+				<div className="relative h-48 w-full">
+					<Image
+						alt={course.name}
+						fill
+						className="object-cover"
+						loading="lazy"
+						sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+						src={course.imageUrl}
+					/>
+				</div>
 			) : (
-				<div className="flex h-48 w-full items-center justify-center bg-gray-100">
+				<div className="flex h-48 w-full items-center justify-center bg-muted">
 					<span className="text-muted-foreground">{course.name}</span>
 				</div>
 			)}
-
-			<Link
-				className="overflow-hidden rounded-lg bg-card shadow-md transition-shadow duration-200 hover:shadow-lg"
-				href={`/course/${course._id}`}
-			>
-				<div className="p-4">
-					<h3 className="mb-2 line-clamp-2 font-semibold text-foreground text-lg">
-						{course.name}
-					</h3>
-					<p className="mb-3 line-clamp-3 text-muted-foreground text-sm">
-						{course.description}
-					</p>
-					<div className="flex items-center justify-between">
-						<span className="text-muted-foreground text-sm">
-							{course.unitLength ?? 0} units
-						</span>
-					</div>
+			<div className="p-4">
+				<h3 className="mb-2 line-clamp-2 font-semibold text-foreground text-lg">
+					{course.name}
+				</h3>
+				<p className="mb-3 line-clamp-3 text-muted-foreground text-sm">
+					{course.description}
+				</p>
+				<div className="flex items-center justify-between">
+					<span className="text-muted-foreground text-sm">
+						{course.unitLength ?? 0} units
+					</span>
 				</div>
-			</Link>
-		</div>
+			</div>
+		</Link>
 	);
 });

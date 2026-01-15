@@ -7,6 +7,9 @@ import { extractSubdomain } from "@/lib/multi-tenant/server";
 import { getAbsoluteUrl } from "@/lib/og-utils";
 import { CoursePageClient } from "./client";
 
+// Cache course pages for 60 seconds
+export const revalidate = 60;
+
 export async function generateMetadata({
 	params,
 }: {

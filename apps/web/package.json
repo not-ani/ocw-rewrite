@@ -60,6 +60,7 @@
     "effect": "catalog:",
     "jotai": "^2.15.0",
     "linkedom": "^0.18.12",
+    "lru-cache": "^11.2.4",
     "lucide-react": "^0.487.0",
     "motion": "^12.23.22",
     "next": "catalog:",

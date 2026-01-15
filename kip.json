@@ -1,0 +1,4 @@
+{
+  "workspaces": ["apps/*", "packages/*"],
+  "ignoreDependencies": ["eslint", "prettier"]
+}

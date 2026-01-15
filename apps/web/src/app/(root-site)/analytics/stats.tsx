@@ -1,7 +1,17 @@
 "use client";
 
 import { Activity, Eye, Users } from "lucide-react";
-import { StatsCard } from "@/components/linear-chart";
+import dynamic from "next/dynamic";
+
+const StatsCard = dynamic(
+	() => import("@/components/linear-chart").then((mod) => mod.StatsCard),
+	{
+		ssr: false,
+		loading: () => (
+			<div className="h-[106px] animate-pulse rounded-lg bg-muted" />
+		),
+	},
+);
 
 export function Statis({
 	pageviews,
