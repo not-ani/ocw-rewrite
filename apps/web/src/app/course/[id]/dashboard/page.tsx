@@ -2,9 +2,11 @@ import { api } from "@ocw/backend/convex/_generated/api";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { fetchQuery, preloadQuery } from "convex/nextjs";
 import type { Metadata } from "next";
-import { checkAdminOrEditorPermission, getAuthToken } from "@/lib/auth";
+import { redirect } from "next/navigation";
+import { getAuthToken } from "@/lib/auth";
 import { isValidConvexId } from "@/lib/convex-utils";
 import { extractSubdomain } from "@/lib/multi-tenant/server";
+import { checkAdminOrEditorPermission } from "@/lib/permissions";
 import { DashboardPageClient } from "./client";
 
 export async function generateMetadata({
@@ -73,7 +75,13 @@ export default async function Dashboard({
 		return null;
 	}
 
-	await checkAdminOrEditorPermission(id as Id<"courses">, subdomain);
+	const { authorized } = await checkAdminOrEditorPermission(
+		id as Id<"courses">,
+	);
+
+	if (!authorized) {
+		redirect("/unauthorized");
+	}
 
 	const token = await getAuthToken();
 	const courseId = id as Id<"courses">;

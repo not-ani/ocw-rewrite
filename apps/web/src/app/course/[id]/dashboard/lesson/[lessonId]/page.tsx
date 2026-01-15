@@ -1,5 +1,6 @@
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
+import { checkAdminOrEditorPermission } from "@/lib/permissions";
 import { isValidConvexId } from "@/lib/convex-utils";
 import { extractSubdomain } from "@/lib/multi-tenant/server";
 import { LessonPageClient } from "./client";
@@ -21,6 +22,12 @@ export default async function LessonPage({
 	}
 
 	const courseId = id as Id<"courses">;
+
+	const { authorized } = await checkAdminOrEditorPermission(courseId);
+
+	if (!authorized) {
+		redirect("/unauthorized");
+	}
 
 	return (
 		<LessonPageClient
