@@ -57,6 +57,7 @@ import { SidebarInset, SidebarProvider, SidebarTrigger } from "@ocw/ui/sidebar";
 import { Skeleton } from "@ocw/ui/skeleton";
 import type { EmbedContent } from "@/lib/convex-utils";
 import { cn } from "@/lib/utils";
+import { OtherEmbed } from "@/components/render/other";
 
 function LessonEmbedSkeleton() {
   return (
@@ -149,11 +150,7 @@ function LessonEmbed({
     case "pdf":
       return <PdfViewer url={pdfUrl} />;
     default:
-      return (
-        <div className="flex h-[60vh] items-center justify-center rounded-lg border">
-          <p className="text-muted-foreground">Unsupported content type</p>
-        </div>
-      );
+      return <OtherEmbed url={embedId ?? null} />;
   }
 }
 
