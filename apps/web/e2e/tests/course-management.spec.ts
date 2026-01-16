@@ -96,7 +96,28 @@ test.describe("Course Dashboard - Unit Management (as ADMIN)", () => {
 				const createButton = page.getByRole("button", {
 					name: /create.*unit|add.*unit|new.*unit/i,
 				});
-				// Button visibility depends on user permissions
+				const createVisible = await createButton
+					.isVisible()
+					.catch(() => false);
+				expect(createVisible).toBeTruthy();
+			}
+		}
+	});
+
+	test("should access settings page from dashboard", async ({ page }) => {
+		await page.goto("/courses");
+		await page.waitForLoadState("networkidle");
+
+		const courseLink = page.locator('a[href^="/course/"]').first();
+		if (await courseLink.isVisible()) {
+			const href = await courseLink.getAttribute("href");
+			if (href) {
+				await page.goto(`${href}/dashboard/settings`);
+				await page.waitForLoadState("networkidle");
+
+				await expect(
+					page.getByRole("heading", { name: "Settings" }),
+				).toBeVisible();
 			}
 		}
 	});
@@ -149,24 +170,6 @@ test.describe("Course Dashboard - User Management (as ADMIN)", () => {
 				await page.waitForLoadState("networkidle");
 
 				// Should show users page or permission denied
-				const content = page.locator("body");
-				await expect(content).toBeVisible();
-			}
-		}
-	});
-
-	test("should access settings page", async ({ page }) => {
-		await page.goto("/courses");
-		await page.waitForLoadState("networkidle");
-
-		const courseLink = page.locator('a[href^="/course/"]').first();
-
-		if (await courseLink.isVisible()) {
-			const href = await courseLink.getAttribute("href");
-			if (href) {
-				await page.goto(`${href}/dashboard/settings`);
-				await page.waitForLoadState("networkidle");
-
 				const content = page.locator("body");
 				await expect(content).toBeVisible();
 			}

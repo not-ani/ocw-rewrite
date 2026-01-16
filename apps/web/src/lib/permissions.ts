@@ -189,28 +189,3 @@ export async function getAllClerkUsers() {
     createdAt: user.createdAt,
   }));
 }
-
-export async function getClerkUser(userId: string) {
-  const client = await clerkClient();
-
-  const result = await tryCatch(client.users.getUser(userId));
-
-  if (result.error) {
-    console.error("Error fetching Clerk user:", result.error);
-    return null;
-  }
-
-  const user = result.data;
-  return {
-    id: user.id,
-    clerkId: user.id,
-    email: user.emailAddresses[0]?.emailAddress ?? "",
-    firstName: user.firstName ?? "",
-    lastName: user.lastName ?? "",
-    fullName:
-      `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim() ||
-      "Unknown User",
-    imageUrl: user.imageUrl,
-    createdAt: user.createdAt,
-  };
-}

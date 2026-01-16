@@ -1,0 +1,31 @@
+{
+  "$schema": "https://unpkg.com/knip@latest/schema.json",
+  "ignoreDependencies": [
+    "server-only",
+    "@tailwindcss/postcss",
+    "postcss",
+    "tailwindcss"
+  ],
+  "ignore": [
+    "apps/web/e2e/global.setup.ts",
+    "apps/web/eslint.config.ts"
+  ],
+  "workspaces": {
+    "apps/web": {
+      "ignoreDependencies": [
+        "@ocw/eslint-config",
+        "@ocw/prettier-config",
+        "@ocw/tailwind-config"
+      ]
+    },
+    "packages/parse": {
+      "ignoreDependencies": ["@ocw/prettier-config"]
+    },
+    "packages/redis": {
+      "ignoreDependencies": ["@ocw/prettier-config"]
+    },
+    "packages/validators": {
+      "ignoreDependencies": ["@ocw/prettier-config"]
+    }
+  }
+}

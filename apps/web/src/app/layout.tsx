@@ -28,7 +28,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
   // FIX: Resolve the current host dynamically to prevent Next.js from defaulting to 'localhost'
   const headersList = await headers();
-  const host = headersList.get("host") || "localhost:3000";
+  const host = headersList.get("host") ?? "localhost:3000";
   const protocol = env.NODE_ENV === "development" ? "http" : "https";
 
   const baseConfig = {

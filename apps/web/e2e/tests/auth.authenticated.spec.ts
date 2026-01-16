@@ -71,6 +71,20 @@ test.describe("Authenticated User - Admin Access (as USER)", () => {
 		}
 	});
 
+	test("user cannot access admin site content", async ({ page }) => {
+		await page.goto("/admin/site-content");
+		await page.waitForLoadState("networkidle");
+
+		const url = page.url();
+		const isUnauthorized = url.includes("/unauthorized");
+		const hasAccessDenied = await page
+			.getByText(/unauthorized|access denied/i)
+			.isVisible()
+			.catch(() => false);
+
+		expect(isUnauthorized || hasAccessDenied).toBeTruthy();
+	});
+
 	test("user without course access is redirected to unauthorized", async ({
 		page,
 	}) => {
@@ -89,6 +103,56 @@ test.describe("Authenticated User - Admin Access (as USER)", () => {
 			.catch(() => false);
 
 		expect(isUnauthorized || hasAccessDenied).toBeTruthy();
+	});
+});
+
+test.describe("Authenticated User - Course Permissions (as EDITOR)", () => {
+	test.use({ storageState: EDITOR_AUTH_STATE });
+
+	test("editor can access course settings", async ({ page }) => {
+		await page.goto("/courses");
+		await page.waitForLoadState("networkidle");
+
+		const courseLink = page.locator('a[href^="/course/"]').first();
+		if (await courseLink.isVisible()) {
+			const href = await courseLink.getAttribute("href");
+			if (href) {
+				await page.goto(`${href}/dashboard/settings`);
+				await page.waitForLoadState("networkidle");
+
+				const url = page.url();
+				const isUnauthorized = url.includes("/unauthorized");
+				if (!isUnauthorized) {
+					await expect(
+						page.getByRole("heading", { name: "Settings" }),
+					).toBeVisible();
+				}
+				expect(url.includes("/dashboard/settings") || isUnauthorized).toBeTruthy();
+			}
+		}
+	});
+
+	test("editor cannot manage course users", async ({ page }) => {
+		await page.goto("/courses");
+		await page.waitForLoadState("networkidle");
+
+		const courseLink = page.locator('a[href^="/course/"]').first();
+		if (await courseLink.isVisible()) {
+			const href = await courseLink.getAttribute("href");
+			if (href) {
+				await page.goto(`${href}/dashboard/users`);
+				await page.waitForLoadState("networkidle");
+
+				const url = page.url();
+				const isUnauthorized = url.includes("/unauthorized");
+				const hasAccessDenied = await page
+					.getByText(/access denied/i)
+					.isVisible()
+					.catch(() => false);
+
+				expect(isUnauthorized || hasAccessDenied).toBeTruthy();
+			}
+		}
 	});
 });
 

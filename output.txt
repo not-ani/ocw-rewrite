@@ -1,0 +1,105 @@
+Unused files (54)
+apps/web/e2e/global.setup.ts                                 
+apps/web/e2e/page-objects/admin.page.ts                      
+apps/web/e2e/page-objects/course-dashboard.page.ts           
+apps/web/e2e/page-objects/courses.page.ts                    
+apps/web/e2e/page-objects/index.ts                           
+apps/web/eslint.config.ts                                    
+apps/web/src/components/courses/course-card.tsx              
+apps/web/src/components/dashboard/lessons/lesson-card.tsx    
+apps/web/src/components/dashboard/lessons/lesson-row.tsx     
+apps/web/src/components/dashboard/sidebar/nav-secondary.tsx  
+apps/web/src/components/dashboard/sidebar/nav-user.tsx       
+apps/web/src/components/dashboard/sidebar/search-form.tsx    
+apps/web/src/components/loader.tsx                           
+apps/web/src/components/mode-toggle.tsx                      
+apps/web/src/config.ts                                       
+apps/web/src/hooks/use-mobile.ts                             
+apps/web/src/lib/parse/handler.ts                            
+packages/parse/dist/benchmark.d.ts                           
+packages/parse/dist/cache.d.ts                               
+packages/parse/dist/config.d.ts                              
+packages/parse/dist/errors.d.ts                              
+packages/parse/dist/fetch.d.ts                               
+packages/parse/dist/handler.d.ts                             
+packages/parse/dist/index.d.ts                               
+packages/parse/dist/parser/service.d.ts                      
+packages/parse/dist/response.d.ts                            
+packages/parse/dist/types.d.ts                               
+packages/parse/dist/utils.d.ts                               
+packages/parse/dist/validation.d.ts                          
+packages/parse/src/benchmark.ts                              
+packages/parse/src/parser/service.test.ts                    
+packages/redis/dist/index.d.ts                               
+packages/redis/dist/rate-limit/client.d.ts                   
+packages/redis/dist/rate-limit/index.d.ts                    
+packages/redis/dist/rate-limit/live.d.ts                     
+packages/redis/dist/rate-limit/service.d.ts                  
+packages/redis/dist/redis.d.ts                               
+packages/redis/dist/redis/client.d.ts                        
+packages/redis/dist/redis/index.d.ts                         
+packages/redis/dist/redis/live.d.ts                          
+packages/redis/dist/redis/service.d.ts                       
+packages/redis/src/rate-limit/client.ts                      
+packages/redis/src/rate-limit/live.ts                        
+packages/redis/src/rate-limit/service.ts                     
+packages/redis/src/redis.ts                                  
+packages/redis/src/redis/client.ts                           
+packages/redis/src/redis/index.js                            
+packages/redis/src/redis/live.ts                             
+packages/redis/src/redis/service.ts                          
+packages/ui/src/kibo-ui/qr-code/server.tsx                   
+packages/validators/dist/index.d.ts                          
+packages/validators/dist/test.d.ts                           
+packages/validators/src/test.ts                              
+turbo/generators/config.ts                                   
+Unused dependencies (5)
+convex                  packages/parse/package.json:23:6  
+eslint-plugin-jsx-a11y  tooling/eslint/package.json:21:6  
+@tailwindcss/postcss    tooling/tailwind/package.json:17:6
+postcss                 tooling/tailwind/package.json:18:6
+tailwindcss             tooling/tailwind/package.json:19:6
+Unused devDependencies (8)
+@ocw/eslint-config    apps/web/package.json:60:6           
+@ocw/prettier-config  apps/web/package.json:61:6           
+@ocw/tailwind-config  apps/web/package.json:62:6           
+@types/culori         apps/web/package.json:65:6           
+@types/qrcode         apps/web/package.json:67:6           
+@ocw/prettier-config  packages/parse/package.json:31:6     
+@ocw/prettier-config  packages/redis/package.json:23:6     
+@ocw/prettier-config  packages/validators/package.json:22:6
+Unlisted dependencies (6)
+postcss              apps/web/postcss.config.mjs                
+server-only          apps/web/src/lib/auth.ts:1:9               
+server-only          apps/web/src/lib/multi-tenant/server.ts:1:9
+server-only          apps/web/src/lib/og-utils.ts:1:9           
+server-only          apps/web/src/lib/permissions.ts:1:9        
+@vitest/coverage-v8  packages/backend/vitest.config.ts          
+Unlisted binaries (1)
+eslint  apps/web/package.json
+Unresolved imports (1)
+../../../packages/ui/src/*.{ts,tsx}  apps/web/src/index.css:4:17
+Unused exports (15)
+TEST_USERS                          apps/web/e2e/fixtures/index.ts:32:2                              
+AUTH_STATE_PATH                     apps/web/e2e/fixtures/index.ts:37:2                              
+signInUser                          apps/web/e2e/fixtures/index.ts:38:2                              
+createTestDataTracker               apps/web/e2e/fixtures/index.ts:40:2                              
+BasePage                  class     apps/web/e2e/fixtures/index.ts:48:14                             
+CourseCardSkeleton        function  apps/web/src/app/(marketing)/courses/client.tsx:16:17            
+loadCourseParams                    apps/web/src/app/(marketing)/courses/parser.ts:8:14              
+LessonPageSkeleton        function  apps/web/src/app/course/[id]/[unitId]/[lessonId]/client.tsx:88:17
+CreateLessonForm          function  apps/web/src/components/dashboard/lessons/create-lesson.tsx:46:17
+CreateUnitForm            function  apps/web/src/components/dashboard/units/create-unit.tsx:35:17    
+usePermission                       apps/web/src/components/permissions/index.tsx:1:29               
+usePermission             function  apps/web/src/components/permissions/permission-wrapper.tsx:76:17 
+SiteContext                         apps/web/src/lib/multi-tenant/context.tsx:24:14                  
+getClerkUser              function  apps/web/src/lib/permissions.ts:193:23                           
+setupFullTestEnvironment  function  packages/backend/tests/setup.ts:223:23                           
+Unused exported types (2)
+TestUser     type  apps/web/e2e/fixtures/index.ts:41:7                      
+Contributor  type  apps/web/src/app/admin/site-content/_client/types.ts:1:13
+Duplicate exports (1)
+USER_AUTH_STATE|AUTH_STATE_PATH  apps/web/e2e/fixtures/auth.fixture.ts
+Unused catalog entries (1)
+dotenv  default  pnpm-workspace.yaml:11:3
+Configuration hints (6)

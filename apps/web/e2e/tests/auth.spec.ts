@@ -57,6 +57,14 @@ test.describe("Authentication - Protected Routes", () => {
 		expect(isRedirectedToUnauthorized).toBeTruthy();
 	});
 
+	test("admin site content redirects unauthenticated users", async ({ page }) => {
+		await page.goto("/admin/site-content");
+		await page.waitForLoadState("networkidle");
+
+		const url = page.url();
+		expect(url.includes("/unauthorized")).toBeTruthy();
+	});
+
 	test("course dashboard redirects unauthenticated users", async ({ page }) => {
 		await page.goto("/course/jd72sw49f70yv5m7d1fwhnwx0n7wbskf/dashboard");
 		await page.waitForLoadState("networkidle");
@@ -64,6 +72,19 @@ test.describe("Authentication - Protected Routes", () => {
 		const url = page.url();
 		const isRedirectedToUnauthorized = url.includes("/unauthorized");
 		expect(isRedirectedToUnauthorized).toBeTruthy();
+	});
+
+	test("course users page redirects unauthenticated users", async ({ page }) => {
+		await page.goto("/course/jd72sw49f70yv5m7d1fwhnwx0n7wbskf/dashboard/users");
+		await page.waitForLoadState("networkidle");
+
+		const hasSignInRequired = await page
+			.getByText(/sign in required/i)
+			.isVisible()
+			.catch(() => false);
+		const isUnauthorized = page.url().includes("/unauthorized");
+
+		expect(hasSignInRequired || isUnauthorized).toBeTruthy();
 	});
 });
 

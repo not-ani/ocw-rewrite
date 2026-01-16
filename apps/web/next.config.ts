@@ -29,6 +29,14 @@ const nextConfig: NextConfig = {
         protocol: "https",
         hostname: "utfs.io",
       },
+      {
+        protocol: "https",
+        hostname: "images.unsplash.com",
+      },
+      {
+        protocol: "https",
+        hostname: "moltmqa28u.ufs.sh",
+      },
     ],
   },
   reactCompiler: true,

@@ -58,6 +58,45 @@ test.describe("Admin Panel - Site Content Management", () => {
 		const url = page.url();
 		expect(url).toContain("/admin/site-content");
 	});
+
+	test("admin can update basic information", async ({ page }) => {
+		await page.goto("/admin/site-content");
+		await page.waitForLoadState("networkidle");
+
+		await expect(
+			page.getByRole("heading", { name: /site content management/i }),
+		).toBeVisible();
+
+		const schoolNameInput = page.getByLabel("School Name");
+		await expect(schoolNameInput).toBeVisible();
+
+		const originalValue = await schoolNameInput.inputValue();
+		const updatedValue = originalValue
+			? `${originalValue} (E2E)`
+			: "E2E School Name";
+
+		await schoolNameInput.fill(updatedValue);
+		await page
+			.getByRole("button", { name: "Save Basic Information" })
+			.click();
+
+		await expect(
+			page.getByText("Basic information updated successfully"),
+		).toBeVisible();
+
+		await page.reload();
+		await page.waitForLoadState("networkidle");
+		await expect(page.getByLabel("School Name")).toHaveValue(updatedValue);
+
+		await page.getByLabel("School Name").fill(originalValue);
+		await page
+			.getByRole("button", { name: "Save Basic Information" })
+			.click();
+
+		await expect(
+			page.getByText("Basic information updated successfully"),
+		).toBeVisible();
+	});
 });
 
 test.describe("Admin Panel - Courses Management", () => {
