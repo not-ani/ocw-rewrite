@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@ocw/ui/button";
 import { BookOpen, ArrowRight } from "lucide-react";
-import { NetworkGraph } from "./network-graph";
+import dynamic from "next/dynamic";
+
+const NetworkGraph = dynamic(() => import("./network-graph").then((mod) => mod.NetworkGraph), {
+});
 
 export const metadata: Metadata = {
   title: "Our Mission | The OpenCourseWare Project",
@@ -94,11 +97,11 @@ export default function MissionPage() {
                 </div>
                 {/* Visual Asset: School Buildings */}
                 <div className="mt-6 flex items-end gap-2">
-                  <div className="h-12 w-8 rounded-t border border-border bg-muted/30" />
-                  <div className="h-16 w-10 rounded-t border border-border bg-muted/50" />
-                  <div className="h-20 w-8 rounded-t border border-primary/40 bg-primary/10" />
-                  <div className="h-14 w-6 rounded-t border border-border bg-muted/30" />
-                  <div className="h-10 w-8 rounded-t border border-border bg-muted/40" />
+                  <div className="h-12 w-8 rounded-t-lg border border-border bg-muted/30" />
+                  <div className="h-16 w-10 rounded-t-lg border border-border bg-muted/50" />
+                  <div className="h-20 w-8 rounded-t-lg border border-primary/40 bg-primary/10" />
+                  <div className="h-14 w-6 rounded-t-lg border border-border bg-muted/30" />
+                  <div className="h-10 w-8 rounded-t-lg border border-border bg-muted/40" />
                 </div>
               </div>
 
@@ -243,13 +246,13 @@ export default function MissionPage() {
                 </div>
                 {/* Visual Asset: Product Cards */}
                 <div className="mt-6 flex justify-center gap-3">
-                  <div className="h-16 w-12 rounded border border-border bg-gradient-to-b from-muted/50 to-muted/20 p-1">
+                  <div className="h-16 w-12 rounded border border-border bg-linear-to-b from-muted/50 to-muted/20 p-1">
                     <div className="h-full w-full rounded-sm bg-muted/40" />
                   </div>
-                  <div className="h-16 w-12 rounded border border-primary/30 bg-gradient-to-b from-primary/20 to-primary/5 p-1">
+                  <div className="h-16 w-12 rounded border border-primary/30 bg-linear-to-b from-primary/20 to-primary/5 p-1">
                     <div className="h-full w-full rounded-sm bg-primary/20" />
                   </div>
-                  <div className="h-16 w-12 rounded border border-border bg-gradient-to-b from-muted/50 to-muted/20 p-1">
+                  <div className="h-16 w-12 rounded border border-border bg-linear-to-b from-muted/50 to-muted/20 p-1">
                     <div className="h-full w-full rounded-sm bg-muted/40" />
                   </div>
                 </div>
@@ -328,14 +331,16 @@ export default function MissionPage() {
                 </h2>
                 <p className="mb-6 text-lg text-muted-foreground leading-relaxed">
                   Imagine a world where every school has its own thriving
-                  ecosystem of student-created resources. Where sharing knowledge
-                  is as easy as uploading a file. Where communities naturally form
-                  around the shared goal of helping each other succeed.
+                  ecosystem of student-created resources. Where sharing
+                  knowledge is as easy as uploading a file. Where communities
+                  naturally form around the shared goal of helping each other
+                  succeed.
                 </p>
                 <p className="text-lg text-muted-foreground leading-relaxed">
                   That&apos;s what we&apos;re building. Not a replacement for
                   education, but a{" "}
-                  <strong className="text-foreground">multiplier</strong> for it.
+                  <strong className="text-foreground">multiplier</strong> for
+                  it.
                 </p>
               </div>
 
