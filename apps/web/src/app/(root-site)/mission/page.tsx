@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Button } from "@ocw/ui/button";
 import { BookOpen, ArrowRight } from "lucide-react";
+import { NetworkGraph } from "./network-graph";
 
 export const metadata: Metadata = {
   title: "Our Mission | The OpenCourseWare Project",
@@ -315,25 +316,35 @@ export default function MissionPage() {
       <section>
         <div className="sm:grid sm:grid-cols-12 sm:divide-x">
           <div />
-          <div className="col-span-10 px-4 py-16 sm:px-8">
-            <div className="mx-auto max-w-3xl text-center">
-              <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
-                <BookOpen className="h-7 w-7 text-primary" />
+          <div className="col-span-10">
+            <div className="grid md:grid-cols-2 md:divide-x">
+              {/* Left side - Text content */}
+              <div className="flex flex-col justify-center px-4 py-16 sm:px-8 md:py-20">
+                <div className="mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10">
+                  <BookOpen className="h-7 w-7 text-primary" />
+                </div>
+                <h2 className="mb-6 font-semibold text-2xl tracking-tight sm:text-3xl">
+                  The Vision
+                </h2>
+                <p className="mb-6 text-lg text-muted-foreground leading-relaxed">
+                  Imagine a world where every school has its own thriving
+                  ecosystem of student-created resources. Where sharing knowledge
+                  is as easy as uploading a file. Where communities naturally form
+                  around the shared goal of helping each other succeed.
+                </p>
+                <p className="text-lg text-muted-foreground leading-relaxed">
+                  That&apos;s what we&apos;re building. Not a replacement for
+                  education, but a{" "}
+                  <strong className="text-foreground">multiplier</strong> for it.
+                </p>
               </div>
-              <h2 className="mb-6 font-semibold text-2xl tracking-tight sm:text-3xl">
-                The Vision
-              </h2>
-              <p className="mb-6 text-lg text-muted-foreground leading-relaxed">
-                Imagine a world where every school has its own thriving
-                ecosystem of student-created resources. Where sharing knowledge
-                is as easy as uploading a file. Where communities naturally form
-                around the shared goal of helping each other succeed.
-              </p>
-              <p className="text-lg text-muted-foreground leading-relaxed">
-                That&apos;s what we&apos;re building. Not a replacement for
-                education, but a{" "}
-                <strong className="text-foreground">multiplier</strong> for it.
-              </p>
+
+              {/* Right side - Network Graph */}
+              <div className="flex items-center justify-center px-4 py-12 sm:px-8 md:py-16">
+                <div className="aspect-square w-full max-w-[320px]">
+                  <NetworkGraph />
+                </div>
+              </div>
             </div>
           </div>
           <div className="border-r-0" />
