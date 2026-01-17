@@ -16,20 +16,23 @@ interface Edge {
 
 interface Pulse {
   id: number;
-  // Current position along the full path (edge + arc + next edge)
-  // 0 to edgeLength = on current edge
-  // edgeLength to edgeLength+arcLength = on arc
-  // After that = on next edge (then we reset)
   position: number;
   edgeIndex: number;
   direction: 1 | -1;
-  // Pre-computed for current transition
   nextEdgeIndex: number;
   nextDirection: 1 | -1;
   arcLength: number;
   arcStartAngle: number;
   arcEndAngle: number;
+  // Store previous path info for smooth tail rendering during transition
+  prevEdgeIndex: number;
+  prevDirection: 1 | -1;
+  prevArcLength: number;
+  prevArcStartAngle: number;
+  prevArcEndAngle: number;
+  prevEdgeLength: number;
 }
+
 const nodes: Node[] = [
   // Row 1 - top
   { id: "a", x: 5, y: 5, radius: 3.2 },
@@ -202,18 +205,19 @@ function computeArc(
   toDirection: 1 | -1,
 ): { arcLength: number; startAngle: number; endAngle: number } {
   const node = getNode(nodeId);
-  const fromEdge = edges[fromEdgeIndex]!;
-  const toEdge = edges[toEdgeIndex]!;
+  const fromEdge = edges[fromEdgeIndex];
+  const toEdge = edges[toEdgeIndex];
 
-  // Angle where we arrive (pointing into the node)
+  if (!fromEdge || !toEdge) {
+    return { arcLength: 0.1, startAngle: 0, endAngle: 0.1 };
+  }
+
   const fromNode = fromDirection === 1 ? getNode(fromEdge.from) : getNode(fromEdge.to);
   const arriveAngle = Math.atan2(node.y - fromNode.y, node.x - fromNode.x) + Math.PI;
 
-  // Angle where we leave (pointing out of the node)
   const toNode = toDirection === 1 ? getNode(toEdge.to) : getNode(toEdge.from);
   const leaveAngle = Math.atan2(toNode.y - node.y, toNode.x - node.x);
 
-  // Normalize angles and find shortest arc
   let diff = leaveAngle - arriveAngle;
   while (diff > Math.PI) diff -= 2 * Math.PI;
   while (diff < -Math.PI) diff += 2 * Math.PI;
@@ -221,9 +225,65 @@ function computeArc(
   const arcLength = Math.abs(diff) * node.radius;
 
   return {
-    arcLength,
+    arcLength: Math.max(arcLength, 0.1),
     startAngle: arriveAngle,
     endAngle: arriveAngle + diff,
+  };
+}
+
+// Pre-compute edge data
+const edgeDataArray = edges.map((e) => getEdgeEndpoints(e.from, e.to));
+
+function createPulse(
+  id: number,
+  edgeIndex: number,
+  direction: 1 | -1,
+  position: number,
+): Pulse {
+  const edge = edges[edgeIndex];
+  if (!edge) {
+    // Fallback for safety
+    return {
+      id,
+      position,
+      edgeIndex: 0,
+      direction: 1,
+      nextEdgeIndex: 0,
+      nextDirection: 1,
+      arcLength: 1,
+      arcStartAngle: 0,
+      arcEndAngle: 0.5,
+      prevEdgeIndex: 0,
+      prevDirection: 1,
+      prevArcLength: 1,
+      prevArcStartAngle: 0,
+      prevArcEndAngle: 0.5,
+      prevEdgeLength: 10,
+    };
+  }
+
+  const nodeId = direction === 1 ? edge.to : edge.from;
+  const { edgeIndex: nextIdx, direction: nextDir } = getNextEdge(nodeId, edgeIndex);
+  const arc = computeArc(nodeId, edgeIndex, direction, nextIdx, nextDir);
+  const edgeLen = edgeDataArray[edgeIndex]?.length ?? 10;
+
+  return {
+    id,
+    position,
+    edgeIndex,
+    direction,
+    nextEdgeIndex: nextIdx,
+    nextDirection: nextDir,
+    arcLength: arc.arcLength,
+    arcStartAngle: arc.startAngle,
+    arcEndAngle: arc.endAngle,
+    // Initialize prev to same as current (no prev path yet)
+    prevEdgeIndex: edgeIndex,
+    prevDirection: direction,
+    prevArcLength: arc.arcLength,
+    prevArcStartAngle: arc.startAngle,
+    prevArcEndAngle: arc.endAngle,
+    prevEdgeLength: edgeLen,
   };
 }
 
@@ -231,92 +291,73 @@ export function NetworkGraph() {
   const [pulses, setPulses] = useState<Pulse[]>([]);
   const animationRef = useRef<number | undefined>(undefined);
   const lastTimeRef = useRef<number>(0);
+  const pulsesRef = useRef<Pulse[]>([]);
 
-  const edgeData = useMemo(
-    () => edges.map((e) => getEdgeEndpoints(e.from, e.to)),
-    [],
-  );
-
-  // Initialize a pulse with pre-computed arc info
-  const initPulse = (
-    id: number,
-    edgeIndex: number,
-    direction: 1 | -1,
-    position: number,
-  ): Pulse => {
-    const edge = edges[edgeIndex]!;
-    const nodeId = direction === 1 ? edge.to : edge.from;
-    const { edgeIndex: nextIdx, direction: nextDir } = getNextEdge(nodeId, edgeIndex);
-    const arc = computeArc(nodeId, edgeIndex, direction, nextIdx, nextDir);
-
-    return {
-      id,
-      position,
-      edgeIndex,
-      direction,
-      nextEdgeIndex: nextIdx,
-      nextDirection: nextDir,
-      arcLength: arc.arcLength,
-      arcStartAngle: arc.startAngle,
-      arcEndAngle: arc.endAngle,
-    };
-  };
+  const edgeData = useMemo(() => edgeDataArray, []);
 
   useEffect(() => {
-    const initialPulses: Pulse[] = [
-      initPulse(0, 0, 1, 2),
-      initPulse(1, 18, -1, 5),
-      initPulse(2, 32, 1, 8),
+    // Initialize pulses only on client to avoid hydration mismatch (Math.random in getNextEdge)
+    pulsesRef.current = [
+      createPulse(0, 0, 1, 2),
+      createPulse(1, 25, -1, 5),
+      createPulse(2, 45, 1, 8),
     ];
-    setPulses(initialPulses);
 
     const animate = (time: number) => {
       if (lastTimeRef.current === 0) lastTimeRef.current = time;
       const delta = (time - lastTimeRef.current) / 1000;
       lastTimeRef.current = time;
 
-      setPulses((prev) =>
-        prev.map((pulse): Pulse => {
-          const speed = 12 + pulse.id * 3;
-          const edgeLen = edgeData[pulse.edgeIndex]!.length;
-          const totalPathLen = edgeLen + pulse.arcLength;
+      pulsesRef.current = pulsesRef.current.map((pulse): Pulse => {
+        const speed = 12 + pulse.id * 3;
+        const currentEdgeData = edgeData[pulse.edgeIndex];
+        const edgeLen = currentEdgeData?.length ?? 10;
+        const totalPathLen = edgeLen + pulse.arcLength;
 
-          let newPos = pulse.position + delta * speed;
+        const newPos = pulse.position + delta * speed;
 
-          // If we've passed the arc, transition to next edge
-          if (newPos >= totalPathLen) {
-            const overflow = newPos - totalPathLen;
-            const edge = edges[pulse.nextEdgeIndex]!;
-            const nodeId = pulse.nextDirection === 1 ? edge.to : edge.from;
-            const { edgeIndex: nextIdx, direction: nextDir } = getNextEdge(
-              nodeId,
-              pulse.nextEdgeIndex,
-            );
-            const arc = computeArc(
-              nodeId,
-              pulse.nextEdgeIndex,
-              pulse.nextDirection,
-              nextIdx,
-              nextDir,
-            );
+        if (newPos >= totalPathLen) {
+          const overflow = newPos - totalPathLen;
+          const nextEdge = edges[pulse.nextEdgeIndex];
+          if (!nextEdge) return { ...pulse, position: newPos };
 
-            return {
-              ...pulse,
-              position: overflow,
-              edgeIndex: pulse.nextEdgeIndex,
-              direction: pulse.nextDirection,
-              nextEdgeIndex: nextIdx,
-              nextDirection: nextDir,
-              arcLength: arc.arcLength,
-              arcStartAngle: arc.startAngle,
-              arcEndAngle: arc.endAngle,
-            };
-          }
+          const nodeId = pulse.nextDirection === 1 ? nextEdge.to : nextEdge.from;
+          const { edgeIndex: nextIdx, direction: nextDir } = getNextEdge(
+            nodeId,
+            pulse.nextEdgeIndex,
+          );
+          const arc = computeArc(
+            nodeId,
+            pulse.nextEdgeIndex,
+            pulse.nextDirection,
+            nextIdx,
+            nextDir,
+          );
 
-          return { ...pulse, position: newPos };
-        }),
-      );
+          return {
+            ...pulse,
+            position: overflow,
+            prevEdgeIndex: pulse.edgeIndex,
+            prevDirection: pulse.direction,
+            prevArcLength: pulse.arcLength,
+            prevArcStartAngle: pulse.arcStartAngle,
+            prevArcEndAngle: pulse.arcEndAngle,
+            prevEdgeLength: edgeLen,
+            edgeIndex: pulse.nextEdgeIndex,
+            direction: pulse.nextDirection,
+            nextEdgeIndex: nextIdx,
+            nextDirection: nextDir,
+            arcLength: arc.arcLength,
+            arcStartAngle: arc.startAngle,
+            arcEndAngle: arc.endAngle,
+          };
+        }
 
+        return { ...pulse, position: newPos };
+      });
+
+      // Update React state to trigger re-render
+      setPulses([...pulsesRef.current]);
       animationRef.current = requestAnimationFrame(animate);
     };
 
@@ -326,18 +367,16 @@ export function NetworkGraph() {
     };
   }, [edgeData]);
 
-  // Convert a position along the path to x,y coordinates
-  const getPointOnPath = (
+  // Get point on current path (positive positions)
+  const getPointOnCurrentPath = (
     pulse: Pulse,
     pos: number,
   ): { x: number; y: number } | null => {
-    const edge = edgeData[pulse.edgeIndex]!;
+    const edge = edgeData[pulse.edgeIndex];
+    if (!edge) return null;
     const edgeLen = edge.length;
 
-    if (pos < 0) return null;
-
     if (pos <= edgeLen) {
-      // On the current edge
       const t = pulse.direction === 1 ? pos / edgeLen : 1 - pos / edgeLen;
       return {
         x: edge.x1 + (edge.x2 - edge.x1) * t,
@@ -347,36 +386,82 @@ export function NetworkGraph() {
 
     const arcPos = pos - edgeLen;
     if (arcPos <= pulse.arcLength) {
-      // On the arc
-      const edgeDef = edges[pulse.edgeIndex]!;
-      const node =
-        pulse.direction === 1 ? getNode(edgeDef.to) : getNode(edgeDef.from);
+      const edgeDef = edges[pulse.edgeIndex];
+      if (!edgeDef) return null;
+      const node = pulse.direction === 1 ? getNode(edgeDef.to) : getNode(edgeDef.from);
       const arcT = arcPos / pulse.arcLength;
-      const angle =
-        pulse.arcStartAngle + (pulse.arcEndAngle - pulse.arcStartAngle) * arcT;
+      const angle = pulse.arcStartAngle + (pulse.arcEndAngle - pulse.arcStartAngle) * arcT;
       return {
         x: node.x + node.radius * Math.cos(angle),
         y: node.y + node.radius * Math.sin(angle),
       };
     }
 
-    // Past the arc - on the next edge (shouldn't happen often with our update logic)
     return null;
   };
 
-  // Build the pulse segment as a series of points
+  // Get point on previous path (for negative positions extending into previous segment)
+  const getPointOnPrevPath = (
+    pulse: Pulse,
+    negativePos: number, // How far back into previous path (positive value)
+  ): { x: number; y: number } | null => {
+    // Previous path ended at: prevEdgeLength + prevArcLength
+    // We need to go backwards from the end of the arc
+    const prevTotalLen = pulse.prevEdgeLength + pulse.prevArcLength;
+    const pos = prevTotalLen - negativePos;
+
+    if (pos < 0) return null;
+
+    const prevEdge = edgeData[pulse.prevEdgeIndex];
+    if (!prevEdge) return null;
+
+    if (pos <= pulse.prevEdgeLength) {
+      const t = pulse.prevDirection === 1 ? pos / pulse.prevEdgeLength : 1 - pos / pulse.prevEdgeLength;
+      return {
+        x: prevEdge.x1 + (prevEdge.x2 - prevEdge.x1) * t,
+        y: prevEdge.y1 + (prevEdge.y2 - prevEdge.y1) * t,
+      };
+    }
+
+    const arcPos = pos - pulse.prevEdgeLength;
+    if (arcPos <= pulse.prevArcLength) {
+      const prevEdgeDef = edges[pulse.prevEdgeIndex];
+      if (!prevEdgeDef) return null;
+      const node = pulse.prevDirection === 1
+        ? getNode(prevEdgeDef.to)
+        : getNode(prevEdgeDef.from);
+      const arcT = arcPos / pulse.prevArcLength;
+      const angle = pulse.prevArcStartAngle + (pulse.prevArcEndAngle - pulse.prevArcStartAngle) * arcT;
+      return {
+        x: node.x + node.radius * Math.cos(angle),
+        y: node.y + node.radius * Math.sin(angle),
+      };
+    }
+
+    return null;
+  };
+
   const getPulsePoints = (pulse: Pulse): string => {
     const segmentLength = 6;
-    const numPoints = 12;
+    const numPoints = 16;
     const points: string[] = [];
 
     const headPos = pulse.position;
-    const tailPos = Math.max(0, headPos - segmentLength);
+    const tailPos = headPos - segmentLength;
 
     for (let i = 0; i <= numPoints; i++) {
       const t = i / numPoints;
       const pos = tailPos + (headPos - tailPos) * t;
-      const pt = getPointOnPath(pulse, pos);
+
+      let pt: { x: number; y: number } | null = null;
+
+      if (pos >= 0) {
+        pt = getPointOnCurrentPath(pulse, pos);
+      } else {
+        // Position is negative - need to get from previous path
+        pt = getPointOnPrevPath(pulse, -pos);
+      }
+
       if (pt) {
         points.push(`${pt.x},${pt.y}`);
       }
