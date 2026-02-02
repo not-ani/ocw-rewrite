@@ -29,8 +29,8 @@ export default function PrivacyPage() {
       <div className="sm:grid sm:grid-cols-12 sm:divide-x">
         <div />
         <div className="col-span-10 px-4 py-8 sm:px-8">
-          <div className="prose prose-slate mx-auto max-w-3xl">
-            <p className="text-muted-foreground leading-relaxed">
+          <div className="mx-auto max-w-3xl">
+            <p className="mb-6 text-muted-foreground leading-relaxed">
               OCWProject ("we", "our", or "the Service") is an educational
               content distribution platform operating across multiple
               school‑specific subdomains. This Privacy Policy describes how we
@@ -38,11 +38,14 @@ export default function PrivacyPage() {
               with your use of the Service.
             </p>
 
-            <h2>1. Information We Collect</h2>
-            <p className="text-muted-foreground">
+            {/* Section 1 */}
+            <h2 className="mb-4 mt-8 text-xl font-semibold">
+              1. Information We Collect
+            </h2>
+            <p className="mb-4 text-muted-foreground leading-relaxed">
               We collect information in the following ways:
             </p>
-            <ul className="text-muted-foreground">
+            <ul className="mb-6 list-disc space-y-3 pl-6 text-muted-foreground">
               <li>
                 <strong>Google OAuth Account Information:</strong> When you sign
                 in using Google OAuth, we receive basic account information such
@@ -60,42 +63,49 @@ export default function PrivacyPage() {
                 materials.
               </li>
             </ul>
-            <p className="text-muted-foreground">
+            <p className="mb-6 text-muted-foreground leading-relaxed">
               We do not access, scan, or monitor your entire Google Drive, and
               no background or continuous Drive access occurs.
             </p>
 
-            <h2>2. How We Use Information</h2>
-            <p className="text-muted-foreground">
+            {/* Section 2 */}
+            <h2 className="mb-4 mt-8 text-xl font-semibold">
+              2. How We Use Information
+            </h2>
+            <p className="mb-4 text-muted-foreground leading-relaxed">
               Information obtained through Google OAuth and Google APIs is used
               strictly to:
             </p>
-            <ul className="text-muted-foreground">
+            <ul className="mb-6 list-disc space-y-2 pl-6 text-muted-foreground">
               <li>Authenticate users and manage accounts</li>
               <li>Enforce user roles and permissions</li>
               <li>
-                Enable approved writers to import and upload content they select
+                Enable approved writers to import and upload content they
+                explicitly select
               </li>
-              <li>Operate and provide the core functionality of the Service</li>
+              <li>Operate and provide core Service functionality</li>
             </ul>
-            <p className="text-muted-foreground">
+            <p className="mb-6 text-muted-foreground leading-relaxed">
               Google user data is not used for advertising, marketing,
               behavioral profiling, or personalized ad targeting.
             </p>
 
-            <h2>3. Uploaded Content vs. Google User Data</h2>
-            <p className="text-muted-foreground leading-relaxed">
+            {/* Section 3 */}
+            <h2 className="mb-4 mt-8 text-xl font-semibold">
+              3. Uploaded Content vs. Google User Data
+            </h2>
+            <p className="mb-4 text-muted-foreground leading-relaxed">
               Information obtained via Google OAuth or Google Drive APIs remains
               classified as Google user data and is subject to Google’s Limited
               Use requirements until a user takes an affirmative action to
               upload content to the Service.
             </p>
-            <p className="text-muted-foreground leading-relaxed">
+            <p className="mb-4 text-muted-foreground leading-relaxed">
               Once a user explicitly selects and uploads content to OCWProject,
               that content becomes platform‑hosted user‑submitted content and is
               no longer treated as Google API data.
             </p>
-            <p className="text-muted-foreground leading-relaxed">
+            <p className="mb-6 text-muted-foreground leading-relaxed">
               OCWProject may use uploaded user‑submitted content in accordance
               with its Terms of Service, including for operating, maintaining,
               improving, researching, and developing the Service, as well as for
@@ -104,13 +114,16 @@ export default function PrivacyPage() {
               is not used for these purposes.
             </p>
 
-            <h2>4. Google OAuth & Drive API Access Justification</h2>
-            <p className="text-muted-foreground">
+            {/* Section 4 */}
+            <h2 className="mb-4 mt-8 text-xl font-semibold">
+              4. Google OAuth & Drive API Access Justification
+            </h2>
+            <p className="mb-4 text-muted-foreground leading-relaxed">
               OCWProject uses Google OAuth to provide secure authentication and
               limited Google Drive read‑only access to allow approved writers to
               import files they already control.
             </p>
-            <ul className="text-muted-foreground">
+            <ul className="mb-6 list-disc space-y-2 pl-6 text-muted-foreground">
               <li>
                 Access is limited to files explicitly selected by the user
               </li>
@@ -119,18 +132,21 @@ export default function PrivacyPage() {
               </li>
               <li>No automated or background Drive access occurs</li>
             </ul>
-            <p className="text-muted-foreground">
+            <p className="mb-6 text-muted-foreground leading-relaxed">
               OCWProject does not modify, delete, or manage user files within
               Google Drive.
             </p>
 
-            <h2>5. Google API Services User Data Policy Compliance</h2>
-            <p className="text-muted-foreground">
+            {/* Section 5 */}
+            <h2 className="mb-4 mt-8 text-xl font-semibold">
+              5. Google API Services User Data Policy Compliance
+            </h2>
+            <p className="mb-4 text-muted-foreground leading-relaxed">
               OCWProject’s use and transfer of information received from Google
               APIs complies with the Google API Services User Data Policy,
               including the Limited Use requirements. Specifically:
             </p>
-            <ul className="text-muted-foreground">
+            <ul className="mb-6 list-disc space-y-2 pl-6 text-muted-foreground">
               <li>
                 Google user data is used only to provide user‑requested
                 functionality
@@ -146,23 +162,32 @@ export default function PrivacyPage() {
               </li>
             </ul>
 
-            <h2>6. User Roles and Access Controls</h2>
-            <ul className="text-muted-foreground">
+            {/* Section 6 */}
+            <h2 className="mb-4 mt-8 text-xl font-semibold">
+              6. User Roles and Access Controls
+            </h2>
+            <ul className="mb-6 list-disc space-y-2 pl-6 text-muted-foreground">
               <li>Only vetted and approved writers may upload content</li>
               <li>General users may view content only</li>
               <li>Access controls are enforced at the application level</li>
             </ul>
 
-            <h2>7. Data Storage and Security</h2>
-            <p className="text-muted-foreground">
+            {/* Section 7 */}
+            <h2 className="mb-4 mt-8 text-xl font-semibold">
+              7. Data Storage and Security
+            </h2>
+            <p className="mb-6 text-muted-foreground leading-relaxed">
               We implement reasonable administrative, technical, and physical
               safeguards designed to protect information against unauthorized
               access, disclosure, alteration, or destruction. However, no method
               of transmission or storage is completely secure.
             </p>
 
-            <h2>8. Data Retention and Deletion</h2>
-            <ul className="text-muted-foreground">
+            {/* Section 8 */}
+            <h2 className="mb-4 mt-8 text-xl font-semibold">
+              8. Data Retention and Deletion
+            </h2>
+            <ul className="mb-6 list-disc space-y-2 pl-6 text-muted-foreground">
               <li>
                 Users may delete uploaded content through the Service where
                 functionality is provided
@@ -181,20 +206,27 @@ export default function PrivacyPage() {
               </li>
             </ul>
 
-            <h2>9. Subdomains</h2>
-            <p className="text-muted-foreground">
+            {/* Section 9 */}
+            <h2 className="mb-4 mt-8 text-xl font-semibold">9. Subdomains</h2>
+            <p className="mb-6 text-muted-foreground leading-relaxed">
               This Privacy Policy applies to all OCWProject‑operated subdomains
               unless otherwise stated.
             </p>
 
-            <h2>10. Changes to This Policy</h2>
-            <p className="text-muted-foreground">
+            {/* Section 10 */}
+            <h2 className="mb-4 mt-8 text-xl font-semibold">
+              10. Changes to This Policy
+            </h2>
+            <p className="mb-6 text-muted-foreground leading-relaxed">
               We may update this Privacy Policy from time to time. Changes
               become effective when posted with a revised effective date.
             </p>
 
-            <h2>11. Contact Information</h2>
-            <p className="text-muted-foreground">
+            {/* Section 11 */}
+            <h2 className="mb-4 mt-8 text-xl font-semibold">
+              11. Contact Information
+            </h2>
+            <p className="mb-2 text-muted-foreground">
               For questions or concerns regarding this Privacy Policy, contact:
             </p>
             <p>
