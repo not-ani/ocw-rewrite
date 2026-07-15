@@ -74,14 +74,21 @@ export async function getTrafficTrends(): Promise<MonthlyTraffic[]> {
       kind: "HogQLQuery",
       query: `
 SELECT
-  formatDateTime(toStartOfMonth(timestamp), '%Y-%m') AS month_key,
-  countIf(event = '$pageview') AS pageviews,
-  count(DISTINCT if(event = '$pageview', person_id, null)) AS visitors
-FROM events
-WHERE event = '$pageview'
-GROUP BY toStartOfMonth(timestamp), month_key
-ORDER BY toStartOfMonth(timestamp)
-LIMIT 6
+  formatDateTime(month, '%Y-%m') AS month_key,
+  pageviews,
+  visitors
+FROM (
+  SELECT
+    toStartOfMonth(timestamp) AS month,
+    count() AS pageviews,
+    count(DISTINCT person_id) AS visitors
+  FROM events
+  WHERE event = '$pageview'
+  GROUP BY month
+  ORDER BY month DESC
+  LIMIT 6
+)
+ORDER BY month ASC
       `,
     },
     name: "embedded_monthly_traffic_trends",
