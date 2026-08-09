@@ -7,8 +7,6 @@
     "build": "tsc",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "dev": "tsc",
-    "format": "prettier --check . --ignore-path ../../.gitignore",
-    "lint": "eslint --flag unstable_native_nodejs_ts_config",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "exports": {
@@ -80,20 +78,15 @@
     "tailwind-merge": "^3.3.1"
   },
   "devDependencies": {
-    "@ocw/eslint-config": "workspace:*",
-    "@ocw/prettier-config": "workspace:*",
     "@ocw/tsconfig": "workspace:*",
     "@types/culori": "^4.0.1",
     "@types/node": "catalog:",
     "@types/qrcode": "^1.5.5",
-    "@types/react": "19.2.2",
-    "@types/react-dom": "19.2.0",
-    "eslint": "catalog:",
-    "prettier": "catalog:",
+    "@types/react": "catalog:react19",
+    "@types/react-dom": "catalog:react19",
     "typescript": "catalog:"
   },
   "peerDependencies": {
     "react": "catalog:react19"
-  },
-  "prettier": "@ocw/prettier-config"
+  }
 }

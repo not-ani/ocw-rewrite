@@ -10,8 +10,6 @@
     "start": "next start",
     "analyze": "next experimental-analyze",
     "test:e2e": "playwright test",
-    "format": "prettier --check . --ignore-path ../../.gitignore",
-    "lint": "eslint --flag unstable_native_nodejs_ts_config",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:debug": "playwright test --debug",
@@ -57,15 +55,12 @@
   },
   "devDependencies": {
     "@clerk/testing": "^1.13.19",
-    "@ocw/eslint-config": "workspace:*",
-    "@ocw/prettier-config": "workspace:*",
     "@ocw/tailwind-config": "workspace:*",
     "@ocw/tsconfig": "workspace:*",
     "@playwright/test": "^1.57.0",
     "@types/node": "catalog:",
     "@types/react": "catalog:react19",
     "@types/react-dom": "catalog:react19",
-    "prettier": "catalog:",
     "tailwindcss": "^4.1.10",
     "typescript": "catalog:"
   }

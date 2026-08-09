@@ -1,4 +1,3 @@
-/** biome-ignore-all lint/suspicious/noArrayIndexKey: ts mpo icl */
 "use client";
 import { api } from "@ocw/backend/convex/_generated/api";
 import type { Preloaded } from "convex/react";

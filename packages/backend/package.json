@@ -14,13 +14,13 @@
   "devDependencies": {
     "@types/node": "catalog:",
     "@vitest/coverage-v8": "^2.1.8",
-    "convex-test": "^0.0.34",
+    "convex-test": "^0.0.55",
     "typescript": "catalog:",
     "vitest": "catalog:"
   },
   "dependencies": {
-    "@convex-dev/migrations": "^0.2.9",
+    "@convex-dev/migrations": "^0.3.6",
     "convex": "catalog:",
-    "convex-helpers": "^0.1.106"
+    "convex-helpers": "^0.1.122"
   }
 }

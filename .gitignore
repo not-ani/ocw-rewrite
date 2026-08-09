@@ -22,3 +22,5 @@ target/
 
 # Build outputs
 dist/
+# next-agents-md
+.next-docs/

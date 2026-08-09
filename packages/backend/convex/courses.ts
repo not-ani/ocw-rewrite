@@ -1,4 +1,5 @@
 import { ConvexError, v } from "convex/values";
+
 import type { Doc, Id } from "./_generated/dataModel";
 import type { QueryCtx } from "./_generated/server";
 import { query } from "./_generated/server";
@@ -289,25 +290,29 @@ export const getCourseWithUnitsAndLessons = query({
 	handler: async (ctx, args) => {
 		const course = await ctx.db.get(args.id);
 
-		if (!course) {
+		if (!course?.isPublic || course.school !== args.school) {
 			return null;
 		}
 
-		const units = await ctx.db
-			.query("units")
-			.withIndex("by_course_id_and_is_published", (q) =>
-				q.eq("courseId", course._id).eq("isPublished", true),
-			)
-			.collect();
+		const units = (
+			await ctx.db
+				.query("units")
+				.withIndex("by_course_id_and_is_published", (q) =>
+					q.eq("courseId", course._id).eq("isPublished", true),
+				)
+				.collect()
+		).filter((unit) => unit.school === args.school);
 
 		const unitsWithLessons = await Promise.all(
 			units.map(async (unit) => {
-				const lessons = await ctx.db
-					.query("lessons")
-					.withIndex("by_unit_id_and_is_published", (q) =>
-						q.eq("unitId", unit._id).eq("isPublished", true),
-					)
-					.collect();
+				const lessons = (
+					await ctx.db
+						.query("lessons")
+						.withIndex("by_unit_id_and_is_published", (q) =>
+							q.eq("unitId", unit._id).eq("isPublished", true),
+						)
+						.collect()
+				).filter((lesson) => lesson.school === args.school);
 
 				const lessonsWithEmbeds = await Promise.all(
 					lessons.map(async (lesson) => {
@@ -321,7 +326,7 @@ export const getCourseWithUnitsAndLessons = query({
 							name: lesson.name,
 							contentType: lesson.contentType,
 							pureLink: lesson.pureLink,
-							embed: embeds,
+							embed: embeds?.school === args.school ? embeds : null,
 						};
 					}),
 				);

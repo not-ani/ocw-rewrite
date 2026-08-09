@@ -101,7 +101,7 @@ export function AddAdminDialog({
 
 				<div className="space-y-4 py-4">
 					<div className="space-y-2">
-						{/** biome-ignore lint/a11y/noLabelWithoutControl: this is how recommended in docs*/}
+						{/* oxlint-disable-next-line jsx-a11y/label-has-associated-control -- The adjacent popover trigger is the labeled control. */}
 						<label className="font-medium text-sm">Select User</label>
 						<Popover open={comboboxOpen} onOpenChange={setComboboxOpen}>
 							<PopoverTrigger asChild>

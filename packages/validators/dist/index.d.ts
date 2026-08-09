@@ -2,7 +2,7 @@ export declare const addCourseFormSchema: import("arktype/internal/variants/obje
     name: string;
     description: string;
     subjectId: string;
-    isPublic: import("arktype/internal/attributes.ts").Default<boolean, false>;
+    isPublic: boolean;
 }, {}>;
 export type AddCourseFormValues = typeof addCourseFormSchema.infer;
 export declare const addUserToCourseFormSchema: import("arktype/internal/variants/object.ts").ObjectType<{

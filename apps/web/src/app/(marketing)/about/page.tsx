@@ -1,22 +1,19 @@
-import { api } from "@ocw/backend/convex/_generated/api";
-import { fetchQuery } from "convex/nextjs";
 import type { Metadata } from "next";
 import Link from "next/link";
-import { extractSubdomain } from "@/lib/multi-tenant/server";
 
-export async function generateMetadata(): Promise<Metadata> {
-	const subdomain = await extractSubdomain();
+import { getPublicSiteConfig } from "@/lib/public-data";
 
-	if (!subdomain) {
+export async function getAboutMetadata(
+	school: string | null,
+): Promise<Metadata> {
+	if (!school) {
 		return {
 			title: "About Us",
 			description: "Learn about our mission and values",
 		};
 	}
 
-	const siteConfig = await fetchQuery(api.site.getSiteConfig, {
-		school: subdomain,
-	});
+	const siteConfig = await getPublicSiteConfig(school);
 
 	return {
 		title: `About Us | ${siteConfig?.schoolName ?? "OpenCourseWare"}`,
@@ -24,24 +21,19 @@ export async function generateMetadata(): Promise<Metadata> {
 	};
 }
 
-export default async function Page() {
-	const subdomain = await extractSubdomain();
-
-	if (!subdomain) {
+export async function renderAboutPage(school: string | null) {
+	if (!school) {
 		return null;
 	}
-
-	const siteConfig = await fetchQuery(api.site.getSiteConfig, {
-		school: subdomain,
-	});
+	const siteConfig = await getPublicSiteConfig(school);
 
 	return (
-		<div className="min-h-screen bg-background px-4 py-12 sm:px-6 lg:px-8">
+		<div className="bg-background min-h-screen px-4 py-12 sm:px-6 lg:px-8">
 			<div className="mx-auto max-w-4xl">
-				<h1 className="mb-8 text-center font-bold text-3xl text-foreground tracking-tight">
+				<h1 className="text-foreground mb-8 text-center text-3xl font-bold tracking-tight">
 					About Us
 				</h1>
-				<div className="space-y-6 text-foreground">
+				<div className="text-foreground space-y-6">
 					<p className="leading-relaxed">
 						{siteConfig?.schoolName} OpenCourseWare (OCW) is dedicated to
 						providing free, high-quality resources to students at{" "}
@@ -58,7 +50,7 @@ export default async function Page() {
 						pace of our learning, and deepens the level of our understanding.
 					</p>
 					<br />
-					<h1 className="mb-8 text-center font-bold text-3xl tracking-tight">
+					<h1 className="mb-8 text-center text-3xl font-bold tracking-tight">
 						Our Mission
 					</h1>
 					<p className="leading-relaxed">
@@ -82,4 +74,12 @@ export default async function Page() {
 			</div>
 		</div>
 	);
+}
+
+export async function generateMetadata() {
+	return getAboutMetadata(null);
+}
+
+export default async function Page() {
+	return renderAboutPage(null);
 }

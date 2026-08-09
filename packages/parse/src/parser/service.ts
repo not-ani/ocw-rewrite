@@ -1,3 +1,6 @@
+// oxlint-disable-next-line typescript/triple-slash-reference -- The upstream plugin does not publish types.
+/// <reference path="../turndown-plugin-gfm.d.ts" />
+
 import { Context, Effect, Layer } from "effect";
 import TurndownService from "turndown";
 import { gfm } from "turndown-plugin-gfm";

@@ -223,9 +223,9 @@ export const deleteContributor = siteAdminMutation({
 
 		// Sort by order and reassign order values
 		const sorted = remainingContributors.sort((a, b) => a.order - b.order);
-		for (let i = 0; i < sorted.length; i++) {
-			if (sorted[i].order !== i) {
-				await ctx.db.patch(sorted[i]._id, { order: i });
+		for (const [order, contributor] of sorted.entries()) {
+			if (contributor.order !== order) {
+				await ctx.db.patch(contributor._id, { order });
 			}
 		}
 
@@ -253,8 +253,8 @@ export const reorderContributors = siteAdminMutation({
 		}
 
 		// Update order for each contributor
-		for (let i = 0; i < args.contributorIds.length; i++) {
-			await ctx.db.patch(args.contributorIds[i], { order: i });
+		for (const [order, contributorId] of args.contributorIds.entries()) {
+			await ctx.db.patch(contributorId, { order });
 		}
 
 		return null;

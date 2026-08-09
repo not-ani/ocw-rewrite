@@ -8,7 +8,7 @@
  * - Permission checks
  */
 
-import { describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { api } from "../convex/_generated/api";
 import { createConvexTest } from "./convexTestHelper";
 import {
@@ -21,6 +21,10 @@ import {
 import { TEST_EMBED_URLS, TEST_SCHOOLS, TEST_USERS } from "./testUtils";
 
 describe("Lessons", () => {
+	afterEach(() => {
+		vi.useRealTimers();
+	});
+
 	describe("getLessonById", () => {
 		it("returns a lesson with its embed", async () => {
 			const t = createConvexTest();
@@ -271,6 +275,7 @@ describe("Lessons", () => {
 		});
 
 		it("creates log entry when creating lesson", async () => {
+			vi.useFakeTimers();
 			const t = createConvexTest();
 
 			await setupSiteAdmin(t, TEST_SCHOOLS.PRIMARY);
@@ -284,6 +289,7 @@ describe("Lessons", () => {
 				embedRaw: TEST_EMBED_URLS.GOOGLE_DOCS,
 				school: TEST_SCHOOLS.PRIMARY,
 			});
+			await t.finishAllScheduledFunctions(() => vi.runAllTimers());
 
 			const logs = await t.run(async (ctx) => {
 				return await ctx.db
@@ -505,6 +511,7 @@ describe("Lessons", () => {
 		});
 
 		it("creates log entry when reordering", async () => {
+			vi.useFakeTimers();
 			const t = createConvexTest();
 
 			await setupSiteAdmin(t, TEST_SCHOOLS.PRIMARY);
@@ -526,6 +533,7 @@ describe("Lessons", () => {
 				data: [{ id: lessonId, position: 0 }],
 				school: TEST_SCHOOLS.PRIMARY,
 			});
+			await t.finishAllScheduledFunctions(() => vi.runAllTimers());
 
 			const logs = await t.run(async (ctx) => {
 				return await ctx.db
@@ -597,6 +605,7 @@ describe("Lessons", () => {
 		});
 
 		it("creates log entry when deleting", async () => {
+			vi.useFakeTimers();
 			const t = createConvexTest();
 
 			await setupSiteAdmin(t, TEST_SCHOOLS.PRIMARY);
@@ -614,6 +623,7 @@ describe("Lessons", () => {
 				id: lessonId,
 				school: TEST_SCHOOLS.PRIMARY,
 			});
+			await t.finishAllScheduledFunctions(() => vi.runAllTimers());
 
 			const logs = await t.run(async (ctx) => {
 				return await ctx.db
@@ -645,6 +655,7 @@ describe("Lessons", () => {
 			await t
 				.withIdentity(TEST_USERS.SITE_ADMIN)
 				.mutation(api.lesson.createOrUpdateEmbed, {
+					courseId,
 					lessonId,
 					raw: TEST_EMBED_URLS.YOUTUBE,
 					school: TEST_SCHOOLS.PRIMARY,
@@ -680,6 +691,7 @@ describe("Lessons", () => {
 			await t
 				.withIdentity(TEST_USERS.SITE_ADMIN)
 				.mutation(api.lesson.createOrUpdateEmbed, {
+					courseId,
 					lessonId,
 					raw: TEST_EMBED_URLS.YOUTUBE,
 					school: TEST_SCHOOLS.PRIMARY,
@@ -711,6 +723,7 @@ describe("Lessons", () => {
 			await t
 				.withIdentity(TEST_USERS.SITE_ADMIN)
 				.mutation(api.lesson.createOrUpdateEmbed, {
+					courseId,
 					lessonId,
 					raw: TEST_EMBED_URLS.GOOGLE_DRIVE,
 					school: TEST_SCHOOLS.PRIMARY,
@@ -740,6 +753,7 @@ describe("Lessons", () => {
 
 			await expect(
 				t.mutation(api.lesson.createOrUpdateEmbed, {
+					courseId,
 					lessonId,
 					raw: TEST_EMBED_URLS.GOOGLE_DOCS,
 					school: TEST_SCHOOLS.PRIMARY,

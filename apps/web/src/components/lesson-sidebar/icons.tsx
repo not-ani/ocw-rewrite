@@ -7,8 +7,11 @@ export function GetIcon(props: {
 		| "flashcard"
 		| "tiptap"
 		| "google_docs"
+		| "google_drive"
 		| "notion"
-		| "youtube";
+		| "youtube"
+		| "pdf"
+		| "other";
 	className?: string;
 }) {
 	const iconProps = {

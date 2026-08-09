@@ -1,4 +1,5 @@
 import { ConvexError, v } from "convex/values";
+
 import { query } from "./_generated/server";
 import { courseMutation, courseQuery } from "./auth";
 
@@ -38,6 +39,17 @@ export const getById = query({
 	},
 });
 
+export const getPublicById = query({
+	args: { id: v.id("units"), school: v.string() },
+	handler: async (ctx, args) => {
+		const unit = await ctx.db.get(args.id);
+		if (!unit?.isPublished || unit.school !== args.school) return null;
+		const course = await ctx.db.get(unit.courseId);
+		if (!course?.isPublic || course.school !== args.school) return null;
+		return unit;
+	},
+});
+
 export const searchByCourse = query({
 	args: {
 		courseId: v.id("courses"),
@@ -63,29 +75,31 @@ export const searchByCourse = query({
 	},
 });
 
-export const getUnitWithLessons = query({
-	args: { id: v.id("units") },
+export const getPublicUnitWithLessons = query({
+	args: { id: v.id("units"), school: v.string() },
 	handler: async (ctx, args) => {
 		const unit = await ctx.db.get(args.id);
 
-		if (!unit) {
+		if (!unit?.isPublished || unit.school !== args.school) {
 			return null;
 		}
 
 		const course = await ctx.db.get(unit.courseId);
 
-		if (!course) {
+		if (!course?.isPublic || course.school !== args.school) {
 			return null;
 		}
 
 		// Use compound index with isPublished to avoid filter
-		const lessons = await ctx.db
-			.query("lessons")
-			.withIndex("by_unit_id_and_is_published", (q) =>
-				q.eq("unitId", unit._id).eq("isPublished", true),
-			)
-			.order("asc")
-			.collect();
+		const lessons = (
+			await ctx.db
+				.query("lessons")
+				.withIndex("by_unit_id_and_is_published", (q) =>
+					q.eq("unitId", unit._id).eq("isPublished", true),
+				)
+				.order("asc")
+				.collect()
+		).filter((lesson) => lesson.school === args.school);
 
 		return {
 			...unit,
@@ -94,6 +108,35 @@ export const getUnitWithLessons = query({
 				_id: course._id,
 				name: course.name,
 			},
+			lessons: lessons.map((lesson) => ({
+				id: lesson._id,
+				name: lesson.name,
+				contentType: lesson.contentType,
+				order: lesson.order,
+			})),
+		};
+	},
+});
+
+// Retained for authenticated/editor callers that may inspect draft units.
+export const getUnitWithLessons = query({
+	args: { id: v.id("units") },
+	handler: async (ctx, args) => {
+		const unit = await ctx.db.get(args.id);
+		if (!unit) return null;
+		const course = await ctx.db.get(unit.courseId);
+		if (!course) return null;
+		const lessons = await ctx.db
+			.query("lessons")
+			.withIndex("by_unit_id_and_is_published", (q) =>
+				q.eq("unitId", unit._id).eq("isPublished", true),
+			)
+			.order("asc")
+			.collect();
+		return {
+			...unit,
+			_id: unit._id,
+			course: { _id: course._id, name: course.name },
 			lessons: lessons.map((lesson) => ({
 				id: lesson._id,
 				name: lesson.name,
@@ -113,29 +156,29 @@ export const create = courseMutation("editor")({
 		school: v.string(),
 	},
 	handler: async (ctx, args) => {
-			const count = await ctx.db
-				.query("units")
-				.withIndex("by_course_id", (q) => q.eq("courseId", ctx.courseId))
-				.collect();
+		const count = await ctx.db
+			.query("units")
+			.withIndex("by_course_id", (q) => q.eq("courseId", ctx.courseId))
+			.collect();
 
-			const order = count.length;
-			const id = await ctx.db.insert("units", {
-				school: args.school,
-				courseId: ctx.courseId,
-				name: args.unitName,
-				description: args.description ?? undefined,
-				isPublished: args.isPublished ?? false,
-				order,
-			});
+		const order = count.length;
+		const id = await ctx.db.insert("units", {
+			school: args.school,
+			courseId: ctx.courseId,
+			name: args.unitName,
+			description: args.description ?? undefined,
+			isPublished: args.isPublished ?? false,
+			order,
+		});
 
-			await ctx.db.insert("logs", {
-				userId: ctx.user.userId,
-				courseId: ctx.courseId,
-				school: args.school,
-				action: "CREATE_UNIT",
-				timestamp: Date.now(),
-				unitId: id,
-			});
+		await ctx.db.insert("logs", {
+			userId: ctx.user.userId,
+			courseId: ctx.courseId,
+			school: args.school,
+			action: "CREATE_UNIT",
+			timestamp: Date.now(),
+			unitId: id,
+		});
 
 		return id;
 	},
@@ -153,31 +196,30 @@ export const update = courseMutation("editor")({
 		school: v.string(),
 	},
 	handler: async (ctx, args) => {
-			const unit = await ctx.db.get(args.data.id);
-			if (!(unit && unit.courseId === ctx.courseId)) {
-				throw new ConvexError("Unit not found");
-			}
+		const unit = await ctx.db.get(args.data.id);
+		if (!(unit && unit.courseId === ctx.courseId)) {
+			throw new ConvexError("Unit not found");
+		}
 
-			await ctx.db.patch(args.data.id, {
-				name: args.data.name ?? unit.name,
-				isPublished: args.data.isPublished ?? unit.isPublished,
-				description:
-					args.data.description === undefined
-						? unit.description
-						: (args.data.description ?? undefined),
-			});
+		await ctx.db.patch(args.data.id, {
+			name: args.data.name ?? unit.name,
+			isPublished: args.data.isPublished ?? unit.isPublished,
+			description:
+				args.data.description === undefined
+					? unit.description
+					: (args.data.description ?? undefined),
+		});
 
-			await ctx.db.insert("logs", {
-				userId: ctx.user.userId,
-				courseId: ctx.courseId,
-				unitId: args.data.id,
-				action: "UPDATE_UNIT",
-				school: args.school,
-				timestamp: Date.now(),
-			});
-		},
+		await ctx.db.insert("logs", {
+			userId: ctx.user.userId,
+			courseId: ctx.courseId,
+			unitId: args.data.id,
+			action: "UPDATE_UNIT",
+			school: args.school,
+			timestamp: Date.now(),
+		});
 	},
-);
+});
 
 export const reorder = courseMutation("editor")({
 	args: {
@@ -191,28 +233,27 @@ export const reorder = courseMutation("editor")({
 		school: v.string(),
 	},
 	handler: async (ctx, args) => {
-			// Update each unit order to the provided position
-			for (const item of args.data) {
-				const unit = await ctx.db.get(item.id);
-				if (
-					unit &&
-					unit.courseId === ctx.courseId &&
-					unit.order !== item.position
-				) {
-					await ctx.db.patch(item.id, { order: item.position });
-				}
+		// Update each unit order to the provided position
+		for (const item of args.data) {
+			const unit = await ctx.db.get(item.id);
+			if (
+				unit &&
+				unit.courseId === ctx.courseId &&
+				unit.order !== item.position
+			) {
+				await ctx.db.patch(item.id, { order: item.position });
 			}
+		}
 
-			await ctx.db.insert("logs", {
-				userId: ctx.user.userId,
-				courseId: ctx.courseId,
-				action: "REORDER_UNIT",
-				school: args.school,
-				timestamp: Date.now(),
-			});
-		},
+		await ctx.db.insert("logs", {
+			userId: ctx.user.userId,
+			courseId: ctx.courseId,
+			action: "REORDER_UNIT",
+			school: args.school,
+			timestamp: Date.now(),
+		});
 	},
-);
+});
 
 export const remove = courseMutation("editor")({
 	args: {
@@ -221,34 +262,33 @@ export const remove = courseMutation("editor")({
 		school: v.string(),
 	},
 	handler: async (ctx, args) => {
-			const unit = await ctx.db.get(args.id);
-			if (!(unit && unit.courseId === ctx.courseId)) {
-				throw new ConvexError("Unit not found");
+		const unit = await ctx.db.get(args.id);
+		if (!(unit && unit.courseId === ctx.courseId)) {
+			throw new ConvexError("Unit not found");
+		}
+
+		await ctx.db.delete(args.id);
+
+		// Use compound index with order to avoid sorting in memory
+		const remaining = await ctx.db
+			.query("units")
+			.withIndex("by_course_id_and_order", (q) =>
+				q.eq("courseId", ctx.courseId),
+			)
+			.collect();
+		for (const [index, u] of remaining.entries()) {
+			if (u.order !== index) {
+				await ctx.db.patch(u._id, { order: index });
 			}
+		}
 
-			await ctx.db.delete(args.id);
-
-			// Use compound index with order to avoid sorting in memory
-			const remaining = await ctx.db
-				.query("units")
-				.withIndex("by_course_id_and_order", (q) =>
-					q.eq("courseId", ctx.courseId),
-				)
-				.collect();
-			for (const [index, u] of remaining.entries()) {
-				if (u.order !== index) {
-					await ctx.db.patch(u._id, { order: index });
-				}
-			}
-
-			await ctx.db.insert("logs", {
-				userId: ctx.user.userId,
-				courseId: ctx.courseId,
-				unitId: args.id,
-				action: "DELETE_UNIT",
-				school: args.school,
-				timestamp: Date.now(),
-			});
-		},
+		await ctx.db.insert("logs", {
+			userId: ctx.user.userId,
+			courseId: ctx.courseId,
+			unitId: args.id,
+			action: "DELETE_UNIT",
+			school: args.school,
+			timestamp: Date.now(),
+		});
 	},
-);
+});

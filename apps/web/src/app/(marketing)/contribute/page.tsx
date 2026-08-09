@@ -1,22 +1,20 @@
-import { api } from "@ocw/backend/convex/_generated/api";
-import { fetchQuery } from "convex/nextjs";
 import type { Metadata } from "next";
-import { extractSubdomain } from "@/lib/multi-tenant/server";
+
+import { getPublicSiteConfig } from "@/lib/public-data";
+
 import { ContributePageClient } from "./client";
 
-export async function generateMetadata(): Promise<Metadata> {
-	const subdomain = await extractSubdomain();
-
-	if (!subdomain) {
+export async function getContributeMetadata(
+	school: string | null,
+): Promise<Metadata> {
+	if (!school) {
 		return {
 			title: "Contribute",
 			description: "Contribute to our platform",
 		};
 	}
 
-	const siteConfig = await fetchQuery(api.site.getSiteConfig, {
-		school: subdomain,
-	});
+	const siteConfig = await getPublicSiteConfig(school);
 
 	return {
 		title: `Contribute | ${siteConfig?.schoolName ?? "OpenCourseWare"}`,
@@ -24,16 +22,20 @@ export async function generateMetadata(): Promise<Metadata> {
 	};
 }
 
-export default async function RouteComponent() {
-	const subdomain = await extractSubdomain();
-
-	if (!subdomain) {
+export async function renderContributePage(school: string | null) {
+	if (!school) {
 		return null;
 	}
 
-	const siteConfig = await fetchQuery(api.site.getSiteConfig, {
-		school: subdomain,
-	});
+	const siteConfig = await getPublicSiteConfig(school);
 
 	return <ContributePageClient siteConfig={siteConfig} />;
+}
+
+export async function generateMetadata() {
+	return getContributeMetadata(null);
+}
+
+export default async function RouteComponent() {
+	return renderContributePage(null);
 }

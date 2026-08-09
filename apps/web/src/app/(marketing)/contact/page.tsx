@@ -1,22 +1,20 @@
-import { api } from "@ocw/backend/convex/_generated/api";
-import { fetchQuery } from "convex/nextjs";
 import type { Metadata } from "next";
-import { extractSubdomain } from "@/lib/multi-tenant/server";
+
+import { getPublicSiteConfig } from "@/lib/public-data";
+
 import { ContactPageClient } from "./client";
 
-export async function generateMetadata(): Promise<Metadata> {
-	const subdomain = await extractSubdomain();
-
-	if (!subdomain) {
+export async function getContactMetadata(
+	school: string | null,
+): Promise<Metadata> {
+	if (!school) {
 		return {
 			title: "Contact Us",
 			description: "Get in touch with us",
 		};
 	}
 
-	const siteConfig = await fetchQuery(api.site.getSiteConfig, {
-		school: subdomain,
-	});
+	const siteConfig = await getPublicSiteConfig(school);
 
 	return {
 		title: `Contact Us | ${siteConfig?.schoolName ?? "OpenCourseWare"}`,
@@ -24,16 +22,20 @@ export async function generateMetadata(): Promise<Metadata> {
 	};
 }
 
-export default async function Page() {
-	const subdomain = await extractSubdomain();
-
-	if (!subdomain) {
+export async function renderContactPage(school: string | null) {
+	if (!school) {
 		return null;
 	}
 
-	const siteConfig = await fetchQuery(api.site.getSiteConfig, {
-		school: subdomain,
-	});
+	const siteConfig = await getPublicSiteConfig(school);
 
 	return <ContactPageClient siteConfig={siteConfig} />;
+}
+
+export async function generateMetadata() {
+	return getContactMetadata(null);
+}
+
+export default async function Page() {
+	return renderContactPage(null);
 }

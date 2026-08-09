@@ -1,25 +1,23 @@
-import { api } from "@ocw/backend/convex/_generated/api";
-import type { Id } from "@ocw/backend/convex/_generated/dataModel";
-import { fetchQuery } from "convex/nextjs";
 import type { Metadata } from "next";
+
 import { isValidConvexId } from "@/lib/convex-utils";
-import { extractSubdomain } from "@/lib/multi-tenant/server";
-import { getAbsoluteUrl } from "@/lib/og-utils";
+import { getPublicCourse, getPublicSiteConfig } from "@/lib/public-data";
+import { protocol, rootDomain } from "@/lib/site";
+import type { Id } from "@ocw/backend/convex/_generated/dataModel";
+
 import { CoursePageClient } from "./client";
 
 // Cache course pages for 60 seconds
 export const revalidate = 60;
 
-export async function generateMetadata({
-	params,
-}: {
-	params: Promise<{ id: string }>;
-}): Promise<Metadata> {
-	const { id } = await params;
-	const subdomain = await extractSubdomain();
-
-	if (!subdomain || !isValidConvexId(id)) {
-		const ogImageUrl = await getAbsoluteUrl("/opengraph-image");
+export async function getCourseMetadata(
+	school: string | null,
+	id: string,
+	baseUrl: string,
+): Promise<Metadata> {
+	const absoluteUrl = (path: string) => Promise.resolve(`${baseUrl}${path}`);
+	if (!school || !isValidConvexId(id)) {
+		const ogImageUrl = await absoluteUrl("/opengraph-image");
 		return {
 			title: "Course",
 			description: "Course details",
@@ -45,17 +43,13 @@ export async function generateMetadata({
 		};
 	}
 
-	const course = await fetchQuery(api.courses.getCourseById, {
-		courseId: id as Id<"courses">,
-		school: subdomain,
-	});
-
-	const siteConfig = await fetchQuery(api.site.getSiteConfig, {
-		school: subdomain,
-	});
+	const [course, siteConfig] = await Promise.all([
+		getPublicCourse(school, id as Id<"courses">),
+		getPublicSiteConfig(school),
+	]);
 
 	if (!course) {
-		const ogImageUrl = await getAbsoluteUrl("/opengraph-image");
+		const ogImageUrl = await absoluteUrl("/opengraph-image");
 		return {
 			title: "Course Not Found",
 			description: "The requested course could not be found",
@@ -85,8 +79,8 @@ export async function generateMetadata({
 	const description =
 		course.description ||
 		`Learn about ${course.name} with free, high-quality resources.`;
-	const ogImageUrl = await getAbsoluteUrl(`/course/${id}/opengraph-image`);
-	const url = await getAbsoluteUrl(`/course/${id}`);
+	const ogImageUrl = await absoluteUrl(`/course/${id}/opengraph-image`);
+	const url = await absoluteUrl(`/course/${id}`);
 
 	return {
 		title,
@@ -116,15 +110,8 @@ export async function generateMetadata({
 	};
 }
 
-export default async function Page({
-	params,
-}: {
-	params: Promise<{ id: string }>;
-}) {
-	const { id } = await params;
-
-	const subdomain = await extractSubdomain();
-	if (!subdomain) {
+export function renderCoursePage(school: string | null, id: string) {
+	if (!school) {
 		return null;
 	}
 
@@ -132,7 +119,23 @@ export default async function Page({
 		return null;
 	}
 
-	return (
-		<CoursePageClient courseId={id as Id<"courses">} subdomain={subdomain} />
-	);
+	return <CoursePageClient courseId={id as Id<"courses">} subdomain={school} />;
+}
+
+export async function generateMetadata({
+	params,
+}: {
+	params: Promise<{ id: string }>;
+}) {
+	const { id } = await params;
+	return getCourseMetadata(null, id, `${protocol}://${rootDomain}`);
+}
+
+export default async function Page({
+	params,
+}: {
+	params: Promise<{ id: string }>;
+}) {
+	const { id } = await params;
+	return renderCoursePage(null, id);
 }

@@ -1,24 +1,23 @@
-import { api } from "@ocw/backend/convex/_generated/api";
-import { fetchQuery, preloadQuery } from "convex/nextjs";
+import { preloadQuery } from "convex/nextjs";
 import type { Metadata } from "next";
-import { Suspense } from "react";
-import { extractSubdomain } from "@/lib/multi-tenant/server";
-import { COURSES_PER_PAGE } from "./constants";
+
+import { getPublicSiteConfig } from "@/lib/public-data";
+import { api } from "@ocw/backend/convex/_generated/api";
+
 import { CoursesPage } from "./client";
+import { COURSES_PER_PAGE } from "./constants";
 
-export async function generateMetadata(): Promise<Metadata> {
-	const subdomain = await extractSubdomain();
-
-	if (!subdomain) {
+export async function getCoursesMetadata(
+	school: string | null,
+): Promise<Metadata> {
+	if (!school) {
 		return {
 			title: "Courses",
 			description: "Browse available courses",
 		};
 	}
 
-	const siteConfig = await fetchQuery(api.site.getSiteConfig, {
-		school: subdomain,
-	});
+	const siteConfig = await getPublicSiteConfig(school);
 
 	return {
 		title: `Courses | ${siteConfig?.schoolName ?? "OpenCourseWare"}`,
@@ -26,23 +25,26 @@ export async function generateMetadata(): Promise<Metadata> {
 	};
 }
 
-export default async function Page() {
-	const subdomain = await extractSubdomain();
-
-	if (!subdomain) {
+export async function renderCoursesPage(school: string | null) {
+	if (!school) {
 		return <div>No subdomain found</div>;
 	}
 
 	// Preload initial courses data (page 1, no search)
-	const preloadedCourses = await preloadQuery(
-		api.courses.getPaginatedCourses,
-		{
-			page: 1,
-			search: "",
-			limit: COURSES_PER_PAGE,
-			school: subdomain,
-		},
-	);
+	const preloadedCourses = await preloadQuery(api.courses.getPaginatedCourses, {
+		page: 1,
+		search: "",
+		limit: COURSES_PER_PAGE,
+		school,
+	});
 
-	return <CoursesPage subdomain={subdomain} preloadedCourses={preloadedCourses} />;
+	return <CoursesPage subdomain={school} preloadedCourses={preloadedCourses} />;
+}
+
+export async function generateMetadata() {
+	return getCoursesMetadata(null);
+}
+
+export default async function Page() {
+	return renderCoursesPage(null);
 }

@@ -6,8 +6,6 @@
     "build": "",
     "clean": "git clean -xdf .cache .turbo dist node_modules",
     "dev": "",
-    "format": "prettier --check . --ignore-path ../../.gitignore",
-    "lint": "eslint --flag unstable_native_nodejs_ts_config",
     "typecheck": "tsc --noEmit --emitDeclarationOnly false"
   },
   "author": "",
@@ -26,12 +24,8 @@
     "turndown-plugin-gfm": "^1.0.2"
   },
   "devDependencies": {
-    "@ocw/eslint-config": "workspace:*",
-    "@ocw/prettier-config": "workspace:*",
     "@ocw/tsconfig": "workspace:*",
     "@types/node": "catalog:",
-    "eslint": "catalog:",
-    "prettier": "catalog:",
     "typescript": "catalog:"
   }
 }

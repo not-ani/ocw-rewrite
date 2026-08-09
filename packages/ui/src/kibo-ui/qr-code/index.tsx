@@ -81,7 +81,7 @@ export const QRCode = ({
 	return (
 		<div
 			className={cn("size-full", "[&_svg]:size-full", className)}
-			// biome-ignore lint/security/noDangerouslySetInnerHtml: "Required for SVG"
+			// oxlint-disable-next-line react/no-danger -- The QR library returns the SVG markup rendered here.
 			dangerouslySetInnerHTML={{ __html: svg }}
 			{...props}
 		/>

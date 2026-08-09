@@ -102,7 +102,7 @@ describe("Permissions", () => {
 						courseId,
 						school: TEST_SCHOOLS.PRIMARY,
 					}),
-			).rejects.toThrow("Not authorized");
+			).rejects.toThrow("User must be at least editor");
 		});
 
 		it("unauthenticated user cannot access course dashboard", async () => {
@@ -575,7 +575,7 @@ describe("Permission Enforcement", () => {
 					unitName: "Should Fail",
 					school: TEST_SCHOOLS.PRIMARY,
 				}),
-			).rejects.toThrow("Not authorized");
+			).rejects.toThrow("User must be at least editor");
 		});
 	});
 

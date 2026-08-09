@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/suspicious/noArrayIndexKey: perf doesn't matter skeleton */
+/* oxlint-disable react/no-array-index-key -- Stable identity is irrelevant for loading skeletons. */
 import { Skeleton } from "@ocw/ui/skeleton";
 
 function HeaderSkeleton() {

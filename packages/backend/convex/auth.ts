@@ -110,17 +110,10 @@ async function ensureAuthenticated(
 	const userId = await getAuthenticatedUserId(ctx);
 	const siteUser = await getSiteUser(ctx, userId, school);
 
-	if (!siteUser) {
-		throw new ConvexError({
-			kind: "authorization",
-			message: "User is not a member of this school",
-		});
-	}
-
 	return {
 		userId,
-		siteRole: siteUser.role,
-		school: siteUser.school,
+		siteRole: siteUser?.role ?? null,
+		school,
 	};
 }
 

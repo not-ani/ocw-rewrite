@@ -25,16 +25,14 @@ import {
 	TableRow,
 } from "@ocw/ui/table";
 import { Textarea } from "@ocw/ui/textarea";
-import {
-	contactPersonFormSchema,
-	type ContactPersonFormValues,
-} from "@ocw/validators";
+import { contactPersonFormSchema } from "@ocw/validators";
+import type { ContactPersonFormValues } from "@ocw/validators";
 import type { PersonContact } from "./types";
 
-type ContactPersonsCardProps = {
+interface ContactPersonsCardProps {
 	school: string;
 	contacts: PersonContact[];
-};
+}
 
 export function ContactPersonsCard({
 	school,
@@ -58,8 +56,11 @@ export function ContactPersonsCard({
 	});
 
 	const handleStartEdit = (index: number) => {
+		const contact = contacts[index];
+		if (!contact) return;
+
 		setEditingIndex(index);
-		setEditingContact({ ...contacts[index] });
+		setEditingContact({ ...contact });
 	};
 
 	const handleCancelEdit = () => {
@@ -105,7 +106,7 @@ export function ContactPersonsCard({
 					{
 						name: values.name,
 						email: values.email,
-						description: values.description || "",
+						description: values.description ?? "",
 					},
 				],
 			});
@@ -162,7 +163,7 @@ export function ContactPersonsCard({
 					</TableHeader>
 					<TableBody>
 						{contacts.map((contact, index) => (
-							<TableRow key={index}>
+							<TableRow key={`${contact.email}:${contact.name}`}>
 								<TableCell>
 									{editingIndex === index && editingContact ? (
 										<Input

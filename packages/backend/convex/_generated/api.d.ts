@@ -21,6 +21,7 @@ import type * as migrations from "../migrations.js";
 import type * as permissions from "../permissions.js";
 import type * as privateData from "../privateData.js";
 import type * as site from "../site.js";
+import type * as sitemap from "../sitemap.js";
 import type * as units from "../units.js";
 
 import type {
@@ -51,6 +52,7 @@ declare const fullApi: ApiFromModules<{
   permissions: typeof permissions;
   privateData: typeof privateData;
   site: typeof site;
+  sitemap: typeof sitemap;
   units: typeof units;
 }>;
 declare const fullApiWithMounts: typeof fullApi;

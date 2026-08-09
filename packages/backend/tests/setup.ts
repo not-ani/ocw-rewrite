@@ -20,7 +20,7 @@ import {
 } from "./testUtils";
 
 // convex-test instance type - using ReturnType to infer from convexTest function
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// oxlint-disable-next-line typescript/no-explicit-any -- convex-test does not export this instance type.
 type ConvexTestInstance = any;
 
 /**

@@ -77,6 +77,14 @@ export const TEST_USERS = {
 
 export type TestUser = (typeof TEST_USERS)[keyof typeof TEST_USERS];
 
+function assertTestUserCredentials(
+  user: TestUser,
+): asserts user is TestUser & { email: string; password: string } {
+  if (!user.email || !user.password) {
+    throw new Error("E2E test user email and password must be configured");
+  }
+}
+
 /**
  * Extended test fixture that provides Clerk authentication utilities.
  *
@@ -126,6 +134,8 @@ export const test = base.extend<{
 }>({
   signIn: async ({ page }, use) => {
     const signIn = async (user: TestUser = TEST_USERS.USER) => {
+      assertTestUserCredentials(user);
+
       // Navigate to an unprotected page that loads Clerk (required before clerk.signIn)
       await page.goto("/");
 
@@ -194,6 +204,8 @@ export async function signInUser(
   page: Page,
   user: TestUser = TEST_USERS.USER,
 ): Promise<void> {
+  assertTestUserCredentials(user);
+
   await page.goto("/");
 
   const isAlreadySignedIn = await page

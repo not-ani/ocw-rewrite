@@ -1,16 +1,16 @@
 "use client";
 import { LoaderCircleIcon } from "lucide-react";
 import type React from "react";
-import { memo, useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useEffectEvent, useRef, useState } from "react";
 
-type EmbedLoaderProps = {
+interface EmbedLoaderProps {
 	src: string;
 	loaderComponent?: React.ReactNode;
 	timeout?: number;
 	onLoad?: () => void;
 	onError?: (error: Error) => void;
 	className?: string;
-};
+}
 
 const DEFAULT_TIMEOUT = 10_000; // 10 seconds
 /*
@@ -18,18 +18,21 @@ const DEFAULT_TIMEOUT = 10_000; // 10 seconds
  * we need to find a way to only stop the embed when there are breaking errors and not just when there are errors.
  */
 
-export const Embed: React.FC<EmbedLoaderProps> = memo(function Embed({
+export function Embed({
 	src: embedUrl,
 	loaderComponent,
 	timeout = DEFAULT_TIMEOUT,
 	onLoad,
 	onError,
 	className,
-}) {
+}: EmbedLoaderProps) {
 	const [isLoading, setIsLoading] = useState(true);
 	const [hasError, setHasError] = useState(false);
 	const iframeRef = useRef<HTMLIFrameElement>(null);
-	const timeoutRef = useRef<NodeJS.Timeout>();
+	const timeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
+	const reportError = useEffectEvent((error: Error) => {
+		onError?.(error);
+	});
 
 	useEffect(() => {
 		// Set a timeout to trigger error if embed takes too long to load.
@@ -37,33 +40,27 @@ export const Embed: React.FC<EmbedLoaderProps> = memo(function Embed({
 			if (isLoading) {
 				setHasError(true);
 				setIsLoading(false);
-				if (onError) {
-					onError(new Error("Embed load timed out"));
-				}
+				reportError(new Error("Embed load timed out"));
 			}
 		}, timeout);
 
 		return () => {
 			clearTimeout(timeoutRef.current);
 		};
-	}, [timeout, isLoading, onError]);
+	}, [timeout, isLoading]);
 
-	const handleLoad = useCallback(() => {
+	const handleLoad = () => {
 		clearTimeout(timeoutRef.current);
 		setIsLoading(false);
-		if (onLoad) {
-			onLoad();
-		}
-	}, [onLoad]);
+		onLoad?.();
+	};
 
-	const handleError = useCallback(() => {
+	const handleError = () => {
 		clearTimeout(timeoutRef.current);
 		setHasError(true);
 		setIsLoading(false);
-		if (onError) {
-			onError(new Error("Failed to load embed"));
-		}
-	}, [onError]);
+		onError?.(new Error("Failed to load embed"));
+	};
 
 	return (
 		<div className={className}>
@@ -102,4 +99,4 @@ export const Embed: React.FC<EmbedLoaderProps> = memo(function Embed({
 			/>
 		</div>
 	);
-});
+}

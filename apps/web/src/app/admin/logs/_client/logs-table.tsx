@@ -10,7 +10,6 @@ import {
 	TrashIcon,
 	UserIcon,
 } from "lucide-react";
-import { memo, useMemo } from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@ocw/ui/avatar";
 import { Badge } from "@ocw/ui/badge";
 import type { ColumnDef } from "@ocw/ui/kibo-ui/table";
@@ -31,17 +30,13 @@ import {
 	TooltipTrigger,
 } from "@ocw/ui/tooltip";
 import { cn } from "@/lib/utils";
-import {
-	type ClerkUser,
-	type EnrichedLog,
-	LOG_ACTION_LABELS,
-	type LogAction,
-} from "./types";
+import { LOG_ACTION_LABELS } from "./types";
+import type { ClerkUser, EnrichedLog, LogAction } from "./types";
 
-type LogsTableProps = {
+interface LogsTableProps {
 	logs: EnrichedLog[];
 	userMap: Map<string, ClerkUser>;
-};
+}
 
 const ACTION_ICON_MAP: Record<
 	string,
@@ -78,18 +73,16 @@ const dateFormatter = new Intl.DateTimeFormat("en-US", {
 	hour: "numeric",
 	minute: "2-digit",
 	hour12: true,
+	timeZone: "UTC",
 });
 
 function getActionParts(action: LogAction) {
-	const parts = action.split("_");
-	const actionType = parts[0];
-	const entityType = parts.slice(1).join("_");
+	const [actionType = "", ...parts] = action.split("_");
+	const entityType = parts.join("_");
 	return { actionType, entityType };
 }
 
-const ActionBadge = memo(function ActionBadge({
-	action,
-}: {
+function ActionBadge({ action }: {
 	action: LogAction;
 }) {
 	const { actionType, entityType } = getActionParts(action);
@@ -110,7 +103,7 @@ const ActionBadge = memo(function ActionBadge({
 			<span>{LOG_ACTION_LABELS[action]}</span>
 		</Badge>
 	);
-});
+}
 
 function formatDate(timestamp: number) {
 	return dateFormatter.format(new Date(timestamp));
@@ -133,22 +126,21 @@ function formatRelativeTime(timestamp: number) {
 
 function extractClerkId(userId: string) {
 	// Extract the Clerk user ID from the tokenIdentifier (format: "issuer|userId")
-	const parts = userId.split("|");
-	return parts[parts.length - 1];
+	return userId.split("|").at(-1) ?? userId;
 }
 
-type UserCellProps = {
+interface UserCellProps {
 	userId: string;
 	user: ClerkUser | undefined;
-};
+}
 
-const UserCell = memo(function UserCell({ userId, user }: UserCellProps) {
+function UserCell({ userId, user }: UserCellProps) {
 	const clerkId = extractClerkId(userId);
 
 	if (user) {
 		const initials = user.fullName
 			.split(" ")
-			.map((n) => n[0])
+			.map((namePart) => namePart[0] ?? "")
 			.join("")
 			.slice(0, 2);
 
@@ -199,26 +191,23 @@ const UserCell = memo(function UserCell({ userId, user }: UserCellProps) {
 			</Tooltip>
 		</TooltipProvider>
 	);
-});
+}
 
-type TargetCellProps = {
+interface TargetCellProps {
 	courseName?: string;
 	unitName?: string;
 	lessonName?: string;
-};
+}
 
-const TargetCell = memo(function TargetCell({
+function TargetCell({
 	courseName,
 	unitName,
 	lessonName,
 }: TargetCellProps) {
-	const targets = useMemo(() => {
-		const result: string[] = [];
-		if (courseName) result.push(`📚 ${courseName}`);
-		if (unitName) result.push(`📁 ${unitName}`);
-		if (lessonName) result.push(`📄 ${lessonName}`);
-		return result;
-	}, [courseName, unitName, lessonName]);
+	const targets: string[] = [];
+	if (courseName) targets.push(`📚 ${courseName}`);
+	if (unitName) targets.push(`📁 ${unitName}`);
+	if (lessonName) targets.push(`📄 ${lessonName}`);
 
 	if (targets.length === 0) {
 		return <span className="text-muted-foreground">—</span>;
@@ -226,20 +215,20 @@ const TargetCell = memo(function TargetCell({
 
 	return (
 		<div className="flex flex-col gap-0.5">
-			{targets.map((target, i) => (
-				<span key={i} className="text-sm">
+			{targets.map((target) => (
+				<span key={target} className="text-sm">
 					{target}
 				</span>
 			))}
 		</div>
 	);
-});
+}
 
-type TimeCellProps = {
+interface TimeCellProps {
 	timestamp: number;
-};
+}
 
-const TimeCell = memo(function TimeCell({ timestamp }: TimeCellProps) {
+function TimeCell({ timestamp }: TimeCellProps) {
 	return (
 		<TooltipProvider>
 			<Tooltip>
@@ -254,17 +243,10 @@ const TimeCell = memo(function TimeCell({ timestamp }: TimeCellProps) {
 			</Tooltip>
 		</TooltipProvider>
 	);
-});
+}
 
 export function LogsTable({ logs, userMap }: LogsTableProps) {
-	// Derive a stable key that changes when users become available
-	// This helps React know when we need to re-render cells with user data
-	const usersLoaded = userMap.size > 0;
-
-	// Column definitions - recreated when usersLoaded changes to force cell re-renders
-	// biome-ignore lint/correctness/useExhaustiveDependencies: we intentionally depend on usersLoaded to force re-render when users load
-	const columns: ColumnDef<EnrichedLog>[] = useMemo(
-		() => [
+	const columns: ColumnDef<EnrichedLog>[] = [
 			{
 				accessorKey: "action",
 				header: ({ column }) => (
@@ -307,10 +289,7 @@ export function LogsTable({ logs, userMap }: LogsTableProps) {
 					/>
 				),
 			},
-		],
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- intentionally depend on usersLoaded to force re-render when users load
-		[userMap, usersLoaded],
-	);
+	];
 
 	if (logs.length === 0) {
 		return (

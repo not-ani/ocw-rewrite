@@ -26,15 +26,18 @@ describe("Units", () => {
 		it("returns all units for a course", async () => {
 			const t = createConvexTest();
 
+			await setupSiteAdmin(t, TEST_SCHOOLS.PRIMARY);
 			const { courseId } = await setupCompleteCourse(t, TEST_SCHOOLS.PRIMARY, {
 				unitCount: 3,
 				lessonsPerUnit: 0,
 			});
 
-			const result = await t.query(api.units.getTableData, {
-				courseId,
-				school: TEST_SCHOOLS.PRIMARY,
-			});
+			const result = await t
+				.withIdentity(TEST_USERS.SITE_ADMIN)
+				.query(api.units.getTableData, {
+					courseId,
+					school: TEST_SCHOOLS.PRIMARY,
+				});
 
 			expect(result).toHaveLength(3);
 			expect(result.every((u) => u.courseId === courseId)).toBe(true);
@@ -43,6 +46,7 @@ describe("Units", () => {
 		it("returns units in ascending order", async () => {
 			const t = createConvexTest();
 
+			await setupSiteAdmin(t, TEST_SCHOOLS.PRIMARY);
 			const { courseId } = await setupCourse(t, TEST_SCHOOLS.PRIMARY);
 
 			// Create units in order (Convex sorts by creation time within index)
@@ -59,10 +63,12 @@ describe("Units", () => {
 				order: 2,
 			});
 
-			const result = await t.query(api.units.getTableData, {
-				courseId,
-				school: TEST_SCHOOLS.PRIMARY,
-			});
+			const result = await t
+				.withIdentity(TEST_USERS.SITE_ADMIN)
+				.query(api.units.getTableData, {
+					courseId,
+					school: TEST_SCHOOLS.PRIMARY,
+				});
 
 			expect(result[0]?.name).toBe("Unit 1");
 			expect(result[1]?.name).toBe("Unit 2");
@@ -406,10 +412,12 @@ describe("Units", () => {
 				school: TEST_SCHOOLS.PRIMARY,
 			});
 
-			const units = await t.query(api.units.getTableData, {
-				courseId,
-				school: TEST_SCHOOLS.PRIMARY,
-			});
+			const units = await t
+				.withIdentity(TEST_USERS.SITE_ADMIN)
+				.query(api.units.getTableData, {
+					courseId,
+					school: TEST_SCHOOLS.PRIMARY,
+				});
 
 			// Sort by order field to verify reordering worked
 			// (production returns by creation time, so we sort here to verify order values)
@@ -490,10 +498,12 @@ describe("Units", () => {
 				school: TEST_SCHOOLS.PRIMARY,
 			});
 
-			const remaining = await t.query(api.units.getTableData, {
-				courseId,
-				school: TEST_SCHOOLS.PRIMARY,
-			});
+			const remaining = await t
+				.withIdentity(TEST_USERS.SITE_ADMIN)
+				.query(api.units.getTableData, {
+					courseId,
+					school: TEST_SCHOOLS.PRIMARY,
+				});
 
 			expect(remaining).toHaveLength(2);
 			expect(remaining[0]?.order).toBe(0);

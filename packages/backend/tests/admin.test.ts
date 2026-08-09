@@ -443,15 +443,18 @@ describe("Site Configuration", () => {
 			const t = createConvexTest();
 
 			await setupSiteConfig(t, TEST_SCHOOLS.PRIMARY);
+			await setupSiteAdmin(t, TEST_SCHOOLS.PRIMARY);
 
-			await t.mutation(api.site.updateSiteConfigBasicFields, {
-				school: TEST_SCHOOLS.PRIMARY,
-				schoolName: "Updated School Name",
-				siteHero: "New hero text",
-				siteLogo: "https://example.com/logo.png",
-				instagramUrl: "https://instagram.com/school",
-				siteContributeLink: "https://contribute.example.com",
-			});
+			await t
+				.withIdentity(TEST_USERS.SITE_ADMIN)
+				.mutation(api.site.updateSiteConfigBasicFields, {
+					school: TEST_SCHOOLS.PRIMARY,
+					schoolName: "Updated School Name",
+					siteHero: "New hero text",
+					siteLogo: "https://example.com/logo.png",
+					instagramUrl: "https://instagram.com/school",
+					siteContributeLink: "https://contribute.example.com",
+				});
 
 			const config = await t.query(api.site.getSiteConfig, {
 				school: TEST_SCHOOLS.PRIMARY,
@@ -464,12 +467,15 @@ describe("Site Configuration", () => {
 
 		it("throws error for non-existent site", async () => {
 			const t = createConvexTest();
+			await setupSiteAdmin(t, "non-existent");
 
 			await expect(
-				t.mutation(api.site.updateSiteConfigBasicFields, {
-					school: "non-existent",
-					schoolName: "Test",
-				}),
+				t
+					.withIdentity(TEST_USERS.SITE_ADMIN)
+					.mutation(api.site.updateSiteConfigBasicFields, {
+						school: "non-existent",
+						schoolName: "Test",
+					}),
 			).rejects.toThrow("Site configuration not found");
 		});
 	});
@@ -479,12 +485,15 @@ describe("Site Configuration", () => {
 			const t = createConvexTest();
 
 			await setupSiteConfig(t, TEST_SCHOOLS.PRIMARY);
+			await setupSiteAdmin(t, TEST_SCHOOLS.PRIMARY);
 
-			await t.mutation(api.site.updateClubInfo, {
-				school: TEST_SCHOOLS.PRIMARY,
-				clubName: "Computer Science Club",
-				clubEmail: "cs-club@school.edu",
-			});
+			await t
+				.withIdentity(TEST_USERS.SITE_ADMIN)
+				.mutation(api.site.updateClubInfo, {
+					school: TEST_SCHOOLS.PRIMARY,
+					clubName: "Computer Science Club",
+					clubEmail: "cs-club@school.edu",
+				});
 
 			const config = await t.query(api.site.getSiteConfig, {
 				school: TEST_SCHOOLS.PRIMARY,
@@ -500,22 +509,27 @@ describe("Site Configuration", () => {
 			const t = createConvexTest();
 
 			await setupSiteConfig(t, TEST_SCHOOLS.PRIMARY);
+			await setupSiteAdmin(t, TEST_SCHOOLS.PRIMARY);
 
-			const contributorId1 = await t.mutation(api.site.createContributor, {
-				school: TEST_SCHOOLS.PRIMARY,
-				name: "John Doe",
-				role: "Developer",
-				avatar: "https://example.com/avatar.png",
-				description: "Backend developer",
-			});
+			const contributorId1 = await t
+				.withIdentity(TEST_USERS.SITE_ADMIN)
+				.mutation(api.site.createContributor, {
+					school: TEST_SCHOOLS.PRIMARY,
+					name: "John Doe",
+					role: "Developer",
+					avatar: "https://example.com/avatar.png",
+					description: "Backend developer",
+				});
 
-			const contributorId2 = await t.mutation(api.site.createContributor, {
-				school: TEST_SCHOOLS.PRIMARY,
-				name: "Jane Smith",
-				role: "Designer",
-				avatar: "https://example.com/avatar2.png",
-				description: "UI/UX designer",
-			});
+			const contributorId2 = await t
+				.withIdentity(TEST_USERS.SITE_ADMIN)
+				.mutation(api.site.createContributor, {
+					school: TEST_SCHOOLS.PRIMARY,
+					name: "Jane Smith",
+					role: "Designer",
+					avatar: "https://example.com/avatar2.png",
+					description: "UI/UX designer",
+				});
 
 			const contributors = await t.query(api.site.getContributors, {
 				school: TEST_SCHOOLS.PRIMARY,
@@ -530,20 +544,26 @@ describe("Site Configuration", () => {
 			const t = createConvexTest();
 
 			await setupSiteConfig(t, TEST_SCHOOLS.PRIMARY);
+			await setupSiteAdmin(t, TEST_SCHOOLS.PRIMARY);
 
-			const contributorId = await t.mutation(api.site.createContributor, {
-				school: TEST_SCHOOLS.PRIMARY,
-				name: "John Doe",
-				role: "Developer",
-				avatar: "https://example.com/avatar.png",
-				description: "Backend developer",
-			});
+			const contributorId = await t
+				.withIdentity(TEST_USERS.SITE_ADMIN)
+				.mutation(api.site.createContributor, {
+					school: TEST_SCHOOLS.PRIMARY,
+					name: "John Doe",
+					role: "Developer",
+					avatar: "https://example.com/avatar.png",
+					description: "Backend developer",
+				});
 
-			await t.mutation(api.site.updateContributor, {
-				contributorId,
-				name: "John Updated",
-				role: "Senior Developer",
-			});
+			await t
+				.withIdentity(TEST_USERS.SITE_ADMIN)
+				.mutation(api.site.updateContributor, {
+					school: TEST_SCHOOLS.PRIMARY,
+					contributorId,
+					name: "John Updated",
+					role: "Senior Developer",
+				});
 
 			const contributors = await t.query(api.site.getContributors, {
 				school: TEST_SCHOOLS.PRIMARY,
@@ -558,18 +578,24 @@ describe("Site Configuration", () => {
 			const t = createConvexTest();
 
 			await setupSiteConfig(t, TEST_SCHOOLS.PRIMARY);
+			await setupSiteAdmin(t, TEST_SCHOOLS.PRIMARY);
 
-			const contributorId = await t.mutation(api.site.createContributor, {
-				school: TEST_SCHOOLS.PRIMARY,
-				name: "John Doe",
-				role: "Developer",
-				avatar: "https://example.com/avatar.png",
-				description: "Backend developer",
-			});
+			const contributorId = await t
+				.withIdentity(TEST_USERS.SITE_ADMIN)
+				.mutation(api.site.createContributor, {
+					school: TEST_SCHOOLS.PRIMARY,
+					name: "John Doe",
+					role: "Developer",
+					avatar: "https://example.com/avatar.png",
+					description: "Backend developer",
+				});
 
-			await t.mutation(api.site.deleteContributor, {
-				contributorId,
-			});
+			await t
+				.withIdentity(TEST_USERS.SITE_ADMIN)
+				.mutation(api.site.deleteContributor, {
+					school: TEST_SCHOOLS.PRIMARY,
+					contributorId,
+				});
 
 			const contributors = await t.query(api.site.getContributors, {
 				school: TEST_SCHOOLS.PRIMARY,
@@ -584,17 +610,20 @@ describe("Site Configuration", () => {
 			const t = createConvexTest();
 
 			await setupSiteConfig(t, TEST_SCHOOLS.PRIMARY);
+			await setupSiteAdmin(t, TEST_SCHOOLS.PRIMARY);
 
-			await t.mutation(api.site.updatePersonsContact, {
-				school: TEST_SCHOOLS.PRIMARY,
-				personsContact: [
-					{
-						name: "Support Team",
-						email: "support@school.edu",
-						description: "General support",
-					},
-				],
-			});
+			await t
+				.withIdentity(TEST_USERS.SITE_ADMIN)
+				.mutation(api.site.updatePersonsContact, {
+					school: TEST_SCHOOLS.PRIMARY,
+					personsContact: [
+						{
+							name: "Support Team",
+							email: "support@school.edu",
+							description: "General support",
+						},
+					],
+				});
 
 			const config = await t.query(api.site.getSiteConfig, {
 				school: TEST_SCHOOLS.PRIMARY,

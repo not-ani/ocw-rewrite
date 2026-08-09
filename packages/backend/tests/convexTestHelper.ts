@@ -10,9 +10,7 @@ import schema from "../convex/schema";
 
 // Import all Convex function modules from the convex directory
 // @ts-expect-error - import.meta.glob is a Vite feature
-const modules = import.meta.glob("../convex/**/*.*s", {
-	eager: true,
-});
+const modules = import.meta.glob("../convex/**/!(*.*.*)*.*s");
 
 /**
  * Creates a convex test instance with all modules pre-loaded.

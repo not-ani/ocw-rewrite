@@ -1,11 +1,14 @@
 import { clerkClient } from "@clerk/nextjs/server";
-import { api } from "@ocw/backend/convex/_generated/api";
+import { auth } from "@clerk/nextjs/server";
 import { fetchQuery } from "convex/nextjs";
 import { NextResponse } from "next/server";
+
 import { getAuthToken } from "@/lib/auth";
 import { extractSubdomain } from "@/lib/multi-tenant/server";
+import { api } from "@ocw/backend/convex/_generated/api";
 
 export async function GET() {
+	await auth.protect();
 	const subdomain = await extractSubdomain();
 	if (!subdomain) {
 		return NextResponse.json({ error: "Unauthorized" }, { status: 401 });

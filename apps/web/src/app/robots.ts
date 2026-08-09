@@ -1,9 +1,9 @@
 import type { MetadataRoute } from "next";
-import { getBaseUrl } from "@/lib/multi-tenant/server";
 
-export default async function robots(): Promise<MetadataRoute.Robots> {
-	const baseUrl = await getBaseUrl();
+import { protocol, rootDomain } from "@/lib/site";
 
+export default function robots(): MetadataRoute.Robots {
+	const baseUrl = `${protocol}://${rootDomain}`;
 	return {
 		rules: [
 			{
@@ -14,7 +14,7 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
 					"/api/",
 					"/course/*/dashboard/",
 					"/ocw-admin/",
-					"/ocw-path-for-stuff/",
+					"/ocw-path-for-real/",
 					"/_next/",
 					"/unauthorized/",
 				],
@@ -23,4 +23,3 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
 		sitemap: `${baseUrl}/sitemap.xml`,
 	};
 }
-

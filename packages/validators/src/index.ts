@@ -4,7 +4,7 @@ export const addCourseFormSchema = type({
   name: "3 <= string <= 100",
   description: "10 <= string <= 500",
   subjectId: "string",
-  isPublic: "boolean = false",
+  isPublic: "boolean",
 });
 
 export type AddCourseFormValues = typeof addCourseFormSchema.infer;

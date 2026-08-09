@@ -204,14 +204,14 @@ export const siteConfigMigration = migrations.define({
 
 		if (doc.school === "creek") {
 			// Insert contributors into the new table
-			for (let i = 0; i < creekContributors.length; i++) {
+			for (const [order, contributor] of creekContributors.entries()) {
 				await ctx.db.insert("contributors", {
 					school: doc.school,
-					name: creekContributors[i].name,
-					role: creekContributors[i].role,
-					avatar: creekContributors[i].avatar,
-					description: creekContributors[i].description,
-					order: i,
+					name: contributor.name,
+					role: contributor.role,
+					avatar: contributor.avatar,
+					description: contributor.description,
+					order,
 				});
 			}
 
@@ -328,7 +328,8 @@ export const migrateContributorsToSeparateTable = migrations.define({
 		// Type assertion to access old contributors field that may exist in old data
 		const docWithContributors = doc
 
-		if (docWithContributors?.contributors === undefined) return;
+		const contributors = docWithContributors?.contributors;
+		if (contributors === undefined) return;
 		// Get existing contributors for this school to determine next order value
 		const existingContributors = await ctx.db
 			.query("contributors")
@@ -341,15 +342,14 @@ export const migrateContributorsToSeparateTable = migrations.define({
 				: -1;
 
 		// Create contributor records
-		for (let i = 0; i < docWithContributors?.contributors?.length; i++) {
-			const contributor = docWithContributors?.contributors?.[i];
+		for (const [index, contributor] of contributors.entries()) {
 			await ctx.db.insert("contributors", {
 				school: doc.school,
 				name: contributor.name,
 				role: contributor.role,
 				avatar: contributor.avatar,
 				description: contributor.description,
-				order: maxOrder + 1 + i,
+				order: maxOrder + 1 + index,
 			});
 		}
 

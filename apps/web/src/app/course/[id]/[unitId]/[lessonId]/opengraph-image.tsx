@@ -1,9 +1,9 @@
-import { api } from "@ocw/backend/convex/_generated/api";
-import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { fetchQuery } from "convex/nextjs";
 import { ImageResponse } from "next/og";
+
 import { isValidConvexId } from "@/lib/convex-utils";
-import { extractSubdomain } from "@/lib/multi-tenant/server";
+import { api } from "@ocw/backend/convex/_generated/api";
+import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 
 export const alt = "OpenCourseWare";
 export const size = {
@@ -22,11 +22,12 @@ type Params = {
 	lessonId: string;
 };
 
-export default async function Image({ params }: { params: Promise<Params> }) {
+export async function renderLessonOpenGraphImage(
+	domain: string | null,
+	unitId: string,
+	lessonId: string,
+) {
 	try {
-		const { unitId, lessonId } = await params;
-		const domain = await extractSubdomain();
-
 		if (!domain) {
 			return new ImageResponse(
 				<div
@@ -83,11 +84,11 @@ export default async function Image({ params }: { params: Promise<Params> }) {
 
 		const [siteConfig, lessonData, unit] = await Promise.all([
 			fetchQuery(api.site.getSiteConfig, { school: domain }),
-			fetchQuery(api.lesson.getLessonById, {
+			fetchQuery(api.lesson.getPublicLessonById, {
 				id: lessonId as Id<"lessons">,
 				school: domain,
 			}),
-			fetchQuery(api.units.getById, {
+			fetchQuery(api.units.getPublicById, {
 				id: unitId as Id<"units">,
 				school: domain,
 			}),
@@ -207,4 +208,9 @@ export default async function Image({ params }: { params: Promise<Params> }) {
 			{ ...size },
 		);
 	}
+}
+
+export default async function Image({ params }: { params: Promise<Params> }) {
+	const { unitId, lessonId } = await params;
+	return renderLessonOpenGraphImage(null, unitId, lessonId);
 }

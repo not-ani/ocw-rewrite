@@ -13,13 +13,13 @@ This directory contains end-to-end tests for the OpenCourseWare web application.
 ### 1. Install Dependencies
 
 ```bash
-pnpm install
+bun install
 ```
 
 ### 2. Install Playwright Browsers
 
 ```bash
-pnpm test:e2e:install
+bun run test:e2e:install
 ```
 
 ### 3. Configure Environment Variables
@@ -65,43 +65,43 @@ Ensure your Convex development database has:
 ### Run All Tests
 
 ```bash
-pnpm test:e2e
+bun run test:e2e
 ```
 
 ### Run Tests with UI (Interactive Mode)
 
 ```bash
-pnpm test:e2e:ui
+bun run test:e2e:ui
 ```
 
 ### Run Tests in Headed Mode (See Browser)
 
 ```bash
-pnpm test:e2e:headed
+bun run test:e2e:headed
 ```
 
 ### Run Tests in Debug Mode
 
 ```bash
-pnpm test:e2e:debug
+bun run test:e2e:debug
 ```
 
 ### View Test Report
 
 ```bash
-pnpm test:e2e:report
+bun run test:e2e:report
 ```
 
 ### Run Specific Test File
 
 ```bash
-pnpm test:e2e e2e/tests/navigation.spec.ts
+bun run test:e2e e2e/tests/navigation.spec.ts
 ```
 
 ### Run Tests with a Tag
 
 ```bash
-pnpm test:e2e --grep "@smoke"
+bun run test:e2e --grep "@smoke"
 ```
 
 ## Directory Structure
@@ -186,7 +186,7 @@ await signOut();
 ### Convex Connection Issues
 
 - Verify `NEXT_PUBLIC_CONVEX_URL` is set
-- Ensure your Convex dev server is running (`npx convex dev`)
+- Ensure your Convex dev server is running (`bunx convex dev`)
 - Check that test data exists in your Convex database
 
 ### Timeout Issues
@@ -240,7 +240,7 @@ To run tests against a local Next.js server in CI (useful for testing without Ve
 ```yaml
 # GitHub Actions example
 - name: Run E2E Tests
-  run: pnpm test:e2e
+  run: bun run test:e2e
   env:
     CI: true
     CLERK_SECRET_KEY: ${{ secrets.CLERK_SECRET_KEY }}
@@ -253,13 +253,13 @@ You can test against any deployed URL by setting `E2E_BASE_URL`:
 
 ```bash
 # Test against Vercel preview
-E2E_BASE_URL=https://your-project-xxx.vercel.app pnpm test:e2e
+E2E_BASE_URL=https://your-project-xxx.vercel.app bun run test:e2e
 
 # Test against staging
-E2E_BASE_URL=https://staging.yourdomain.com pnpm test:e2e
+E2E_BASE_URL=https://staging.yourdomain.com bun run test:e2e
 
 # Test against production (be careful!)
-E2E_BASE_URL=https://yourdomain.com pnpm test:e2e
+E2E_BASE_URL=https://yourdomain.com bun run test:e2e
 ```
 
 When `E2E_BASE_URL` points to an external URL (not localhost), Playwright will:
@@ -281,4 +281,3 @@ CONVEX_DEPLOYMENT
 ```
 
 **Note:** You may want to use separate Clerk/Convex instances for preview vs production to avoid test data contamination.
-

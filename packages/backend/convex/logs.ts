@@ -71,7 +71,6 @@ export const getLogs = siteAdminQuery({
 		const limit = args.limit ?? 100;
 
 		// Choose the right index based on filters
-		// biome-ignore lint/suspicious/noImplicitAnyLet: we need to use a type that is not yet defined
 		let logsQuery;
 
 		if (args.action && args.userId) {

@@ -10,13 +10,13 @@ Tests are intentionally placed **outside** the `convex/` directory to avoid bund
 
 ```bash
 # From packages/backend
-pnpm test
+bun run test
 
 # Watch mode
-pnpm test:watch
+bun run test:watch
 
 # With coverage
-pnpm test:coverage
+bun run test:coverage
 ```
 
 ## Structure
@@ -79,4 +79,3 @@ Pre-defined test users in `testUtils.ts`:
 - `TEST_USERS.COURSE_EDITOR` - Course editor
 - `TEST_USERS.REGULAR_USER` - Regular authenticated user
 - `TEST_USERS.UNAUTHENTICATED` - No authentication (null)
-

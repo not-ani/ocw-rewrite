@@ -1,9 +1,9 @@
-import { api } from "@ocw/backend/convex/_generated/api";
-import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 import { fetchQuery } from "convex/nextjs";
 import { ImageResponse } from "next/og";
+
 import { isValidConvexId } from "@/lib/convex-utils";
-import { extractSubdomain } from "@/lib/multi-tenant/server";
+import { api } from "@ocw/backend/convex/_generated/api";
+import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 
 export const alt = "OpenCourseWare";
 export const size = {
@@ -16,15 +16,11 @@ export const runtime = "nodejs";
 // Cache OG images for 1 hour, revalidate in background
 export const revalidate = 3600;
 
-export default async function Image({
-	params,
-}: {
-	params: Promise<{ id: string }>;
-}) {
+export async function renderCourseOpenGraphImage(
+	domain: string | null,
+	id: string,
+) {
 	try {
-		const { id } = await params;
-		const domain = await extractSubdomain();
-
 		if (!domain) {
 			return new ImageResponse(
 				<div>
@@ -158,4 +154,12 @@ export default async function Image({
 			},
 		);
 	}
+}
+
+export default async function Image({
+	params,
+}: {
+	params: Promise<{ id: string }>;
+}) {
+	return renderCourseOpenGraphImage(null, (await params).id);
 }

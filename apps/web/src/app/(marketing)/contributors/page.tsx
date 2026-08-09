@@ -1,22 +1,22 @@
-import { api } from "@ocw/backend/convex/_generated/api";
 import { fetchQuery } from "convex/nextjs";
 import type { Metadata } from "next";
-import { extractSubdomain } from "@/lib/multi-tenant/server";
+
+import { getPublicSiteConfig } from "@/lib/public-data";
+import { api } from "@ocw/backend/convex/_generated/api";
+
 import { WritersTableClient } from "./client";
 
-export async function generateMetadata(): Promise<Metadata> {
-	const subdomain = await extractSubdomain();
-
-	if (!subdomain) {
+export async function getContributorsMetadata(
+	school: string | null,
+): Promise<Metadata> {
+	if (!school) {
 		return {
 			title: "Contributors",
 			description: "Meet our contributors",
 		};
 	}
 
-	const siteConfig = await fetchQuery(api.site.getSiteConfig, {
-		school: subdomain,
-	});
+	const siteConfig = await getPublicSiteConfig(school);
 
 	return {
 		title: `Contributors | ${siteConfig?.schoolName ?? "OpenCourseWare"}`,
@@ -24,19 +24,25 @@ export async function generateMetadata(): Promise<Metadata> {
 	};
 }
 
-export default async function WritersTable() {
-	const subdomain = await extractSubdomain();
-
-	if (!subdomain) {
+export async function renderContributorsPage(school: string | null) {
+	if (!school) {
 		return null;
 	}
 
-	const siteConfig = await fetchQuery(api.site.getSiteConfig, {
-		school: subdomain,
-	});
+	const siteConfig = await getPublicSiteConfig(school);
 	const contributors = await fetchQuery(api.site.getContributors, {
-		school: subdomain,
+		school,
 	});
 
-	return <WritersTableClient siteConfig={siteConfig} contributors={contributors} />;
+	return (
+		<WritersTableClient siteConfig={siteConfig} contributors={contributors} />
+	);
+}
+
+export async function generateMetadata() {
+	return getContributorsMetadata(null);
+}
+
+export default async function WritersTable() {
+	return renderContributorsPage(null);
 }

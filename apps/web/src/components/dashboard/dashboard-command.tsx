@@ -1,4 +1,4 @@
-/** biome-ignore-all lint/a11y/useButtonType: this is how recommended in docs */
+/* oxlint-disable react/button-has-type -- Command items render buttons through a controlled component API. */
 "use client";
 
 import { api } from "@ocw/backend/convex/_generated/api";

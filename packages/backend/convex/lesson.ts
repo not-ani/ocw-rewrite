@@ -1,4 +1,5 @@
 import { ConvexError, v } from "convex/values";
+
 import { internal } from "./_generated/api";
 import { internalMutation, mutation, query } from "./_generated/server";
 import { courseMutation } from "./auth";
@@ -63,6 +64,32 @@ export const getLessonById = query({
 	},
 });
 
+export const getPublicLessonById = query({
+	args: { id: v.id("lessons"), school: v.string() },
+	handler: async (ctx, args) => {
+		const lesson = await ctx.db.get(args.id);
+		if (!lesson?.isPublished || lesson.school !== args.school) return null;
+		const [unit, course, embed] = await Promise.all([
+			ctx.db.get(lesson.unitId),
+			ctx.db.get(lesson.courseId),
+			ctx.db
+				.query("lessonEmbeds")
+				.withIndex("by_lesson_id", (q) => q.eq("lessonId", args.id))
+				.first(),
+		]);
+		if (
+			!unit?.isPublished ||
+			unit.school !== args.school ||
+			!course?.isPublic ||
+			course.school !== args.school ||
+			!embed
+		) {
+			return null;
+		}
+		return { lesson, embed };
+	},
+});
+
 function detectEmbed(input: string): {
 	contentType:
 		| "google_docs"
@@ -75,7 +102,7 @@ function detectEmbed(input: string): {
 	embedUrl?: string;
 } {
 	const iframeSrcMatch = input.match(/src="([^"]+)"/);
-	const url = iframeSrcMatch ? iframeSrcMatch[1] : input.trim();
+	const url = iframeSrcMatch?.[1] ?? input.trim();
 
 	try {
 		const u = new URL(url);

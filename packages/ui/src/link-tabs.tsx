@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import type { Route } from "next";
 import type * as React from "react";
 
 import { cn } from "./utils";
@@ -76,7 +77,7 @@ function LinkTabsList({
 
 interface LinkTabsTabProps
   extends Omit<React.ComponentPropsWithoutRef<typeof Link>, "href"> {
-  href: string;
+  href: Route<string>;
   orientation?: Orientation;
   exact?: boolean;
 }

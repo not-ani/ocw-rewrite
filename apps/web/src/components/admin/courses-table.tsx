@@ -164,8 +164,7 @@ export function CoursesTable({ courses }: CoursesTableProps) {
 			cell: ({ row }) => {
 				const course = row.original;
 				return (
-					// biome-ignore lint/a11y/noStaticElementInteractions: this is how recommended in docs
-					// biome-ignore lint/a11y/useKeyWithClickEvents: this is how recommended in docs
+					// oxlint-disable-next-line jsx-a11y/no-static-element-interactions, jsx-a11y/click-events-have-key-events -- The table row delegates navigation to this cell.
 					<div
 						className="cursor-pointer space-y-1"
 						onClick={() => router.push(`/course/${course._id}/dashboard`)}

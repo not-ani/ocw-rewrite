@@ -1,4 +1,4 @@
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// oxlint-disable-next-line typescript/ban-ts-comment -- Recharts' published types are incompatible with this wrapper.
 //@ts-nocheck
 import * as React from "react";
 import * as RechartsPrimitive from "recharts";

@@ -1,9 +1,8 @@
-import { api } from "@ocw/backend/convex/_generated/api";
-import { fetchQuery } from "convex/nextjs";
 import type { Metadata } from "next";
+
 import { HeroSection } from "@/components/hero";
-import { extractSubdomain } from "@/lib/multi-tenant/server";
-import { getAbsoluteUrl } from "@/lib/og-utils";
+import { getPublicSiteConfig } from "@/lib/public-data";
+import { getTenantBaseUrl } from "@/lib/site";
 
 export async function generateMetadata({
 	params,
@@ -11,11 +10,7 @@ export async function generateMetadata({
 	params: Promise<{ domain: string }>;
 }): Promise<Metadata> {
 	const { domain } = await params;
-	const currentSubdomain = await extractSubdomain();
-
-	const siteConfig = await fetchQuery(api.site.getSiteConfig, {
-		school: domain,
-	});
+	const siteConfig = await getPublicSiteConfig(domain);
 
 	const title = siteConfig
 		? `${siteConfig.schoolName} OpenCourseWare`
@@ -25,16 +20,8 @@ export async function generateMetadata({
 			`${siteConfig.schoolName} OpenCourseWare is a platform for free, high-quality resources to students at ${siteConfig.schoolName}`
 		: "Free, high-quality educational resources";
 
-	// If accessed via subdomain, use /opengraph-image (which gets rewritten)
-	// Otherwise, use the full path /s/[domain]/opengraph-image
-	const ogImagePath =
-		currentSubdomain === domain
-			? "/opengraph-image"
-			: `/s/${domain}/opengraph-image`;
-	const urlPath = currentSubdomain === domain ? "/" : `/s/${domain}`;
-
-	const ogImageUrl = await getAbsoluteUrl(ogImagePath);
-	const url = await getAbsoluteUrl(urlPath);
+	const url = getTenantBaseUrl(domain);
+	const ogImageUrl = `${url}/opengraph-image`;
 
 	return {
 		title,
@@ -74,7 +61,7 @@ export async function generateMetadata({
 
 export default function Page() {
 	return (
-		<div className="w-full bg-background/60">
+		<div className="bg-background/60 w-full">
 			<main className="flex w-full flex-1 flex-col rounded-xl p-4 transition-all duration-300 ease-in-out">
 				<div className="py-52 sm:py-42">
 					<HeroSection />

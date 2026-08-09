@@ -75,11 +75,11 @@ function getWebServerConfig() {
 
 	// Start local dev server for local testing
 	return {
-		// For local development, start the server separately with `pnpm dev` from the project root.
+		// For local development, start the server separately with `bun run dev` from the project root.
 		// This command is mainly for CI where we need to start the server automatically.
-		command: "npx next dev --port=3001",
+		command: "bunx next dev --port=3001",
 		url: "http://localhost:3001",
-		// Reuse existing server in local dev - make sure to run `pnpm dev` before tests
+		// Reuse existing server in local dev - make sure to run `bun run dev` before tests
 		reuseExistingServer: !process.env.CI,
 		timeout: 120 * 1000,
 		env: {
