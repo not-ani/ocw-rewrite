@@ -1,8 +1,8 @@
-import { preloadQuery } from "convex/nextjs";
-
 import { SiteContextProvider } from "@/lib/multi-tenant/context";
-import { getPublicSites } from "@/lib/public-data";
-import { api } from "@ocw/backend/convex/_generated/api";
+import { getPublicSiteConfig, getPublicSites } from "@/lib/public-data";
+
+// ClerkProvider currently reads the pathname above this unenumerated dynamic tree.
+export const instant = false;
 
 export async function generateStaticParams() {
 	const sites = await getPublicSites();
@@ -17,9 +17,7 @@ export default async function TenantCourseLayout({
 	params: Promise<{ domain: string }>;
 }) {
 	const { domain } = await params;
-	const siteConfig = await preloadQuery(api.site.getSiteConfig, {
-		school: domain,
-	});
+	const siteConfig = await getPublicSiteConfig(domain);
 	return (
 		<SiteContextProvider initialSiteConfig={siteConfig} subdomain={domain}>
 			{children}

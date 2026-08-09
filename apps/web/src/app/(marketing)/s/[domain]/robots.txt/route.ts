@@ -1,7 +1,5 @@
 import { getTenantBaseUrl } from "@/lib/site";
 
-export const revalidate = 3600;
-
 export async function GET(
 	_request: Request,
 	{ params }: { params: Promise<{ domain: string }> },

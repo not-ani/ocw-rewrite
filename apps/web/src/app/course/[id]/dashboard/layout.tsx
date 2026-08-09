@@ -4,6 +4,9 @@ import { AppSidebar } from "@/components/dashboard/sidebar/app-sidebar";
 import { CourseDashboardHeader } from "@/components/dashboard/sidebar/course-dashboard-header";
 import { SidebarInset, SidebarProvider } from "@ocw/ui/sidebar";
 
+// Authentication intentionally gates this private tree before course data renders.
+export const instant = false;
+
 export default async function DashboardLayout({
 	children,
 }: {

@@ -55,6 +55,7 @@
   },
   "devDependencies": {
     "@clerk/testing": "^1.13.19",
+    "@next/playwright": "16.3.0",
     "@ocw/tailwind-config": "workspace:*",
     "@ocw/tsconfig": "workspace:*",
     "@playwright/test": "^1.57.0",

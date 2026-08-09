@@ -5,10 +5,10 @@ import { Menu, MoveRight, Shield, X } from "lucide-react";
 import type { Route } from "next";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
-import { Button } from "@ocw/ui/button";
+import { Suspense, useState } from "react";
+
 import { useSite } from "@/lib/multi-tenant/context";
-import { Search } from "./search";
+import { Button } from "@ocw/ui/button";
 import {
 	NavigationMenu,
 	NavigationMenuContent,
@@ -18,6 +18,8 @@ import {
 	NavigationMenuTrigger,
 	navigationMenuTriggerStyle,
 } from "@ocw/ui/navigation-menu";
+
+import { Search } from "./search";
 
 const navigationItems = [
 	{
@@ -60,14 +62,17 @@ const navigationItems = [
 	},
 ];
 
-function Header() {
+function HeaderSearch() {
 	const route = usePathname();
+	return route.endsWith("/courses") ? null : <Search />;
+}
+
+function Header() {
 	const { user, siteConfig } = useSite();
 
-	const isCoursesPage = route.endsWith("/courses");
 	const [isOpen, setOpen] = useState(false);
 	return (
-		<header className={"sticky top-0 z-50 flex border-b bg-background"}>
+		<header className={"bg-background sticky top-0 z-50 flex border-b"}>
 			<div className="flex min-h-20 w-full flex-row items-center justify-evenly gap-4 px-5 lg:grid lg:grid-cols-3">
 				<div className="hidden flex-row items-center justify-start gap-4 lg:flex">
 					<NavigationMenu
@@ -115,7 +120,9 @@ function Header() {
 					</Link>
 				</div>
 				<div className="flex w-full justify-end gap-4">
-					{!isCoursesPage && <Search />}
+					<Suspense fallback={<Search />}>
+						<HeaderSearch />
+					</Suspense>
 					<div className="hidden border-r md:inline" />
 					<SignedIn>
 						{user?.isSiteAdmin && (
@@ -134,7 +141,7 @@ function Header() {
 						{isOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
 					</Button>
 					{isOpen && (
-						<div className="absolute top-20 right-0 left-0 z-50 flex w-full flex-col gap-8 border-t border-b bg-background px-5 py-4 shadow-lg backdrop-blur-sm">
+						<div className="bg-background absolute top-20 right-0 left-0 z-50 flex w-full flex-col gap-8 border-t border-b px-5 py-4 shadow-lg backdrop-blur-sm">
 							{navigationItems.map((item) => (
 								<div key={item.title}>
 									<div className="flex flex-col gap-2">
@@ -144,7 +151,7 @@ function Header() {
 												href={item.href as Route}
 											>
 												<span className="text-lg">{item.title}</span>
-												<MoveRight className="h-4 w-4 stroke-1 text-muted-foreground" />
+												<MoveRight className="text-muted-foreground h-4 w-4 stroke-1" />
 											</Link>
 										) : (
 											<p className="text-lg">{item.title}</p>

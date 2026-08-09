@@ -48,14 +48,13 @@ export async function generateMetadata({
 			description,
 			images: [ogImageUrl],
 		},
-		icons: {
-			icon: [
-				{
-					rel: "icon",
-					url: siteConfig?.siteLogo ?? "",
-				},
-			],
-		},
+		...(siteConfig?.siteLogo
+			? {
+					icons: {
+						icon: [{ rel: "icon", url: siteConfig.siteLogo }],
+					},
+				}
+			: {}),
 	};
 }
 

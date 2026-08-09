@@ -3,8 +3,6 @@ import { ImageResponse } from "next/og";
 export const alt = "The OpenCourseWare Project";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
-export const runtime = "nodejs";
-export const revalidate = 3600;
 
 export default function Image() {
 	return new ImageResponse(

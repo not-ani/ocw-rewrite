@@ -2,6 +2,9 @@ import { auth } from "@clerk/nextjs/server";
 
 import { LinkTabs, LinkTabsList, LinkTabsTab } from "@ocw/ui/link-tabs";
 
+// Authentication intentionally gates this private tree before any admin UI renders.
+export const instant = false;
+
 export default async function AdminLayout({
 	children,
 }: {

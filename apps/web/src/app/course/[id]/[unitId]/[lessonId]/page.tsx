@@ -1,5 +1,5 @@
-import { preloadQuery } from "convex/nextjs";
 import type { Metadata } from "next";
+import { cacheLife } from "next/cache";
 
 import { isValidConvexId } from "@/lib/convex-utils";
 import {
@@ -9,13 +9,9 @@ import {
 	getPublicUnit,
 } from "@/lib/public-data";
 import { protocol, rootDomain } from "@/lib/site";
-import { api } from "@ocw/backend/convex/_generated/api";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 
 import { LessonPageClient } from "./client";
-
-// Cache lesson pages for 60 seconds
-export const revalidate = 60;
 
 export async function getLessonMetadata(
 	school: string | null,
@@ -106,6 +102,9 @@ export async function renderLessonPage(
 	id: string,
 	lessonId: string,
 ) {
+	"use cache";
+	cacheLife("minutes");
+
 	if (!school) {
 		return null;
 	}
@@ -115,17 +114,17 @@ export async function renderLessonPage(
 		return null;
 	}
 
-	// Preload lesson data
-	const preloadedLesson = await preloadQuery(api.lesson.getPublicLessonById, {
-		id: lessonId as Id<"lessons">,
+	const initialLesson = await getPublicLesson(
 		school,
-	});
+		lessonId as Id<"lessons">,
+	);
 
 	return (
 		<LessonPageClient
 			courseId={id as Id<"courses">}
+			initialLesson={initialLesson}
+			lessonId={lessonId as Id<"lessons">}
 			subdomain={school}
-			preloadedLesson={preloadedLesson}
 		/>
 	);
 }

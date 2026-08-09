@@ -1,8 +1,7 @@
-import { fetchQuery } from "convex/nextjs";
 import { ImageResponse } from "next/og";
 
 import { isValidConvexId } from "@/lib/convex-utils";
-import { api } from "@ocw/backend/convex/_generated/api";
+import { getPublicCourse, getPublicSiteConfig } from "@/lib/public-data";
 import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 
 export const alt = "OpenCourseWare";
@@ -12,9 +11,6 @@ export const size = {
 };
 
 export const contentType = "image/png";
-export const runtime = "nodejs";
-// Cache OG images for 1 hour, revalidate in background
-export const revalidate = 3600;
 
 export async function renderCourseOpenGraphImage(
 	domain: string | null,
@@ -40,13 +36,8 @@ export async function renderCourseOpenGraphImage(
 		}
 
 		const [siteConfig, course] = await Promise.all([
-			fetchQuery(api.site.getSiteConfig, {
-				school: domain,
-			}),
-			fetchQuery(api.courses.getCourseById, {
-				courseId: id as Id<"courses">,
-				school: domain,
-			}),
+			getPublicSiteConfig(domain),
+			getPublicCourse(domain, id as Id<"courses">),
 		]);
 
 		const schoolName = siteConfig?.schoolName || "OpenCourseWare";

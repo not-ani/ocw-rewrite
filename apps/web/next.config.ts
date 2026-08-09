@@ -14,6 +14,7 @@ const tenantHosts = [
 ];
 
 const nextConfig: NextConfig = {
+	cacheComponents: true,
 	typedRoutes: true,
 	async rewrites() {
 		return {
@@ -132,6 +133,7 @@ const nextConfig: NextConfig = {
 	reactCompiler: true,
 	transpilePackages: ["@ocw/ui", "@ocw/redis", "@ocw/parse", "@ocw/validators"],
 	experimental: {
+		exposeTestingApiInProductionBuild: process.env.EXPOSE_TESTING_API === "1",
 		optimizePackageImports: [
 			"lucide-react",
 			"recharts",

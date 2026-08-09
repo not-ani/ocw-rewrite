@@ -1,5 +1,6 @@
 import { fetchQuery } from "convex/nextjs";
 import type { Metadata } from "next";
+import { cacheLife } from "next/cache";
 
 import { getPublicSiteConfig } from "@/lib/public-data";
 import { api } from "@ocw/backend/convex/_generated/api";
@@ -25,14 +26,17 @@ export async function getContributorsMetadata(
 }
 
 export async function renderContributorsPage(school: string | null) {
+	"use cache";
+	cacheLife("hours");
+
 	if (!school) {
 		return null;
 	}
 
-	const siteConfig = await getPublicSiteConfig(school);
-	const contributors = await fetchQuery(api.site.getContributors, {
-		school,
-	});
+	const [siteConfig, contributors] = await Promise.all([
+		getPublicSiteConfig(school),
+		fetchQuery(api.site.getContributors, { school }),
+	]);
 
 	return (
 		<WritersTableClient siteConfig={siteConfig} contributors={contributors} />

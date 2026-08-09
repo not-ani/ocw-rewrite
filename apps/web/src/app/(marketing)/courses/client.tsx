@@ -1,20 +1,27 @@
 "use client";
-import { api } from "@ocw/backend/convex/_generated/api";
-import type { Preloaded } from "convex/react";
-import { usePreloadedQuery, useQuery } from "convex/react";
+import { useQuery } from "convex/react";
+import type { FunctionReturnType } from "convex/server";
 import Link from "next/link";
 import { useQueryStates } from "nuqs";
-import { Suspense, useCallback, useMemo } from "react";
+import { Suspense } from "react";
+
 import { Pagination } from "@/components/courses/pagination";
 import { SearchBar } from "@/components/courses/search-bar";
-import { Skeleton } from "@ocw/ui/skeleton";
 import { useDebouncedValue } from "@/hooks/use-debounce";
+import { api } from "@ocw/backend/convex/_generated/api";
+import { Skeleton } from "@ocw/ui/skeleton";
+
 import { COURSES_PER_PAGE, SEARCH_DEBOUNCE_MS } from "./constants";
 import { coursesSearchParams } from "./parser";
 
+const courseSkeletonKeys = Array.from(
+	{ length: COURSES_PER_PAGE },
+	(_, index) => `course-skeleton-${index + 1}`,
+);
+
 export function CourseCardSkeleton() {
 	return (
-		<div className="flex min-h-[10rem] flex-col overflow-hidden rounded-lg bg-card shadow-md">
+		<div className="bg-card flex min-h-[10rem] flex-col overflow-hidden rounded-lg shadow-md">
 			<div className="flex flex-1 flex-col p-5">
 				{/* Title */}
 				<Skeleton className="mb-3 h-6 w-3/4" />
@@ -27,7 +34,7 @@ export function CourseCardSkeleton() {
 				</div>
 
 				{/* Units footer */}
-				<div className="mt-auto flex items-center pt-3 border-t border-border/50">
+				<div className="border-border/50 mt-auto flex items-center border-t pt-3">
 					<Skeleton className="h-4 w-20" />
 				</div>
 			</div>
@@ -35,13 +42,9 @@ export function CourseCardSkeleton() {
 	);
 }
 
-function CoursesPageSkeleton() {
-	const skeletonKeys = useMemo(
-		() => Array.from({ length: COURSES_PER_PAGE }, () => crypto.randomUUID()),
-		[],
-	);
+export function CoursesPageSkeleton() {
 	return (
-		<div className="min-h-screen bg-background">
+		<div className="bg-background min-h-screen">
 			<div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
 				<div className="mb-8">
 					<div className="max-w-md">
@@ -49,9 +52,9 @@ function CoursesPageSkeleton() {
 					</div>
 				</div>
 
-				<div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-stretch">
-					{skeletonKeys.map((i) => (
-						<CourseCardSkeleton key={i} />
+				<div className="mb-8 grid grid-cols-1 items-stretch gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+					{courseSkeletonKeys.map((key) => (
+						<CourseCardSkeleton key={key} />
 					))}
 				</div>
 
@@ -71,62 +74,50 @@ function CoursesPageSkeleton() {
 
 function CoursesData({
 	subdomain,
-	preloadedCourses,
+	initialCourses,
 }: {
 	subdomain: string;
-	preloadedCourses: Preloaded<typeof api.courses.getPaginatedCourses>;
+	initialCourses: FunctionReturnType<typeof api.courses.getPaginatedCourses>;
 }) {
 	const [queryState, setQueryState] = useQueryStates(coursesSearchParams);
 	const { page: currentPage, search: searchInput } = queryState;
 	const debouncedSearch = useDebouncedValue(searchInput, SEARCH_DEBOUNCE_MS);
 
-	// Use preloaded query for initial render, then useQuery for reactivity when params change
-	const preloadedData = usePreloadedQuery(preloadedCourses);
-	const isInitialLoad =
-		currentPage === 1 && !debouncedSearch && !searchInput;
+	const isInitialLoad = currentPage === 1 && !debouncedSearch && !searchInput;
 
-	const dynamicData = useQuery(
-		api.courses.getPaginatedCourses,
-		isInitialLoad
-			? "skip"
-			: {
-					page: currentPage,
-					search: debouncedSearch,
-					limit: COURSES_PER_PAGE,
-					school: subdomain,
-				},
-	);
+	const dynamicData = useQuery(api.courses.getPaginatedCourses, {
+		page: currentPage,
+		search: debouncedSearch,
+		limit: COURSES_PER_PAGE,
+		school: subdomain,
+	});
 
-	// Use preloaded data for initial load, otherwise use dynamic data (fallback to preloaded if dynamic is loading)
-	const coursesData = isInitialLoad
-		? preloadedData
-		: dynamicData ?? preloadedData;
+	const coursesData =
+		dynamicData ?? (isInitialLoad ? initialCourses : undefined);
 
-	const courses = coursesData.courses ?? [];
-	const totalPages = coursesData?.totalPages ?? 1;
-	const totalCourses = coursesData?.totalCourses ?? 0;
+	const goToPage = (page: number) => {
+		void setQueryState({ page });
+		window.scrollTo({ top: 0, behavior: "smooth" });
+	};
 
-	const goToPage = useCallback(
-		(page: number) => {
-			void setQueryState({ page });
-			window.scrollTo({ top: 0, behavior: "smooth" });
-		},
-		[setQueryState],
-	);
-
-	const handleSearchChange = useCallback(
-		(value: string) => {
-			void setQueryState({ search: value, page: 1 });
-		},
-		[setQueryState],
-	);
+	const handleSearchChange = (value: string) => {
+		void setQueryState({ search: value, page: 1 });
+	};
 
 	if (!coursesData) {
 		return <CoursesPageSkeleton />;
 	}
 
+	const courses = coursesData.courses ?? [];
+	const totalPages = coursesData.totalPages ?? 1;
+	const totalCourses = coursesData.totalCourses ?? 0;
+	const fillerKeys = Array.from(
+		{ length: COURSES_PER_PAGE - courses.length },
+		(_, index) => `course-filler-${courses.length + index + 1}`,
+	);
+
 	return (
-		<div className="min-h-screen bg-background">
+		<div className="bg-background min-h-screen">
 			<div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
 				<div className="mb-8">
 					<SearchBar
@@ -140,7 +131,7 @@ function CoursesData({
 
 				{courses.length === 0 ? (
 					<div className="py-12 text-center">
-						<p className="text-lg text-muted-foreground">
+						<p className="text-muted-foreground text-lg">
 							{debouncedSearch
 								? `No courses found for "${debouncedSearch}"`
 								: "No courses available"}
@@ -148,23 +139,23 @@ function CoursesData({
 					</div>
 				) : (
 					<div>
-						<div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 items-stretch">
+						<div className="mb-8 grid grid-cols-1 items-stretch gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
 							{courses.map((course) => (
 								<Link
 									prefetch
 									key={course._id}
-									className="group flex min-h-[10rem] flex-col overflow-hidden rounded-lg bg-card shadow-md transition-all duration-200 hover:shadow-lg hover:-translate-y-0.5"
+									className="group bg-card flex min-h-[10rem] flex-col overflow-hidden rounded-lg shadow-md transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-lg"
 									href={`/course/${course._id}`}
 								>
 									<div className="flex flex-1 flex-col p-5">
-										<h3 className="mb-3 font-semibold text-foreground text-lg leading-snug group-hover:text-primary transition-colors">
+										<h3 className="text-foreground group-hover:text-primary mb-3 text-lg leading-snug font-semibold transition-colors">
 											{course.name}
 										</h3>
-										<p className="mb-4 text-muted-foreground text-sm leading-relaxed">
+										<p className="text-muted-foreground mb-4 text-sm leading-relaxed">
 											{course.description}
 										</p>
-										<div className="mt-auto flex items-center pt-3 border-t border-border/50">
-											<span className="text-muted-foreground text-xs font-medium uppercase tracking-wide">
+										<div className="border-border/50 mt-auto flex items-center border-t pt-3">
+											<span className="text-muted-foreground text-xs font-medium tracking-wide uppercase">
 												{course.unitLength ?? 0} units
 											</span>
 										</div>
@@ -172,14 +163,12 @@ function CoursesData({
 								</Link>
 							))}
 
-							{Array.from({ length: COURSES_PER_PAGE - courses.length }).map(
-								(_, index) => (
-									<div
-										key={`filler-${index}`}
-										className="pointer-events-none min-h-[10rem] rounded-lg opacity-0"
-									/>
-								),
-							)}
+							{fillerKeys.map((key) => (
+								<div
+									key={key}
+									className="pointer-events-none min-h-[10rem] rounded-lg opacity-0"
+								/>
+							))}
 						</div>
 
 						{totalPages > 1 && (
@@ -204,14 +193,14 @@ function CoursesData({
 
 export function CoursesPage({
 	subdomain,
-	preloadedCourses,
+	initialCourses,
 }: {
 	subdomain: string;
-	preloadedCourses: Preloaded<typeof api.courses.getPaginatedCourses>;
+	initialCourses: FunctionReturnType<typeof api.courses.getPaginatedCourses>;
 }) {
 	return (
 		<Suspense fallback={<CoursesPageSkeleton />}>
-			<CoursesData subdomain={subdomain} preloadedCourses={preloadedCourses} />
+			<CoursesData initialCourses={initialCourses} subdomain={subdomain} />
 		</Suspense>
 	);
 }

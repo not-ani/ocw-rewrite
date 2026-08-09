@@ -1,10 +1,13 @@
-import { preloadQuery } from "convex/nextjs";
+import { fetchQuery } from "convex/nextjs";
 import type { Metadata } from "next";
+import { cacheLife } from "next/cache";
+import { connection } from "next/server";
+import { Suspense } from "react";
 
 import { getPublicSiteConfig } from "@/lib/public-data";
 import { api } from "@ocw/backend/convex/_generated/api";
 
-import { CoursesPage } from "./client";
+import { CoursesPage, CoursesPageSkeleton } from "./client";
 import { COURSES_PER_PAGE } from "./constants";
 
 export async function getCoursesMetadata(
@@ -25,20 +28,34 @@ export async function getCoursesMetadata(
 	};
 }
 
-export async function renderCoursesPage(school: string | null) {
+export function renderCoursesPage(school: string | null) {
 	if (!school) {
 		return <div>No subdomain found</div>;
 	}
 
-	// Preload initial courses data (page 1, no search)
-	const preloadedCourses = await preloadQuery(api.courses.getPaginatedCourses, {
+	return (
+		<Suspense fallback={<CoursesPageSkeleton />}>
+			<CoursesContent school={school} />
+		</Suspense>
+	);
+}
+
+async function CoursesContent({ school }: { school: string }) {
+	await connection();
+	const initialCourses = await getInitialCourses(school);
+
+	return <CoursesPage initialCourses={initialCourses} subdomain={school} />;
+}
+
+async function getInitialCourses(school: string) {
+	"use cache";
+	cacheLife("hours");
+	return fetchQuery(api.courses.getPaginatedCourses, {
 		page: 1,
 		search: "",
 		limit: COURSES_PER_PAGE,
 		school,
 	});
-
-	return <CoursesPage subdomain={school} preloadedCourses={preloadedCourses} />;
 }
 
 export async function generateMetadata() {

@@ -1,7 +1,7 @@
 "use client";
 
-import type { Preloaded } from "convex/react";
-import { usePreloadedQuery } from "convex/react";
+import { useQuery } from "convex/react";
+import type { FunctionReturnType } from "convex/server";
 import { HomeIcon } from "lucide-react";
 import Link from "next/link";
 import { Suspense } from "react";
@@ -210,11 +210,19 @@ function Layout({
 }
 
 function LessonEmbedData({
-	preloadedLesson,
+	initialLesson,
+	lessonId,
+	subdomain,
 }: {
-	preloadedLesson: Preloaded<typeof api.lesson.getPublicLessonById>;
+	initialLesson: FunctionReturnType<typeof api.lesson.getPublicLessonById>;
+	lessonId: Id<"lessons">;
+	subdomain: string;
 }) {
-	const lesson = usePreloadedQuery(preloadedLesson);
+	const lesson =
+		useQuery(api.lesson.getPublicLessonById, {
+			id: lessonId,
+			school: subdomain,
+		}) ?? initialLesson;
 	if (!lesson) return null;
 
 	return (
@@ -229,18 +237,24 @@ function LessonEmbedData({
 
 export function LessonPageClient({
 	courseId,
+	initialLesson,
+	lessonId,
 	subdomain,
-	preloadedLesson,
 }: {
 	courseId: Id<"courses">;
+	initialLesson: FunctionReturnType<typeof api.lesson.getPublicLessonById>;
+	lessonId: Id<"lessons">;
 	subdomain: string;
-	preloadedLesson: Preloaded<typeof api.lesson.getPublicLessonById>;
 }) {
 	return (
 		<Layout courseId={courseId} subdomain={subdomain}>
 			<main className="h-min-screen w-full">
 				<Suspense fallback={<LessonEmbedSkeleton />}>
-					<LessonEmbedData preloadedLesson={preloadedLesson} />
+					<LessonEmbedData
+						initialLesson={initialLesson}
+						lessonId={lessonId}
+						subdomain={subdomain}
+					/>
 				</Suspense>
 			</main>
 		</Layout>

@@ -1,9 +1,15 @@
 import { fetchQuery } from "convex/nextjs";
+import { cacheLife } from "next/cache";
+import { connection } from "next/server";
 
 import { getTenantBaseUrl } from "@/lib/site";
 import { api } from "@ocw/backend/convex/_generated/api";
 
-export const revalidate = 300;
+async function getPublicSitemapData(school: string) {
+	"use cache";
+	cacheLife({ stale: 300, revalidate: 300, expire: 3600 });
+	return fetchQuery(api.sitemap.getPublicSitemapData, { school });
+}
 
 function entry(
 	url: string,
@@ -19,10 +25,9 @@ export async function GET(
 	{ params }: { params: Promise<{ domain: string }> },
 ) {
 	const { domain } = await params;
+	await connection();
 	const baseUrl = getTenantBaseUrl(domain);
-	const data = await fetchQuery(api.sitemap.getPublicSitemapData, {
-		school: domain,
-	});
+	const data = await getPublicSitemapData(domain);
 	const entries = [
 		entry(baseUrl, "daily", 1),
 		entry(`${baseUrl}/courses`, "daily", 0.9),

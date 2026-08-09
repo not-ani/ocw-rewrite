@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import type { Route } from "next";
-import type * as React from "react";
+import * as React from "react";
 
 import { cn } from "./utils";
 
@@ -82,14 +82,14 @@ interface LinkTabsTabProps
   exact?: boolean;
 }
 
-function LinkTabsTab({
+function ActiveLinkTabsTab({
   className,
   href,
   orientation = "horizontal",
   exact = true,
   ...props
 }: LinkTabsTabProps) {
-  const pathname = usePathname()
+  const pathname = usePathname();
   const isActive = exact
     ? pathname === href
     : pathname === href || pathname.startsWith(`${href}/`);
@@ -110,6 +110,38 @@ function LinkTabsTab({
         className
       )}
     />
+  );
+}
+
+function LinkTabsTab(props: LinkTabsTabProps) {
+  const {
+    className,
+    href,
+    orientation = "horizontal",
+    exact: _exact,
+    ...linkProps
+  } = props;
+
+  return (
+    <React.Suspense
+      fallback={
+        <Link
+          {...linkProps}
+          href={href}
+          data-slot="tabs-trigger"
+          data-orientation={orientation}
+          className={cn(
+            "flex flex-1 shrink-0 cursor-pointer items-center justify-center whitespace-nowrap rounded-md border border-transparent font-medium text-sm outline-none transition-[color,background-color,box-shadow] focus-visible:ring-2 focus-visible:ring-ring [&_svg:not([class*='size-'])]:size-4 [&_svg]:pointer-events-none [&_svg]:shrink-0",
+            "hover:text-muted-foreground",
+            "gap-1.5 px-[calc(--spacing(2.5)-1px)] py-[calc(--spacing(1.5)-1px)]",
+            orientation === "vertical" && "w-full justify-start",
+            className
+          )}
+        />
+      }
+    >
+      <ActiveLinkTabsTab {...props} />
+    </React.Suspense>
   );
 }
 

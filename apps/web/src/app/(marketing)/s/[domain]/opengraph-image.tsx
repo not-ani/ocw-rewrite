@@ -1,7 +1,6 @@
-import { fetchQuery } from "convex/nextjs";
 import { ImageResponse } from "next/og";
 
-import { api } from "@ocw/backend/convex/_generated/api";
+import { getPublicSiteConfig } from "@/lib/public-data";
 
 export const alt = "OpenCourseWare";
 export const size = {
@@ -10,15 +9,10 @@ export const size = {
 };
 
 export const contentType = "image/png";
-export const runtime = "nodejs";
-// Cache OG images for 1 hour, revalidate in background
-export const revalidate = 3600;
 
 export async function renderTenantOpenGraphImage(domain: string) {
 	try {
-		const siteConfig = await fetchQuery(api.site.getSiteConfig, {
-			school: domain,
-		});
+		const siteConfig = await getPublicSiteConfig(domain);
 
 		const schoolName = siteConfig?.schoolName || "OpenCourseWare";
 		const titleText = `${schoolName} OCW`;

@@ -7,17 +7,14 @@ import type { Id } from "@ocw/backend/convex/_generated/dataModel";
 
 import { CoursePageClient } from "./client";
 
-// Cache course pages for 60 seconds
-export const revalidate = 60;
-
 export async function getCourseMetadata(
 	school: string | null,
 	id: string,
 	baseUrl: string,
 ): Promise<Metadata> {
-	const absoluteUrl = (path: string) => Promise.resolve(`${baseUrl}${path}`);
+	const absoluteUrl = (path: string) => `${baseUrl}${path}`;
 	if (!school || !isValidConvexId(id)) {
-		const ogImageUrl = await absoluteUrl("/opengraph-image");
+		const ogImageUrl = absoluteUrl("/opengraph-image");
 		return {
 			title: "Course",
 			description: "Course details",
@@ -49,7 +46,7 @@ export async function getCourseMetadata(
 	]);
 
 	if (!course) {
-		const ogImageUrl = await absoluteUrl("/opengraph-image");
+		const ogImageUrl = absoluteUrl("/opengraph-image");
 		return {
 			title: "Course Not Found",
 			description: "The requested course could not be found",
@@ -79,8 +76,8 @@ export async function getCourseMetadata(
 	const description =
 		course.description ||
 		`Learn about ${course.name} with free, high-quality resources.`;
-	const ogImageUrl = await absoluteUrl(`/course/${id}/opengraph-image`);
-	const url = await absoluteUrl(`/course/${id}`);
+	const ogImageUrl = absoluteUrl(`/course/${id}/opengraph-image`);
+	const url = absoluteUrl(`/course/${id}`);
 
 	return {
 		title,
